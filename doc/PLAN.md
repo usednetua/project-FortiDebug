@@ -1,28 +1,33 @@
-# FortiDebug Builder (Windows) — Детальний покроковий план розробки
+# FortiDebug Builder (Windows) — Максимально детальний покроковий план
 
-## 1. Мета проекту
-Створити Windows-аналог macOS-додатку FortiDebug Builder.
-GUI-інструмент для візуального складання CLI-команд діагностики FortiGate.
+## 1. Мета
+Windows-аналог macOS FortiDebug Builder.
+GUI для візуального складання CLI-команд діагностики FortiGate (Sessions, Ping, Traceroute, Sniffer, Flows, VPN, System Top, HA, Routing + Saved).
 
-## 2. Технологічний стек (рекомендований)
-- **Мова**: Python 3.11+
-- **GUI**: CustomTkinter (сучасний вигляд) або PyQt6
-- **Зберігання**: SQLite (saved commands) + JSON (налаштування)
-- **Пакування**: PyInstaller → один .exe
-- **Версіонування**: Git + GitHub (цей репозиторій)
+## 2. Стек
+- Python 3.11+
+- GUI: CustomTkinter (темна/світла тема, сучасний вигляд)
+- Зберігання: SQLite (команди) + JSON (налаштування, кастомні інтерфейси)
+- Clipboard: pyperclip
+- Пакування: PyInstaller → один .exe
+- Git + цей приватний репозиторій
 
-Альтернатива: C# + WPF (.NET 8) — якщо потрібен нативний Windows-вигляд.
+Альтернатива (якщо нативність критична): C# + WPF/.NET 8.
 
-## 3. Структура репозиторію
+## 3. Структура репозиторію (цільова)
 ```
 project-FortiDebug/
 ├── doc/
-│   └── PLAN.md                 ← цей файл
+│   └── PLAN.md
 ├── src/
 │   ├── main.py
+│   ├── app.py                  # Application class
 │   ├── ui/
 │   │   ├── main_window.py
+│   │   ├── sidebar.py
+│   │   ├── preview_panel.py
 │   │   ├── tabs/
+│   │   │   ├── base_tab.py
 │   │   │   ├── sessions.py
 │   │   │   ├── ping.py
 │   │   │   ├── traceroute.py
@@ -31,136 +36,238 @@ project-FortiDebug/
 │   │   │   ├── vpn.py
 │   │   │   ├── system_top.py
 │   │   │   ├── ha.py
-│   │   │   └── routing.py
+│   │   │   ├── routing.py
+│   │   │   └── saved.py
 │   │   └── widgets/
+│   │       ├── ip_entry.py
+│   │       ├── port_entry.py
+│   │       ├── protocol_combo.py
+│   │       ├── bpf_builder.py
+│   │       └── interface_selector.py
 │   ├── core/
 │   │   ├── command_builder.py
 │   │   ├── models.py
-│   │   └── storage.py
+│   │   ├── storage.py
+│   │   └── validators.py
 │   └── resources/
+│       └── icons/
 ├── tests/
+│   ├── test_sessions.py
+│   ├── test_sniffer.py
+│   └── ...
 ├── requirements.txt
+├── .gitignore
 ├── README.md
-└── build.spec                   # PyInstaller
+└── build.spec
 ```
 
-## 4. Покроковий план реалізації
+## 4. Покроковий план (детально)
 
-### Крок 1. Ініціалізація проекту (1 день)
-1. Створити віртуальне середовище `python -m venv venv`
-2. Встановити залежності: `customtkinter`, `sqlite3` (стандарт), `pyperclip`, `pyinstaller`
-3. Створити базову структуру папок
-4. Написати `main.py` з порожнім вікном CustomTkinter
-5. Налаштувати `.gitignore`
+### Крок 0. Підготовка середовища (0.5 дня)
+1. Встановити Python 3.11+ з python.org (додати в PATH).
+2. `python -m venv venv`
+3. Активувати: `venv\Scripts\activate`
+4. `pip install customtkinter pyperclip pyinstaller`
+5. Створити `.gitignore`:
+   ```
+   venv/
+   __pycache__/
+   *.pyc
+   dist/
+   build/
+   *.spec
+   .idea/
+   .vscode/
+   *.db
+   ```
+6. Ініціалізувати структуру папок у `src/`.
 
-### Крок 2. Базовий каркас GUI (1–2 дні)
-1. Головне вікно з бічною панеллю (sidebar) або вкладками (tabs)
-2. Список секцій:
-   - Diagnose Sessions
-   - Ping
-   - Traceroute
-   - Sniffer
-   - Flows
-   - VPN
-   - System Top
-   - HA
-   - Routing
-   - Saved Commands
-3. Нижня панель: кнопки **Copy**, **Save to .txt**, **Save for Later**
-4. Текстове поле для попереднього перегляду згенерованих команд
+### Крок 1. Точка входу + каркас вікна (1 день)
+1. `main.py`:
+   ```python
+   import customtkinter as ctk
+   from ui.main_window import MainWindow
 
-### Крок 3. Модуль Diagnose Sessions (1 день)
-Поля:
-- Source IP / Destination IP
-- Source Port / Destination Port
-- Protocol (TCP/UDP/ICMP/GRE/ESP/Any)
+   if __name__ == "__main__":
+       ctk.set_appearance_mode("System")
+       ctk.set_default_color_theme("blue")
+       app = MainWindow()
+       app.mainloop()
+   ```
+2. `MainWindow` (CTk):
+   - Sidebar (ліва панель) зі списком секцій (CTkSegmentedButton або CTkOptionMenu + кнопки).
+   - Центральна область: динамічний фрейм для активної вкладки.
+   - Нижня панель (preview + кнопки):
+     - CTkTextbox (readonly) для згенерованих команд.
+     - Кнопки: Copy, Save .txt, Save for Later.
+3. Перемикання вкладок через словник `self.tabs = {"sessions": SessionsTab(...), ...}`.
+4. Метод `update_preview(text: str)`.
+
+### Крок 2. Базовий клас вкладки + валідатори (0.5 дня)
+1. `BaseTab(CTkFrame)`:
+   - `build_ui()`
+   - `generate_commands() -> str`
+   - `validate() -> bool`
+2. `validators.py`:
+   - `is_valid_ip(s)` (IPv4/IPv6)
+   - `is_valid_port(s)` (1-65535)
+   - `is_valid_vdom(s)` (int)
+
+### Крок 3. Diagnose Sessions (1 день)
+Поля (сітка CTkLabel + CTkEntry/CTkComboBox/CTkCheckBox):
+- Source IP, Destination IP
+- Source Port, Destination Port
+- Protocol: TCP(6), UDP(17), ICMP(1), GRE(47), ESP(50), Any
 - VDOM index
-- Negate filter (checkbox)
+- Negate filter
 - Include session stats
 - Append session list
 
-Генерувати:
+Логіка генерації:
 ```
 diagnose sys session filter clear
-diagnose sys session filter src ...
-diagnose sys session filter dst ...
-...
-diagnose sys session list
+[якщо src] diagnose sys session filter src <ip>
+[якщо dst] diagnose sys session filter dst <ip>
+[якщо sport] diagnose sys session filter sport <port>
+[якщо dport] diagnose sys session filter dport <port>
+[якщо proto != Any] diagnose sys session filter proto <num>
+[якщо vdom] diagnose sys session filter vd <idx>
+[якщо negate] diagnose sys session filter negate enable
+[якщо stats] diagnose sys session stat
+[якщо list] diagnose sys session list
 ```
 
-### Крок 4. Модуль Ping (1 день)
+### Крок 4. Ping (1 день)
 Опції `exec ping-options`:
-- source
+- source <ip>
+- interface <name>
+- df-bit {yes|no}
+- data-size <bytes> (за замовч. 56, для MTU 1472)
+- adaptive {enable|disable}
+- timeout / interval / repeat-count
++ checkbox «Show view-settings»
++ host
+
+Генерація:
+```
+exec ping-options source ...
+...
+exec ping-options view-settings   # якщо увімкнено
+exec ping <host>
+```
+
+### Крок 5. Traceroute (0.5 дня)
+Аналогічно Ping:
 - interface
-- df-bit
-- data-size
-- adaptive
-- timeout / interval / count
-+ `exec ping <host>`
-+ опція view-settings
+- queries-per-hop
+- max-ttl
+- source
++ host
 
-### Крок 5. Модуль Traceroute (0.5 дня)
-Аналогічно Ping: `exec traceroute-options` + `exec traceroute`
+### Крок 6. Sniffer (2–3 дні) — пріоритетний складний модуль
+1. InterfaceSelector:
+   - CTkComboBox з пресетами (port1, port2, any, vlan100...)
+   - кнопка «Add Custom» → зберігає в JSON
+2. Verbose: CTkOptionMenu 0–6 з підказками.
+3. Простий фільтр (якщо toggle off):
+   - Host / Network / Port / Protocol + src/dst/either
+4. BPF Builder (toggle on):
+   - Presets: TCP SYN, TCP RST, New TCP, ICMP, ARP, VLAN, IPv6, Broadcast, Multicast
+   - Snippet constructor:
+     - type (host/network/port/protocol/ether host/vlan/tcp flag/icmp type/...)
+     - value
+     - Negate, Wrap in parens
+     - Combine with AND/OR
+     - Add to filter / Clear
+5. Генерація:
+   `diagnose sniffer packet <intf> '<bpf>' <verbose> [<count>]`
 
-### Крок 6. Модуль Sniffer (2–3 дні) — найскладніший
-1. Поле Interface (з пресетами + можливість додавати свої)
-2. Verbose level (0–6)
-3. Простий режим фільтра (Host/Network/Port/Protocol + src/dst/either)
-4. BPF Builder:
-   - Presets (TCP SYN, RST, ICMP, ARP, VLAN...)
-   - Конструктор сніпетів
-   - AND/OR, negate, parentheses
-5. Генерація: `diagnose sniffer packet <intf> '<filter>' <verbose>`
-
-### Крок 7. Модуль Flows (1 день)
-- Reset debug state
-- Address/Port/Protocol filters
-- Trace count
+### Крок 7. Flows (1 день)
+- Reset debug state (checkbox, за замовч. on)
+- src/dst address, port, protocol filters
+- Trace count (default 1000)
 - Console timestamps
-- Append stop-debug block
+- Append stop-debug block (за замовч. on)
 
-### Крок 8. Модуль VPN (1 день)
-- Phase1 / Phase2 name
-- Peer IP
-- IKE debug level
-- Команди status + live debug
+Команди:
+```
+diagnose debug reset
+diagnose debug flow filter ...
+diagnose debug flow show console enable
+diagnose debug flow trace-start <count>
+...
+diagnose debug disable
+```
+
+### Крок 8. VPN (1 день)
+- Phase1 name / Phase2 name / Peer IPv4
+- IKE debug level (-1 за замовч.)
+- Status commands + live debug block
 
 ### Крок 9. System Top + HA + Routing (2 дні)
-Реалізувати всі варіанти команд з оригінального додатку.
+**System Top**:
+- top / top-summary / top-mem / top-io
+- delay, max lines
+- companion: performance status, hardware info, conserve-mode
 
-### Крок 10. Saved Commands (1 день)
-- SQLite таблиця: id, title, category, notes, command, created_at
-- Пошук, редагування, видалення, експорт
-- Context menu
+**HA**:
+- status, checksums, full dump
+- force sync, reset uptime, manage unit
+- hatalk / hasync debug
 
-### Крок 11. Збереження налаштувань і кастомних інтерфейсів
-- JSON-файл у `%APPDATA%/FortiDebugBuilder/`
+**Routing**:
+- OSPF (status/neighbors/interfaces/LSDB/routes + live debug)
+- BGP (summary, neighbor routes, advertised, network, live debug)
+- Static / RIB / proute / lookup destination
 
-### Крок 12. Тестування і полірування (2 дні)
-- Перевірка всіх генераторів
-- Обробка помилок вводу
+### Крок 10. Saved Commands (1–1.5 дні)
+1. `storage.py`:
+   - SQLite: `CREATE TABLE commands (id INTEGER PRIMARY KEY, title TEXT, category TEXT, notes TEXT, command TEXT, created_at TEXT)`
+2. UI:
+   - Список (CTkScrollableFrame або Treeview)
+   - Пошук (фільтр по title/category/notes/command)
+   - Edit / Delete / Copy / Export
+   - Context menu (правою кнопкою)
+3. «Save for Later» з будь-якої вкладки → діалог title + notes + category.
+
+### Крок 11. Налаштування і персистентність (0.5 дня)
+- `%APPDATA%\FortiDebugBuilder\config.json`
+- theme, last used tab, custom interfaces, window size/position
+
+### Крок 12. Тестування (1.5–2 дні)
+- Unit-тести генераторів (pytest)
+- Ручне тестування всіх комбінацій полів
+- Валідація порожніх/некоректних вводів
 - Темна/світла тема
-- Гарячі клавіші (Ctrl+C, Ctrl+S)
+- Гарячі клавіші: Ctrl+C (copy), Ctrl+S (save txt), Ctrl+L (save later)
 
-### Крок 13. Збірка .exe (1 день)
+### Крок 13. Збірка .exe (0.5–1 день)
 ```bash
-pyinstaller --onefile --windowed --name FortiDebugBuilder build.spec
+pyinstaller --onefile --windowed --name FortiDebugBuilder --icon=resources/icon.ico src/main.py
 ```
+або через `build.spec`.
 
-### Крок 14. Документація і реліз
-- README.md з інструкцією
+### Крок 14. Документація і фініш (1 день)
+- README.md (українською + англійською)
 - Скріншоти
 - Changelog
+- Ліцензія (MIT або власна)
 
-## 5. Порядок пріоритетів
-1. Каркас + Sessions + Ping + Sniffer (MVP)
+## 5. Порядок пріоритетів (MVP → Full)
+1. Каркас + Sessions + Ping + Sniffer + Preview + Copy/Save
 2. Saved Commands
-3. Решта модулів
-4. Пакування і polish
+3. Flows + VPN
+4. System Top + HA + Routing
+5. Polish + .exe
 
-## 6. Оцінка часу
-Повний MVP: 7–10 днів
-Повний функціонал: 14–18 днів (один розробник)
+## 6. Оцінка часу (один розробник)
+- MVP: 6–8 робочих днів
+- Повний функціонал: 12–16 робочих днів
+
+## 7. Наступні дії прямо зараз
+1. Створити `requirements.txt`
+2. Створити базову структуру папок і `main.py` + `MainWindow`
+3. Реалізувати Sessions як перший робочий модуль
 
 ---
-*Оновлено: 2026-09-03*
+Оновлено: 2026-09-03

@@ -9,6 +9,7 @@ from ui.tabs.ping import PingTab
 from ui.tabs.traceroute import TracerouteTab
 from ui.tabs.sniffer import SnifferTab
 from ui.tabs.flows import FlowsTab
+from ui.tabs.vpn import VpnTab
 
 
 class MainWindow(ctk.CTk):
@@ -95,9 +96,10 @@ class MainWindow(ctk.CTk):
         self.tabs["traceroute"] = TracerouteTab(self.content, on_change=self.on_tab_change)
         self.tabs["sniffer"] = SnifferTab(self.content, on_change=self.on_tab_change)
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
+        self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change)
 
         # Placeholders
-        for key in ["vpn", "system_top", "ha", "routing", "saved"]:
+        for key in ["system_top", "ha", "routing", "saved"]:
             frame = ctk.CTkFrame(self.content)
             ctk.CTkLabel(
                 frame,

@@ -12,6 +12,7 @@ from ui.tabs.flows import FlowsTab
 from ui.tabs.vpn import VpnTab
 from ui.tabs.system_top import SystemTopTab
 from ui.tabs.ha import HaTab
+from ui.tabs.routing import RoutingTab
 from ui.tabs.ssh_logger import SshLoggerTab
 
 
@@ -99,16 +100,13 @@ class MainWindow(ctk.CTk):
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
+        self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)
         self.tabs["ssh_logger"] = SshLoggerTab(self.content, on_change=self.on_tab_change)
 
-        for key in ["routing", "saved"]:
-            frame = ctk.CTkFrame(self.content)
-            ctk.CTkLabel(
-                frame,
-                text=f"{key.replace('_', ' ').title()} — coming soon",
-                font=ctk.CTkFont(size=16),
-            ).pack(expand=True)
-            self.tabs[key] = frame
+        # Placeholder
+        frame = ctk.CTkFrame(self.content)
+        ctk.CTkLabel(frame, text="Saved Commands — coming soon", font=ctk.CTkFont(size=16)).pack(expand=True)
+        self.tabs["saved"] = frame
 
         self.show_tab("sessions")
 

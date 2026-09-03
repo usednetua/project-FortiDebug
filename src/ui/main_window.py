@@ -11,6 +11,7 @@ from ui.tabs.sniffer import SnifferTab
 from ui.tabs.flows import FlowsTab
 from ui.tabs.vpn import VpnTab
 from ui.tabs.system_top import SystemTopTab
+from ui.tabs.ha import HaTab
 from ui.tabs.ssh_logger import SshLoggerTab
 
 
@@ -25,7 +26,6 @@ class MainWindow(ctk.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # Sidebar
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
         self.sidebar.grid_rowconfigure(12, weight=1)
@@ -63,13 +63,11 @@ class MainWindow(ctk.CTk):
             btn.grid(row=i, column=0, padx=10, pady=4, sticky="ew")
             self.nav_buttons[key] = btn
 
-        # Content area
         self.content = ctk.CTkFrame(self, corner_radius=0)
         self.content.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
         self.content.grid_columnconfigure(0, weight=1)
         self.content.grid_rowconfigure(0, weight=1)
 
-        # Preview + actions
         self.bottom = ctk.CTkFrame(self)
         self.bottom.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
         self.bottom.grid_columnconfigure(0, weight=1)
@@ -90,7 +88,6 @@ class MainWindow(ctk.CTk):
         )
         self.btn_save_later.grid(row=1, column=2, padx=5, pady=5, sticky="w")
 
-        # Tabs
         self.tabs = {}
         self.current_tab = None
 
@@ -101,10 +98,10 @@ class MainWindow(ctk.CTk):
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
+        self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["ssh_logger"] = SshLoggerTab(self.content, on_change=self.on_tab_change)
 
-        # Placeholders
-        for key in ["ha", "routing", "saved"]:
+        for key in ["routing", "saved"]:
             frame = ctk.CTkFrame(self.content)
             ctk.CTkLabel(
                 frame,

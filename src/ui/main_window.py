@@ -6,6 +6,7 @@ import pyperclip
 
 from ui.tabs.sessions import SessionsTab
 from ui.tabs.ping import PingTab
+from ui.tabs.traceroute import TracerouteTab
 
 
 class MainWindow(ctk.CTk):
@@ -89,9 +90,10 @@ class MainWindow(ctk.CTk):
 
         self.tabs["sessions"] = SessionsTab(self.content, on_change=self.on_tab_change)
         self.tabs["ping"] = PingTab(self.content, on_change=self.on_tab_change)
+        self.tabs["traceroute"] = TracerouteTab(self.content, on_change=self.on_tab_change)
 
         # Placeholders
-        for key in ["traceroute", "sniffer", "flows", "vpn", "system_top", "ha", "routing", "saved"]:
+        for key in ["sniffer", "flows", "vpn", "system_top", "ha", "routing", "saved"]:
             frame = ctk.CTkFrame(self.content)
             ctk.CTkLabel(
                 frame,

@@ -5,6 +5,7 @@ from tkinter import filedialog, messagebox
 import pyperclip
 
 from ui.tabs.sessions import SessionsTab
+from ui.tabs.ping import PingTab
 
 
 class MainWindow(ctk.CTk):
@@ -66,7 +67,9 @@ class MainWindow(ctk.CTk):
         self.bottom.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
         self.bottom.grid_columnconfigure(0, weight=1)
 
-        self.preview = ctk.CTkTextbox(self.bottom, height=140, font=ctk.CTkFont(family="Consolas", size=13))
+        self.preview = ctk.CTkTextbox(
+            self.bottom, height=140, font=ctk.CTkFont(family="Consolas", size=13)
+        )
         self.preview.grid(row=0, column=0, columnspan=4, sticky="ew", padx=5, pady=(5, 8))
 
         self.btn_copy = ctk.CTkButton(self.bottom, text="Copy", width=100, command=self.copy_commands)
@@ -85,12 +88,16 @@ class MainWindow(ctk.CTk):
         self.current_tab = None
 
         self.tabs["sessions"] = SessionsTab(self.content, on_change=self.on_tab_change)
-        # Placeholders for future tabs
-        for key in ["ping", "traceroute", "sniffer", "flows", "vpn", "system_top", "ha", "routing", "saved"]:
+        self.tabs["ping"] = PingTab(self.content, on_change=self.on_tab_change)
+
+        # Placeholders
+        for key in ["traceroute", "sniffer", "flows", "vpn", "system_top", "ha", "routing", "saved"]:
             frame = ctk.CTkFrame(self.content)
-            ctk.CTkLabel(frame, text=f"{key.replace('_', ' ').title()} — coming soon", font=ctk.CTkFont(size=16)).pack(
-                expand=True
-            )
+            ctk.CTkLabel(
+                frame,
+                text=f"{key.replace('_', ' ').title()} — coming soon",
+                font=ctk.CTkFont(size=16),
+            ).pack(expand=True)
             self.tabs[key] = frame
 
         self.show_tab("sessions")

@@ -11,6 +11,7 @@ from ui.tabs.sniffer import SnifferTab
 from ui.tabs.flows import FlowsTab
 from ui.tabs.vpn import VpnTab
 from ui.tabs.system_top import SystemTopTab
+from ui.tabs.ssh_logger import SshLoggerTab
 
 
 class MainWindow(ctk.CTk):
@@ -27,7 +28,7 @@ class MainWindow(ctk.CTk):
         # Sidebar
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(10, weight=1)
+        self.sidebar.grid_rowconfigure(12, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
@@ -45,6 +46,7 @@ class MainWindow(ctk.CTk):
             ("system_top", "System Top"),
             ("ha", "HA"),
             ("routing", "Routing"),
+            ("ssh_logger", "SSH Logger"),
             ("saved", "Saved Commands"),
         ]
 
@@ -99,6 +101,7 @@ class MainWindow(ctk.CTk):
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
+        self.tabs["ssh_logger"] = SshLoggerTab(self.content, on_change=self.on_tab_change)
 
         # Placeholders
         for key in ["ha", "routing", "saved"]:

@@ -6,24 +6,26 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+- `doc/RELEASE_3_PLAN.md` — план наступного релізу (Network, Policy lookup, VIP, SSL VPN, …)
+
+---
+
 ## [0.3.0] — 2026-09-05
 
 ### Added
-- Tooltips (helper + Flows / Sessions)
-- build.spec (PyInstaller)
-- Unit tests (pytest): validators, safety, fortios, builders
-- Sessions: policy, ext-sip/dip, duration, validation
-- Sniffer: BPF JSON persist, IPv6 host
-- VPN: ifindex filter, status/stats
-- Config persist (theme/lang у AppData)
-- Settings (theme, language), About (version, used.net.ua)
+- Tooltips, build.spec, unit tests
+- Sessions filters, Sniffer BPF JSON, VPN ifindex/stats
+- Config persist, Settings, About
 
 ---
 
 ## [0.2.0] — 2026-09-04
 
 ### Added
-- Recipes, App Debug, TAC, Flows v2, safety-блоки, UX polish, README
+- Recipes, App Debug, TAC, Flows v2, safety-блоки, UX polish
 
 ---
 

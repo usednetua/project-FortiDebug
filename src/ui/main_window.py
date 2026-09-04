@@ -16,6 +16,7 @@ from ui.tabs.routing import RoutingTab
 from ui.tabs.ssh_logger import SshLoggerTab
 from ui.tabs.saved import SavedTab
 from ui.tabs.recipes import RecipesTab
+from ui.tabs.app_debug import AppDebugTab
 from core.storage import save_command
 from core.fortios_version import (
     FortiOSVersion,
@@ -40,7 +41,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(14, weight=1)
+        self.sidebar.grid_rowconfigure(15, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
@@ -68,6 +69,7 @@ class MainWindow(ctk.CTk):
             ("sniffer", "Sniffer"),
             ("flows", "Flows"),
             ("vpn", "VPN"),
+            ("app_debug", "App Debug"),
             ("system_top", "System Top"),
             ("ha", "HA"),
             ("routing", "Routing"),
@@ -125,6 +127,7 @@ class MainWindow(ctk.CTk):
         self.tabs["sniffer"] = SnifferTab(self.content, on_change=self.on_tab_change)
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change, get_version=self.get_version)
+        self.tabs["app_debug"] = AppDebugTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)

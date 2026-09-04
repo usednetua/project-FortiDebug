@@ -9,18 +9,13 @@
 ## [Unreleased]
 
 ### Added
-- **Recipes / Workflows** — 6 playbooks:
-  - Traffic not passing (session + flow + sniffer)
-  - VPN down / rekey (version-aware IKE)
-  - High CPU
-  - Policy / NAT check (iprope)
-  - HA out-of-sync
-  - DNS issues (dnsproxy)
-- **Flows v2**: iprope, IPv6, addr filter, presets
+- **Application Debug** — демони:
+  authd, dnsproxy, ike, sslvpn, miglogd, fgtlogd, urlfilter, wad, sip, fnbamd, eap_proxy, samld
+- **Recipes / Workflows** — 6 playbooks
+- **Flows v2**: iprope, IPv6, addr, presets
 - **Safety-блоки** у Flows / VPN / HA / Routing
 
 ### Planned (Release 2)
-- Application Debug tab
 - TAC / Support helper
 - Sessions / Sniffer enrichment
 - UX polish / hotkeys

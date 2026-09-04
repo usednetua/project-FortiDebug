@@ -16,6 +16,12 @@ from ui.tabs.routing import RoutingTab
 from ui.tabs.ssh_logger import SshLoggerTab
 from ui.tabs.saved import SavedTab
 from core.storage import save_command
+from core.fortios_version import (
+    FortiOSVersion,
+    DEFAULT_VERSION,
+    VERSION_LABELS,
+    parse_version,
+)
 
 
 class MainWindow(ctk.CTk):
@@ -26,17 +32,32 @@ class MainWindow(ctk.CTk):
         self.geometry("1100x720")
         self.minsize(900, 600)
 
+        self.fortios_version = DEFAULT_VERSION
+
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(12, weight=1)
+        self.sidebar.grid_rowconfigure(13, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
         )
-        self.logo.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.logo.grid(row=0, column=0, padx=20, pady=(20, 6))
+
+        # FortiOS version selector
+        ctk.CTkLabel(self.sidebar, text="FortiOS", font=ctk.CTkFont(size=12)).grid(
+            row=1, column=0, padx=12, sticky="w"
+        )
+        self.version_menu = ctk.CTkOptionMenu(
+            self.sidebar,
+            values=list(VERSION_LABELS.values()),
+            command=self._on_version_change,
+            width=160,
+        )
+        self.version_menu.set(VERSION_LABELS[DEFAULT_VERSION])
+        self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 10), sticky="ew")
 
         self.nav_buttons = {}
         sections = [
@@ -53,7 +74,7 @@ class MainWindow(ctk.CTk):
             ("saved", "Saved Commands"),
         ]
 
-        for i, (key, label) in enumerate(sections, start=1):
+        for i, (key, label) in enumerate(sections, start=3):
             btn = ctk.CTkButton(
                 self.sidebar,
                 text=label,
@@ -63,7 +84,7 @@ class MainWindow(ctk.CTk):
                 hover_color=("gray70", "gray30"),
                 anchor="w",
             )
-            btn.grid(row=i, column=0, padx=10, pady=4, sticky="ew")
+            btn.grid(row=i, column=0, padx=10, pady=3, sticky="ew")
             self.nav_buttons[key] = btn
 
         self.content = ctk.CTkFrame(self, corner_radius=0)
@@ -99,7 +120,7 @@ class MainWindow(ctk.CTk):
         self.tabs["traceroute"] = TracerouteTab(self.content, on_change=self.on_tab_change)
         self.tabs["sniffer"] = SnifferTab(self.content, on_change=self.on_tab_change)
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
-        self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change)
+        self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change, get_version=self.get_version)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)
@@ -107,6 +128,13 @@ class MainWindow(ctk.CTk):
         self.tabs["saved"] = SavedTab(self.content, on_change=self.on_tab_change)
 
         self.show_tab("sessions")
+
+    def get_version(self) -> FortiOSVersion:
+        return self.fortios_version
+
+    def _on_version_change(self, label: str):
+        self.fortios_version = parse_version(label)
+        self.on_tab_change()
 
     def show_tab(self, key: str):
         if self.current_tab is not None:

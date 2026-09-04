@@ -26,6 +26,11 @@ from core.fortios_version import (
     parse_version,
 )
 
+STOP_DEBUG_BLOCK = (
+    "diagnose debug disable\n"
+    "diagnose debug reset"
+)
+
 
 class MainWindow(ctk.CTk):
     def __init__(self):
@@ -104,18 +109,30 @@ class MainWindow(ctk.CTk):
         self.preview = ctk.CTkTextbox(
             self.bottom, height=140, font=ctk.CTkFont(family="Consolas", size=13)
         )
-        self.preview.grid(row=0, column=0, columnspan=4, sticky="ew", padx=5, pady=(5, 8))
+        self.preview.grid(row=0, column=0, columnspan=5, sticky="ew", padx=5, pady=(5, 8))
 
-        self.btn_copy = ctk.CTkButton(self.bottom, text="Copy", width=100, command=self.copy_commands)
-        self.btn_copy.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        self.btn_copy = ctk.CTkButton(self.bottom, text="Copy", width=90, command=self.copy_commands)
+        self.btn_copy.grid(row=1, column=0, padx=4, pady=5, sticky="w")
 
-        self.btn_save_txt = ctk.CTkButton(self.bottom, text="Save .txt", width=100, command=self.save_txt)
-        self.btn_save_txt.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+        self.btn_copy_stop = ctk.CTkButton(
+            self.bottom, text="Copy stop-debug", width=130, command=self.copy_stop_debug
+        )
+        self.btn_copy_stop.grid(row=1, column=1, padx=4, pady=5, sticky="w")
+
+        self.btn_save_txt = ctk.CTkButton(
+            self.bottom, text="Save .txt", width=90, command=self.save_txt
+        )
+        self.btn_save_txt.grid(row=1, column=2, padx=4, pady=5, sticky="w")
 
         self.btn_save_later = ctk.CTkButton(
-            self.bottom, text="Save for Later", width=130, command=self.save_for_later
+            self.bottom, text="Save for Later", width=120, command=self.save_for_later
         )
-        self.btn_save_later.grid(row=1, column=2, padx=5, pady=5, sticky="w")
+        self.btn_save_later.grid(row=1, column=3, padx=4, pady=5, sticky="w")
+
+        # Hotkeys
+        self.bind("<Control-Return>", lambda e: self.copy_commands())
+        self.bind("<Control-s>", lambda e: self.save_txt())
+        self.bind("<Control-S>", lambda e: self.save_txt())
 
         self.tabs = {}
         self.current_tab = None
@@ -180,6 +197,10 @@ class MainWindow(ctk.CTk):
         if text:
             pyperclip.copy(text)
             messagebox.showinfo("Copied", "Commands copied to clipboard.")
+
+    def copy_stop_debug(self):
+        pyperclip.copy(STOP_DEBUG_BLOCK)
+        messagebox.showinfo("Copied", "Stop-debug block copied.")
 
     def save_txt(self):
         text = self.preview.get("1.0", "end-1c").strip()

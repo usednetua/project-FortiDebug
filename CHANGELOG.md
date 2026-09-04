@@ -9,16 +9,16 @@
 ## [Unreleased]
 
 ### Added
-- **Sessions enrichment**: IPv6 (`session6`), clear matched sessions, full-stat
-- **Sniffer enrichment**: timestamp format (`a`/`l`), presets DNS / IKE-ESP / SYN-only
-- **TAC / Support** — tac report, debug report, support bundle
-- **Application Debug** — authd, dnsproxy, sslvpn, miglogd, wad, sip, …
+- **UX**: dark theme за замовч., Ctrl+Enter = Copy, Ctrl+S = Save .txt, кнопка «Copy stop-debug»
+- **Sessions enrichment**: IPv6, clear, full-stat
+- **Sniffer enrichment**: timestamp format, presets DNS / IKE-ESP / SYN
+- **TAC / Support**
+- **Application Debug**
 - **Recipes / Workflows** — 6 playbooks
-- **Flows v2**: iprope, IPv6, addr, presets
-- **Safety-блоки** у Flows / VPN / HA / Routing
+- **Flows v2**: iprope, IPv6, presets
+- **Safety-блоки**
 
 ### Planned (Release 2)
-- UX polish / hotkeys
 - README update / build.spec
 - Див. `doc/RELEASE_2_PLAN.md`
 

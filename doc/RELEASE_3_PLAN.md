@@ -2,7 +2,7 @@
 
 **Мета:** закрити пробіли з офіційних / community FortiGate debug cheatsheet’ів.
 
-**Реліз:** **0.4.0** — завершено
+**Реліз:** **0.4.0** (+ UTM/IPS)
 
 ---
 
@@ -19,17 +19,17 @@
 | 7 | LACP | ✅ Done | P1 | |
 | 8 | SD-WAN | ✅ Done | P2 | |
 | 9 | Auth / FSSO | ✅ Done | P2 | |
-| 10 | diag debug cli 7 | ✅ Done | P2 | TAC tab |
-| 11 | UTM / IPS | ❌ Deferred | P3 | поза 0.4.0 |
+| 10 | diag debug cli 7 | ✅ Done | P2 | |
+| 11 | UTM / IPS | ✅ Done | P3 | utm_ips tab |
 | 12 | README + version 0.4.0 | ✅ Done | P0 | |
 
 **Легенда:** ✅ Done · 🟡 Partial · ❌ Todo
 
 ---
 
-## Release 3 — завершено (v0.4.0)
+## Release 3 — повністю завершено
 
-Відкладено: UTM/IPS quick debug (P3).
+Усі пункти плану реалізовані.
 
 ---
 

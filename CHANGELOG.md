@@ -6,19 +6,17 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+- **UTM / IPS** tab — ips filter, ips debug, av/urlfilter hints
+
+---
+
 ## [0.4.0] — 2026-09-05
 
 ### Added
-- **Network** — ARP, NIC, IP list, LACP, IPv6 ND
-- **Policy Lookup** — `diagnose firewall iprope lookup`
-- **Recipe** VIP / port forward
-- **VPN** — SSL monitor, list, sslvpn debug
-- **App Debug** — Realtime / Test (`diagnose test application`)
-- **DHCP** tab
-- **SD-WAN** tab — health-check, service, member, zone
-- **Auth / FSSO** tab
-- **TAC** — diagnose debug cli 7
-- `doc/RELEASE_3_PLAN.md`
+- Network, Policy Lookup, VIP recipe, SSL VPN, App test mode, DHCP, SD-WAN, Auth/FSSO, debug cli 7
 
 ---
 

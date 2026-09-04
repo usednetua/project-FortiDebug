@@ -12,6 +12,9 @@
 - **Settings**: тема (Light / Dark / System), мова меню (EN / UK)
 - **About**: версія, автор, https://used.net.ua
 
+### Changed
+- `doc/RELEASE_2_PLAN.md` — статусна таблиця кроків (done / partial / todo)
+
 ---
 
 ## [0.2.0] — 2026-09-04

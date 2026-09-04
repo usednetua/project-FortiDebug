@@ -23,6 +23,9 @@ python src/main.py
 
 ## Збірка .exe
 ```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
 pyinstaller --onefile --windowed --name FortiDebugBuilder src/main.py
 ```
 

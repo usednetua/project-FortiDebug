@@ -1,4 +1,4 @@
-"""VPN / IKE tab — version-aware syntax (verified against Fortinet docs)."""
+"""VPN / IKE tab — version-aware + safety blocks."""
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
@@ -10,6 +10,7 @@ from core.fortios_version import (
     ike_filter_name,
     uses_new_ike_filter_syntax,
 )
+from core.safety import preamble, epilogue
 
 
 class VpnTab(BaseTab):
@@ -64,34 +65,38 @@ class VpnTab(BaseTab):
         self.live_debug.select()
         self.live_debug.grid(row=7, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
+        self.timestamps = ctk.CTkCheckBox(
+            self, text="Console timestamps", command=self.notify_change
+        )
+        self.timestamps.select()
+        self.timestamps.grid(row=8, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+
         self.stop_block = ctk.CTkCheckBox(
             self, text="Append stop-debug block", command=self.notify_change
         )
         self.stop_block.select()
-        self.stop_block.grid(row=8, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        self.stop_block.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
         self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray", wraplength=480, justify="left")
-        self.ver_hint.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=8)
+        self.ver_hint.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=8)
 
     def generate_commands(self) -> str:
         version = self.get_version()
         base = ike_log_filter_base(version)
         new = uses_new_ike_filter_syntax(version)
 
-        if new:
-            self.ver_hint.configure(
-                text=f"FortiOS {version.value}: «{base}» + rem-addr4 (змінено з 7.4.1)"
+        self.ver_hint.configure(
+            text=(
+                f"FortiOS {version.value}: «{base}» + rem-addr4 (з 7.4.1)"
+                if new
+                else f"FortiOS {version.value}: «{base}» + dst-addr4 (до 7.4.1)"
             )
-        else:
-            self.ver_hint.configure(
-                text=f"FortiOS {version.value}: «{base}» + dst-addr4 (до 7.4.1)"
-            )
+        )
 
         lines = []
 
         if self.show_gateway.get():
             lines.append("diagnose vpn ike gateway list")
-
         if self.show_tunnel.get():
             lines.append("diagnose vpn tunnel list")
 
@@ -105,9 +110,10 @@ class VpnTab(BaseTab):
             lines.append(f"diagnose vpn tunnel list name {phase2}")
 
         if self.live_debug.get():
-            lines.append("diagnose debug reset")
+            lines.extend(
+                preamble(reset=True, timestamps=bool(self.timestamps.get()))
+            )
             lines.append(ike_log_filter_clear(version))
-
             if peer:
                 lines.append(ike_filter_remote_peer(version, peer))
             if phase1:
@@ -115,13 +121,7 @@ class VpnTab(BaseTab):
 
             level = self.ike_level.get().split()[0]
             lines.append(f"diagnose debug application ike {level}")
-            lines.append("diagnose debug console timestamp enable")
             lines.append("diagnose debug enable")
-
-            if self.stop_block.get():
-                lines.append("")
-                lines.append("# --- reproduce issue, then: ---")
-                lines.append("diagnose debug disable")
-                lines.append("diagnose debug reset")
+            lines.extend(epilogue(stop=bool(self.stop_block.get())))
 
         return "\n".join(lines) if lines else "# select options"

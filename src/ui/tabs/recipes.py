@@ -17,6 +17,7 @@ class RecipesTab(BaseTab):
         "VPN down / rekey",
         "High CPU",
         "Policy / NAT check",
+        "VIP / port forward",
         "HA out-of-sync",
         "DNS issues",
     ]
@@ -39,12 +40,12 @@ class RecipesTab(BaseTab):
         self.recipe.set(self.RECIPES[0])
         self.recipe.grid(row=1, column=1, sticky="ew", padx=10, pady=4)
 
-        ctk.CTkLabel(self, text="Source IP").grid(row=2, column=0, sticky="w", padx=10, pady=4)
+        ctk.CTkLabel(self, text="Source / Client IP").grid(row=2, column=0, sticky="w", padx=10, pady=4)
         self.src = ctk.CTkEntry(self, placeholder_text="optional")
         self.src.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
         self.src.bind("<KeyRelease>", self.notify_change)
 
-        ctk.CTkLabel(self, text="Destination IP").grid(row=3, column=0, sticky="w", padx=10, pady=4)
+        ctk.CTkLabel(self, text="Destination / VIP").grid(row=3, column=0, sticky="w", padx=10, pady=4)
         self.dst = ctk.CTkEntry(self, placeholder_text="optional")
         self.dst.grid(row=3, column=1, sticky="ew", padx=10, pady=4)
         self.dst.bind("<KeyRelease>", self.notify_change)
@@ -59,13 +60,18 @@ class RecipesTab(BaseTab):
         self.peer.grid(row=5, column=1, sticky="ew", padx=10, pady=4)
         self.peer.bind("<KeyRelease>", self.notify_change)
 
+        ctk.CTkLabel(self, text="WAN interface (VIP)").grid(row=6, column=0, sticky="w", padx=10, pady=4)
+        self.wan = ctk.CTkEntry(self, placeholder_text="wan1 / any")
+        self.wan.grid(row=6, column=1, sticky="ew", padx=10, pady=4)
+        self.wan.bind("<KeyRelease>", self.notify_change)
+
         note = ctk.CTkLabel(
             self,
             text="Готовий набір команд під типові інциденти. Заповни поля → Copy.",
             text_color="gray",
             wraplength=480,
         )
-        note.grid(row=6, column=0, columnspan=2, sticky="w", padx=10, pady=12)
+        note.grid(row=7, column=0, columnspan=2, sticky="w", padx=10, pady=12)
 
     def generate_commands(self) -> str:
         name = self.recipe.get()
@@ -73,6 +79,7 @@ class RecipesTab(BaseTab):
         dst = self.dst.get().strip()
         port = self.port.get().strip()
         peer = self.peer.get().strip()
+        wan = self.wan.get().strip() or "any"
         version = self.get_version()
 
         if name == "Traffic not passing":
@@ -83,6 +90,8 @@ class RecipesTab(BaseTab):
             return self._high_cpu()
         if name == "Policy / NAT check":
             return self._policy_nat(src, dst, port)
+        if name == "VIP / port forward":
+            return self._vip(src, dst, port, wan)
         if name == "HA out-of-sync":
             return self._ha_sync()
         if name == "DNS issues":
@@ -125,10 +134,7 @@ class RecipesTab(BaseTab):
         if port:
             filt_parts.append(f"port {port}")
         filt = " and ".join(filt_parts) if filt_parts else ""
-        if filt:
-            lines.append(f"diagnose sniffer packet any '{filt}' 4 0 l")
-        else:
-            lines.append("diagnose sniffer packet any '' 4 0 l")
+        lines.append(f"diagnose sniffer packet any '{filt}' 4 0 l")
         return "\n".join(lines)
 
     def _vpn_down(self, version, peer: str) -> str:
@@ -139,7 +145,6 @@ class RecipesTab(BaseTab):
         lines.extend(preamble(reset=True, timestamps=True))
         lines.append(ike_log_filter_clear(version))
         if peer:
-            # peer can be IP or phase1 name
             if any(c.isdigit() for c in peer) and "." in peer:
                 lines.append(ike_filter_remote_peer(version, peer))
             else:
@@ -189,6 +194,49 @@ class RecipesTab(BaseTab):
         lines.append("diagnose debug enable")
         lines.append("diagnose debug flow trace start 100")
         lines.extend(epilogue(stop=True))
+        return "\n".join(lines)
+
+    def _vip(self, client: str, vip: str, port: str, wan: str) -> str:
+        lines = [
+            "# === Recipe: VIP / port forward ===",
+            "# Look for: VIP-..., DNAT, iprope_in_check failed, policy 0 drop",
+            "",
+            "# 1) Sniffer on WAN",
+        ]
+        filt_parts = []
+        if client:
+            filt_parts.append(f"host {client}")
+        if vip:
+            filt_parts.append(f"host {vip}")
+        if port:
+            filt_parts.append(f"port {port}")
+        filt = " and ".join(filt_parts) if filt_parts else ""
+        lines.append(f"diagnose sniffer packet {wan} '{filt}' 4 0 l")
+        lines.append("")
+        lines.append("# 2) Debug flow")
+        lines.extend(preamble(reset=True, clear_flow_filter=True, timestamps=True))
+        if client:
+            lines.append(f"diagnose debug flow filter saddr {client}")
+        if vip:
+            lines.append(f"diagnose debug flow filter daddr {vip}")
+        if port:
+            lines.append(f"diagnose debug flow filter dport {port}")
+        lines.append("diagnose debug flow show function-name enable")
+        lines.append("diagnose debug flow show iprope enable")
+        lines.append("diagnose debug flow show console enable")
+        lines.append("diagnose debug enable")
+        lines.append("diagnose debug flow trace start 50")
+        lines.extend(epilogue(stop=True))
+        lines.append("")
+        lines.append("# 3) Sessions to VIP")
+        lines.append("diagnose sys session filter clear")
+        if vip:
+            lines.append(f"diagnose sys session filter dst {vip}")
+        if port:
+            lines.append(f"diagnose sys session filter dport {port}")
+        if client:
+            lines.append(f"diagnose sys session filter src {client}")
+        lines.append("diagnose sys session list")
         return "\n".join(lines)
 
     def _ha_sync(self) -> str:

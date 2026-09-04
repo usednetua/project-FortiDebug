@@ -12,8 +12,8 @@
 |---|------|------|-----------|----------|
 | 1 | Network tab (ARP, NIC, IP list) | ✅ Done | P0 | |
 | 2 | Policy lookup (iprope lookup) | ✅ Done | P0 | |
-| 3 | VIP / DNAT recipe + hints | ❌ Todo | P0 | |
-| 4 | SSL VPN status + monitor | ❌ Todo | P0 | |
+| 3 | VIP / DNAT recipe + hints | ✅ Done | P0 | Recipes → VIP / port forward |
+| 4 | SSL VPN status + monitor | ✅ Done | P0 | VPN tab |
 | 5 | diag test application (App Debug) | ❌ Todo | P1 | |
 | 6 | DHCP diagnostics | ❌ Todo | P1 | |
 | 7 | Interfaces / LACP | ❌ Todo | P1 | |
@@ -21,15 +21,15 @@
 | 9 | Auth / FSSO list | ❌ Todo | P2 | |
 | 10 | diag debug cli 7 | ❌ Todo | P2 | |
 | 11 | UTM / IPS quick debug | ❌ Todo | P3 | |
-| 12 | README + CHANGELOG + version bump | 🟡 Partial | P0 | CHANGELOG updated; version bump later |
+| 12 | README + CHANGELOG + version bump | 🟡 Partial | P0 | CHANGELOG updated |
 
 **Легенда:** ✅ Done · 🟡 Partial · ❌ Todo
 
 ---
 
-## Наступне
+## MVP R3 (кроки 1–4) — виконано
 
-Етап B: **VIP recipe** + **SSL VPN** у VPN tab.
+Наступне: етап C — **test application**, **DHCP**, **LACP**.
 
 ---
 

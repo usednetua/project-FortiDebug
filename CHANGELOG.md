@@ -9,8 +9,9 @@
 ## [Unreleased]
 
 ### Added
-- **Network** tab: ARP, clear ARP, IP list, NIC info, netlink interfaces, IPv6 neighbors
-- **Policy lookup** tab: `diagnose firewall iprope lookup`
+- **Recipe: VIP / port forward** — sniffer + flow + session + hints (DNAT/VIP)
+- **VPN**: SSL monitor, SSL list, live sslvpn debug
+- **Network** tab, **Policy lookup** tab
 - `doc/RELEASE_3_PLAN.md`
 
 ---

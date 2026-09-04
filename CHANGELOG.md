@@ -9,9 +9,10 @@
 ## [Unreleased]
 
 ### Added
-- **Recipe: VIP / port forward** — sniffer + flow + session + hints (DNAT/VIP)
-- **VPN**: SSL monitor, SSL list, live sslvpn debug
-- **Network** tab, **Policy lookup** tab
+- **App Debug**: режим Realtime vs `diagnose test application`
+- **DHCP** tab: lease-list, sniffer 67/68, dhcprelay debug
+- **Network**: LACP aggregate list/name
+- Network, Policy lookup, VIP recipe, SSL VPN
 - `doc/RELEASE_3_PLAN.md`
 
 ---

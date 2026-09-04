@@ -17,6 +17,7 @@ from ui.tabs.ssh_logger import SshLoggerTab
 from ui.tabs.saved import SavedTab
 from ui.tabs.recipes import RecipesTab
 from ui.tabs.app_debug import AppDebugTab
+from ui.tabs.tac import TacTab
 from core.storage import save_command
 from core.fortios_version import (
     FortiOSVersion,
@@ -41,7 +42,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(15, weight=1)
+        self.sidebar.grid_rowconfigure(16, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
@@ -73,6 +74,7 @@ class MainWindow(ctk.CTk):
             ("system_top", "System Top"),
             ("ha", "HA"),
             ("routing", "Routing"),
+            ("tac", "TAC / Support"),
             ("ssh_logger", "SSH Logger"),
             ("saved", "Saved Commands"),
         ]
@@ -87,7 +89,7 @@ class MainWindow(ctk.CTk):
                 hover_color=("gray70", "gray30"),
                 anchor="w",
             )
-            btn.grid(row=i, column=0, padx=10, pady=3, sticky="ew")
+            btn.grid(row=i, column=0, padx=10, pady=2, sticky="ew")
             self.nav_buttons[key] = btn
 
         self.content = ctk.CTkFrame(self, corner_radius=0)
@@ -131,6 +133,7 @@ class MainWindow(ctk.CTk):
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)
+        self.tabs["tac"] = TacTab(self.content, on_change=self.on_tab_change)
         self.tabs["ssh_logger"] = SshLoggerTab(self.content, on_change=self.on_tab_change)
         self.tabs["saved"] = SavedTab(self.content, on_change=self.on_tab_change)
 

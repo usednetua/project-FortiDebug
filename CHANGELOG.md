@@ -9,14 +9,13 @@
 ## [Unreleased]
 
 ### Added
-- **Application Debug** — демони:
-  authd, dnsproxy, ike, sslvpn, miglogd, fgtlogd, urlfilter, wad, sip, fnbamd, eap_proxy, samld
+- **TAC / Support** — tac report, debug report, status, performance, crashlog, support bundle
+- **Application Debug** — authd, dnsproxy, ike, sslvpn, miglogd, fgtlogd, urlfilter, wad, sip, …
 - **Recipes / Workflows** — 6 playbooks
 - **Flows v2**: iprope, IPv6, addr, presets
 - **Safety-блоки** у Flows / VPN / HA / Routing
 
 ### Planned (Release 2)
-- TAC / Support helper
 - Sessions / Sniffer enrichment
 - UX polish / hotkeys
 - Див. `doc/RELEASE_2_PLAN.md`

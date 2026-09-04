@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.validators import is_valid_ip, is_valid_port, is_valid_policy_id
+from ui.widgets.tooltip import tip
 
 
 class SessionsTab(BaseTab):
@@ -25,6 +26,7 @@ class SessionsTab(BaseTab):
 
         self.ipv6 = ctk.CTkCheckBox(self, text="IPv6 (session6)", command=self.notify_change)
         self.ipv6.grid(row=1, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        tip(self.ipv6, "diagnose sys session6 — IPv6 session table")
 
         ctk.CTkLabel(self, text="Source IP").grid(row=2, column=0, sticky="w", padx=10, pady=4)
         self.src_ip = ctk.CTkEntry(self, placeholder_text="10.1.1.10")
@@ -62,16 +64,19 @@ class SessionsTab(BaseTab):
         self.policy = ctk.CTkEntry(self, placeholder_text="optional")
         self.policy.grid(row=8, column=1, sticky="ew", padx=10, pady=4)
         self.policy.bind("<KeyRelease>", self.notify_change)
+        tip(self.policy, "filter policy <id> — сесії за номером policy")
 
         ctk.CTkLabel(self, text="Ext source IP").grid(row=9, column=0, sticky="w", padx=10, pady=4)
         self.ext_sip = ctk.CTkEntry(self, placeholder_text="optional")
         self.ext_sip.grid(row=9, column=1, sticky="ew", padx=10, pady=4)
         self.ext_sip.bind("<KeyRelease>", self.notify_change)
+        tip(self.ext_sip, "ext-sip — original source (до NAT)")
 
         ctk.CTkLabel(self, text="Ext dest IP").grid(row=10, column=0, sticky="w", padx=10, pady=4)
         self.ext_dip = ctk.CTkEntry(self, placeholder_text="optional")
         self.ext_dip.grid(row=10, column=1, sticky="ew", padx=10, pady=4)
         self.ext_dip.bind("<KeyRelease>", self.notify_change)
+        tip(self.ext_dip, "ext-dip — original destination (до NAT)")
 
         ctk.CTkLabel(self, text="Duration (sec)").grid(row=11, column=0, sticky="w", padx=10, pady=4)
         self.duration = ctk.CTkEntry(self, placeholder_text="optional")
@@ -90,6 +95,7 @@ class SessionsTab(BaseTab):
             self, text="Include full-stat", command=self.notify_change
         )
         self.full_stat.grid(row=14, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        tip(self.full_stat, "full-stat — thresholds conserve mode / session limits")
 
         self.append_list = ctk.CTkCheckBox(
             self, text="Append session list", command=self.notify_change
@@ -101,6 +107,7 @@ class SessionsTab(BaseTab):
             self, text="Clear matched sessions (after list) ⚠", command=self.notify_change
         )
         self.clear_matched.grid(row=16, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        tip(self.clear_matched, "Видаляє сесії за поточним фільтром — обережно на production")
 
         self.warn = ctk.CTkLabel(self, text="", text_color="#e74c3c")
         self.warn.grid(row=17, column=0, columnspan=2, sticky="w", padx=10, pady=2)

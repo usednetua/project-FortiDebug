@@ -16,22 +16,20 @@
 | 5b | Sniffer enrichment | ✅ Done | |
 | 5c | VPN enrichment | ✅ Done | |
 | 6 | TAC / Support | ✅ Done | |
-| 7 | UX polish | ✅ Done | tooltips helper + Flows/Sessions/Sniffer |
-| 8 | README / CHANGELOG / build | ✅ Done | build.spec (icon optional) |
-| — | Settings + About | ✅ Done | |
+| 7 | UX polish + tooltips | ✅ Done | |
+| 8 | README / CHANGELOG / build.spec | ✅ Done | icon.ico — опційно |
+| — | Settings + About | ✅ Done | v0.3.0 |
 | — | Config persist | ✅ Done | |
 | — | Validators IPv6 | ✅ Done | |
-| — | Unit tests | ✅ Done | pytest: validators, safety, fortios, builders |
+| — | Unit tests | ✅ Done | |
 
 **Легенда:** ✅ Done · 🟡 Partial · ❌ Todo
 
 ---
 
-## Залишилось (опційно)
+## Release 2 — завершено (v0.3.0)
 
-1. Іконка `.ico` для EXE
-2. Більше tooltips на всіх вкладках
-3. GUI-тести (опційно)
+Опційно на майбутнє: `.ico` для EXE, tooltips на решті вкладок, GUI-тести.
 
 ---
 

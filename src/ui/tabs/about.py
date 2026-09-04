@@ -5,7 +5,7 @@ import webbrowser
 from ui.tabs.base_tab import BaseTab
 from core.i18n import t
 
-APP_VERSION = "0.2.1"
+APP_VERSION = "0.3.0"
 AUTHOR = "used.net.ua"
 WEBSITE = "https://used.net.ua"
 

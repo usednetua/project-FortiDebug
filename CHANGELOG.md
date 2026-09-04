@@ -6,20 +6,17 @@
 
 ---
 
-## [Unreleased]
+## [0.3.0] — 2026-09-05
 
 ### Added
-- **Tooltips** — `ui/widgets/tooltip.py`, підказки у Flows / Sessions / Sniffer
-- **build.spec** — PyInstaller one-file windowed
-- **Unit tests** — validators, safety, fortios_version, flows/sessions generators
-- Sessions: policy, ext-sip/dip, duration
-- Sniffer: BPF JSON, IPv6 host
-- VPN: interface/ifindex, status
-- Config persist (theme/lang)
-- Settings / About
-
-### Changed
-- `doc/RELEASE_2_PLAN.md` — оновлений статус
+- Tooltips (helper + Flows / Sessions)
+- build.spec (PyInstaller)
+- Unit tests (pytest): validators, safety, fortios, builders
+- Sessions: policy, ext-sip/dip, duration, validation
+- Sniffer: BPF JSON persist, IPv6 host
+- VPN: ifindex filter, status/stats
+- Config persist (theme/lang у AppData)
+- Settings (theme, language), About (version, used.net.ua)
 
 ---
 

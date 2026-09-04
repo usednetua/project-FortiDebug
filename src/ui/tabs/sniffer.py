@@ -18,10 +18,13 @@ class SnifferTab(BaseTab):
         "TCP SYN": "tcp[tcpflags] & (tcp-syn) != 0",
         "TCP RST": "tcp[tcpflags] & (tcp-rst) != 0",
         "New TCP (SYN no ACK)": "tcp[tcpflags] & (tcp-syn|tcp-ack) == tcp-syn",
+        "SYN only": "tcp[tcpflags] == 2",
         "ICMP": "icmp",
         "ARP": "arp",
         "VLAN": "vlan",
         "IPv6": "ip6",
+        "DNS": "port 53",
+        "IKE/ESP": "udp port 500 or udp port 4500 or esp",
         "Broadcast": "ether broadcast",
         "Multicast": "ether multicast",
         "HTTP/HTTPS": "tcp port 80 or tcp port 443",
@@ -35,7 +38,6 @@ class SnifferTab(BaseTab):
         title = ctk.CTkLabel(self, text="Sniffer", font=ctk.CTkFont(size=18, weight="bold"))
         title.grid(row=0, column=0, columnspan=3, sticky="w", padx=10, pady=(5, 12))
 
-        # Interface
         ctk.CTkLabel(self, text="Interface").grid(row=1, column=0, sticky="w", padx=10, pady=4)
         self.interface = ctk.CTkComboBox(
             self,
@@ -45,35 +47,37 @@ class SnifferTab(BaseTab):
         self.interface.set("any")
         self.interface.grid(row=1, column=1, columnspan=2, sticky="ew", padx=10, pady=4)
 
-        # Verbose
         ctk.CTkLabel(self, text="Verbose").grid(row=2, column=0, sticky="w", padx=10, pady=4)
         self.verbose = ctk.CTkOptionMenu(
-            self,
-            values=["1", "2", "3", "4", "5", "6"],
-            command=lambda _: self.notify_change(),
+            self, values=["1", "2", "3", "4", "5", "6"], command=self._on_verbose_change
         )
         self.verbose.set("4")
         self.verbose.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
 
         self.verbose_hint = ctk.CTkLabel(self, text=self.VERBOSE_HELP["4"], text_color="gray")
         self.verbose_hint.grid(row=2, column=2, sticky="w", padx=5)
-        self.verbose.configure(command=self._on_verbose_change)
 
-        # Count
         ctk.CTkLabel(self, text="Count (0=unlimited)").grid(row=3, column=0, sticky="w", padx=10, pady=4)
         self.count = ctk.CTkEntry(self, placeholder_text="0")
         self.count.grid(row=3, column=1, sticky="ew", padx=10, pady=4)
         self.count.bind("<KeyRelease>", self.notify_change)
 
-        # Mode toggle
+        ctk.CTkLabel(self, text="Timestamp").grid(row=4, column=0, sticky="w", padx=10, pady=4)
+        self.ts = ctk.CTkOptionMenu(
+            self,
+            values=["none", "a (absolute)", "l (relative)"],
+            command=lambda _: self.notify_change(),
+        )
+        self.ts.set("l (relative)")
+        self.ts.grid(row=4, column=1, sticky="ew", padx=10, pady=4)
+
         self.use_bpf = ctk.CTkSwitch(
             self, text="Use custom BPF filter", command=self._toggle_mode
         )
-        self.use_bpf.grid(row=4, column=0, columnspan=3, sticky="w", padx=10, pady=10)
+        self.use_bpf.grid(row=5, column=0, columnspan=3, sticky="w", padx=10, pady=10)
 
-        # === Simple filter frame ===
         self.simple_frame = ctk.CTkFrame(self)
-        self.simple_frame.grid(row=5, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        self.simple_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
         self.simple_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(self.simple_frame, text="Host").grid(row=0, column=0, sticky="w", padx=8, pady=3)
@@ -105,9 +109,7 @@ class SnifferTab(BaseTab):
         self.s_proto.set("any")
         self.s_proto.grid(row=2, column=1, sticky="ew", padx=8, pady=3)
 
-        # === BPF frame ===
         self.bpf_frame = ctk.CTkFrame(self)
-
         ctk.CTkLabel(self.bpf_frame, text="Presets").grid(row=0, column=0, sticky="w", padx=8, pady=4)
         self.preset = ctk.CTkOptionMenu(
             self.bpf_frame,
@@ -117,14 +119,13 @@ class SnifferTab(BaseTab):
         self.preset.set("")
         self.preset.grid(row=0, column=1, sticky="ew", padx=8, pady=4)
 
-        ctk.CTkLabel(self.bpf_frame, text="BPF expression").grid(row=1, column=0, sticky="nw", padx=8, pady=4)
+        ctk.CTkLabel(self.bpf_frame, text="BPF expression").grid(
+            row=1, column=0, sticky="nw", padx=8, pady=4
+        )
         self.bpf_text = ctk.CTkTextbox(self.bpf_frame, height=80)
         self.bpf_text.grid(row=1, column=1, sticky="ew", padx=8, pady=4)
         self.bpf_text.bind("<KeyRelease>", self.notify_change)
-
         self.bpf_frame.grid_columnconfigure(1, weight=1)
-
-        # initially hide BPF
         self.bpf_frame.grid_remove()
 
     def _on_verbose_change(self, value):
@@ -134,10 +135,10 @@ class SnifferTab(BaseTab):
     def _toggle_mode(self):
         if self.use_bpf.get():
             self.simple_frame.grid_remove()
-            self.bpf_frame.grid(row=5, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+            self.bpf_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
         else:
             self.bpf_frame.grid_remove()
-            self.simple_frame.grid(row=5, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+            self.simple_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
         self.notify_change()
 
     def _apply_preset(self, name):
@@ -148,50 +149,47 @@ class SnifferTab(BaseTab):
 
     def _build_simple_filter(self) -> str:
         parts = []
-
         host = self.s_host.get().strip()
         if host:
-            direction = self.s_host_dir.get()
-            if direction == "src":
+            d = self.s_host_dir.get()
+            if d == "src":
                 parts.append(f"src host {host}")
-            elif direction == "dst":
+            elif d == "dst":
                 parts.append(f"dst host {host}")
             else:
                 parts.append(f"host {host}")
-
         port = self.s_port.get().strip()
         if port:
-            direction = self.s_port_dir.get()
-            if direction == "src":
+            d = self.s_port_dir.get()
+            if d == "src":
                 parts.append(f"src port {port}")
-            elif direction == "dst":
+            elif d == "dst":
                 parts.append(f"dst port {port}")
             else:
                 parts.append(f"port {port}")
-
         proto = self.s_proto.get()
         if proto and proto != "any":
             parts.append(proto)
-
         return " and ".join(parts) if parts else ""
 
     def generate_commands(self) -> str:
         iface = self.interface.get().strip() or "any"
         verbose = self.verbose.get()
-        count = self.count.get().strip()
+        count = self.count.get().strip() or "0"
+        ts = self.ts.get()
+        ts_flag = ""
+        if ts.startswith("a"):
+            ts_flag = "a"
+        elif ts.startswith("l"):
+            ts_flag = "l"
 
         if self.use_bpf.get():
             filt = self.bpf_text.get("1.0", "end-1c").strip()
         else:
             filt = self._build_simple_filter()
 
-        # FortiGate format: diagnose sniffer packet <intf> '<filter>' <verbose> [<count>]
-        if filt:
-            cmd = f"diagnose sniffer packet {iface} '{filt}' {verbose}"
-        else:
-            cmd = f"diagnose sniffer packet {iface} '' {verbose}"
-
-        if count and count != "0":
-            cmd += f" {count}"
-
+        # diagnose sniffer packet <intf> '<filter>' <verbose> [<count>] [<tsformat>]
+        cmd = f"diagnose sniffer packet {iface} '{filt}' {verbose} {count}"
+        if ts_flag:
+            cmd += f" {ts_flag}"
         return cmd

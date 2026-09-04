@@ -9,15 +9,17 @@
 ## [Unreleased]
 
 ### Added
-- **TAC / Support** — tac report, debug report, status, performance, crashlog, support bundle
-- **Application Debug** — authd, dnsproxy, ike, sslvpn, miglogd, fgtlogd, urlfilter, wad, sip, …
+- **Sessions enrichment**: IPv6 (`session6`), clear matched sessions, full-stat
+- **Sniffer enrichment**: timestamp format (`a`/`l`), presets DNS / IKE-ESP / SYN-only
+- **TAC / Support** — tac report, debug report, support bundle
+- **Application Debug** — authd, dnsproxy, sslvpn, miglogd, wad, sip, …
 - **Recipes / Workflows** — 6 playbooks
 - **Flows v2**: iprope, IPv6, addr, presets
 - **Safety-блоки** у Flows / VPN / HA / Routing
 
 ### Planned (Release 2)
-- Sessions / Sniffer enrichment
 - UX polish / hotkeys
+- README update / build.spec
 - Див. `doc/RELEASE_2_PLAN.md`
 
 ---

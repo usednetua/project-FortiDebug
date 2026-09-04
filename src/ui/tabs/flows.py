@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.safety import preamble, epilogue
+from ui.widgets.tooltip import tip
 
 
 class FlowsTab(BaseTab):
@@ -34,16 +35,19 @@ class FlowsTab(BaseTab):
         )
         self.preset.set("")
         self.preset.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
+        tip(self.preset, "Готові набори опцій: denied / NAT / policy match")
 
         self.reset = ctk.CTkCheckBox(self, text="Reset debug state first", command=self.notify_change)
         self.reset.select()
         self.reset.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.reset, "diagnose debug reset — очищає попередній debug state")
 
         self.clear_filter = ctk.CTkCheckBox(
             self, text="Clear flow filter first", command=self.notify_change
         )
         self.clear_filter.select()
         self.clear_filter.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.clear_filter, "diagnose debug flow filter clear")
 
         self.debug_info = ctk.CTkCheckBox(
             self, text="Show diagnose debug info", command=self.notify_change
@@ -57,6 +61,7 @@ class FlowsTab(BaseTab):
         self.addr = ctk.CTkEntry(self, placeholder_text="optional bidirectional")
         self.addr.grid(row=7, column=1, sticky="ew", padx=10, pady=4)
         self.addr.bind("<KeyRelease>", self.notify_change)
+        tip(self.addr, "filter addr — збіг з будь-якої сторони")
 
         ctk.CTkLabel(self, text="Source address").grid(row=8, column=0, sticky="w", padx=10, pady=4)
         self.src = ctk.CTkEntry(self, placeholder_text="10.1.1.10")
@@ -87,6 +92,7 @@ class FlowsTab(BaseTab):
         self.trace_count.insert(0, "1000")
         self.trace_count.grid(row=12, column=1, sticky="ew", padx=10, pady=4)
         self.trace_count.bind("<KeyRelease>", self.notify_change)
+        tip(self.trace_count, "Ліміт пакетів trace start N — обов’язково на production")
 
         self.timestamps = ctk.CTkCheckBox(
             self, text="Console timestamps", command=self.notify_change
@@ -99,17 +105,20 @@ class FlowsTab(BaseTab):
         )
         self.fn_name.select()
         self.fn_name.grid(row=14, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.fn_name, "Показує імена функцій у flow output")
 
         self.iprope = ctk.CTkCheckBox(
             self, text="Show iprope (policy match detail)", command=self.notify_change
         )
         self.iprope.grid(row=15, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.iprope, "Деталі policy match (iprope) — корисно для denied/NAT")
 
         self.stop_debug = ctk.CTkCheckBox(
             self, text="Append stop-debug block", command=self.notify_change
         )
         self.stop_debug.select()
         self.stop_debug.grid(row=16, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        tip(self.stop_debug, "diagnose debug disable + reset після тесту")
 
     def _apply_preset(self, name: str):
         cfg = self.PRESETS.get(name)
@@ -140,18 +149,14 @@ class FlowsTab(BaseTab):
             debug_info=bool(self.debug_info.get()),
         )
 
-        # clear uses correct family
-        if self.clear_filter.get():
-            # preamble already added IPv4 clear; fix for IPv6
-            if ipv6:
-                lines = [l for l in lines if l != "diagnose debug flow filter clear"]
-                if bool(self.reset.get()):
-                    # re-insert after reset
-                    try:
-                        idx = lines.index("diagnose debug reset") + 1
-                    except ValueError:
-                        idx = 0
-                    lines.insert(idx, "diagnose debug flow filter6 clear")
+        if self.clear_filter.get() and ipv6:
+            lines = [l for l in lines if l != "diagnose debug flow filter clear"]
+            if bool(self.reset.get()):
+                try:
+                    idx = lines.index("diagnose debug reset") + 1
+                except ValueError:
+                    idx = 0
+                lines.insert(idx, "diagnose debug flow filter6 clear")
 
         addr = self.addr.get().strip()
         if addr:

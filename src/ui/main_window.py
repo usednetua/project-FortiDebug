@@ -77,14 +77,16 @@ class MainWindow(ctk.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
+        # Fixed header of sidebar
+        self.sidebar = ctk.CTkFrame(self, width=210, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(28, weight=1)
+        self.sidebar.grid_rowconfigure(3, weight=1)
+        self.sidebar.grid_columnconfigure(0, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
         )
-        self.logo.grid(row=0, column=0, padx=20, pady=(16, 4))
+        self.logo.grid(row=0, column=0, padx=16, pady=(16, 4), sticky="w")
 
         self.fortios_lbl = ctk.CTkLabel(self.sidebar, text=t("fortios"), font=ctk.CTkFont(size=12))
         self.fortios_lbl.grid(row=1, column=0, padx=12, sticky="w")
@@ -92,23 +94,29 @@ class MainWindow(ctk.CTk):
             self.sidebar,
             values=list(VERSION_LABELS.values()),
             command=self._on_version_change,
-            width=160,
+            width=170,
         )
         self.version_menu.set(VERSION_LABELS[DEFAULT_VERSION])
-        self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 8), sticky="ew")
+        self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 6), sticky="ew")
+
+        # Scrollable nav
+        self.nav_scroll = ctk.CTkScrollableFrame(self.sidebar, width=190, fg_color="transparent")
+        self.nav_scroll.grid(row=3, column=0, sticky="nsew", padx=4, pady=(0, 8))
+        self.nav_scroll.grid_columnconfigure(0, weight=1)
 
         self.nav_buttons = {}
-        for i, (key, _) in enumerate(NAV_KEYS, start=3):
+        for i, (key, _) in enumerate(NAV_KEYS):
             btn = ctk.CTkButton(
-                self.sidebar,
+                self.nav_scroll,
                 text=t(key),
                 command=lambda k=key: self.show_tab(k),
                 fg_color="transparent",
                 text_color=("gray10", "gray90"),
                 hover_color=("gray70", "gray30"),
                 anchor="w",
+                height=28,
             )
-            btn.grid(row=i, column=0, padx=10, pady=1, sticky="ew")
+            btn.grid(row=i, column=0, padx=6, pady=1, sticky="ew")
             self.nav_buttons[key] = btn
 
         self.content = ctk.CTkFrame(self, corner_radius=0)

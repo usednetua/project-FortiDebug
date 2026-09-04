@@ -2,7 +2,7 @@
 
 GUI для складання CLI-команд діагностики FortiGate (аналог macOS FortiDebug Builder).
 
-**Версія:** 0.4.0
+**Версія:** 0.4.1
 
 ## Можливості
 
@@ -20,12 +20,13 @@ GUI для складання CLI-команд діагностики FortiGate 
 | **DHCP** | lease-list, sniffer 67/68, dhcprelay |
 | **SD-WAN** | health-check, service, member, zone |
 | **Auth / FSSO** | auth list, fsso list, authd debug |
+| **UTM / IPS** | ips filter/debug, av stats, urlfilter |
 | **System Top / HA / Routing** | top, HA, OSPF/BGP/RIB |
 | **TAC / Support** | tac report, crashlog, debug cli 7 |
 | **SSH Logger** | `ssh \| Tee-Object` |
 | **Saved / Settings / About** | SQLite, theme, EN/UK |
 
-Глобально: **FortiOS 6.0–8.0**, safety-блоки, tooltips.
+Глобально: **FortiOS 6.0–8.0**, safety-блоки, tooltips, scrollable sidebar.
 
 ## Встановлення
 

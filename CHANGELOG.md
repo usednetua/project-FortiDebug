@@ -6,10 +6,14 @@
 
 ---
 
-## [Unreleased]
+## [0.4.1] — 2026-09-05
 
 ### Added
-- **UTM / IPS** tab — ips filter, ips debug, av/urlfilter hints
+- **UTM / IPS** tab
+
+### Changed
+- Скрольований sidebar (багато вкладок)
+- README оновлено
 
 ---
 

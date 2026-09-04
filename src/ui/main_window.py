@@ -20,6 +20,8 @@ from ui.tabs.saved import SavedTab
 from ui.tabs.recipes import RecipesTab
 from ui.tabs.app_debug import AppDebugTab
 from ui.tabs.dhcp import DhcpTab
+from ui.tabs.sdwan import SdwanTab
+from ui.tabs.auth import AuthTab
 from ui.tabs.tac import TacTab
 from ui.tabs.settings import SettingsTab
 from ui.tabs.about import AboutTab
@@ -46,6 +48,8 @@ NAV_KEYS = [
     ("vpn", "vpn"),
     ("app_debug", "app_debug"),
     ("dhcp", "dhcp"),
+    ("sdwan", "sdwan"),
+    ("auth", "auth"),
     ("system_top", "system_top"),
     ("ha", "ha"),
     ("routing", "routing"),
@@ -63,7 +67,7 @@ class MainWindow(ctk.CTk):
 
         set_lang("uk")
         self.title(t("app_title"))
-        self.geometry("1100x780")
+        self.geometry("1100x800")
         self.minsize(900, 600)
 
         self.fortios_version = DEFAULT_VERSION
@@ -73,7 +77,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(24, weight=1)
+        self.sidebar.grid_rowconfigure(26, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
@@ -157,6 +161,8 @@ class MainWindow(ctk.CTk):
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change, get_version=self.get_version)
         self.tabs["app_debug"] = AppDebugTab(self.content, on_change=self.on_tab_change)
         self.tabs["dhcp"] = DhcpTab(self.content, on_change=self.on_tab_change)
+        self.tabs["sdwan"] = SdwanTab(self.content, on_change=self.on_tab_change)
+        self.tabs["auth"] = AuthTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)

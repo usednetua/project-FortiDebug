@@ -2,6 +2,8 @@
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
+from core.safety import preamble, epilogue
+from ui.widgets.tooltip import tip
 
 
 class TacTab(BaseTab):
@@ -72,10 +74,16 @@ class TacTab(BaseTab):
         )
         self.session_stat.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=3)
 
+        self.cli7 = ctk.CTkCheckBox(
+            self, text="diagnose debug cli 7 (GUI→CLI)", command=self.notify_change
+        )
+        self.cli7.grid(row=11, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.cli7, "Показує CLI-еквівалент дій у GUI")
+
         self.bundle = ctk.CTkCheckBox(
             self, text="Support bundle (усі типові команди вище)", command=self.notify_change
         )
-        self.bundle.grid(row=11, column=0, columnspan=2, sticky="w", padx=10, pady=8)
+        self.bundle.grid(row=12, column=0, columnspan=2, sticky="w", padx=10, pady=8)
 
     def generate_commands(self) -> str:
         if self.bundle.get():
@@ -103,6 +111,11 @@ class TacTab(BaseTab):
             lines.append("get router info routing-table all")
         if self.session_stat.get():
             lines.append("diagnose sys session full-stat")
+        if self.cli7.get():
+            lines.extend(preamble(reset=True, timestamps=True))
+            lines.append("diagnose debug cli 7")
+            lines.append("diagnose debug enable")
+            lines.extend(epilogue(stop=True))
 
         return "\n".join(lines) if len(lines) > 2 else "# select options"
 

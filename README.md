@@ -2,24 +2,30 @@
 
 GUI для складання CLI-команд діагностики FortiGate (аналог macOS FortiDebug Builder).
 
+**Версія:** 0.4.0
+
 ## Можливості
 
 | Модуль | Опис |
 |--------|------|
-| **Recipes** | 6 готових playbooks під типові інциденти |
-| **Sessions** | `diagnose sys session` / `session6`, clear, full-stat |
+| **Recipes** | Playbooks: traffic, VPN, CPU, NAT, VIP, HA, DNS |
+| **Sessions** | session / session6, policy, ext-sip/dip, clear |
 | **Ping / Traceroute** | exec ping/traceroute-options |
-| **Sniffer** | simple + BPF, timestamp, presets |
-| **Flows** | debug flow + iprope + IPv6 + presets |
-| **VPN** | IKE gateway/tunnel + live debug (syntax за версією FortiOS) |
-| **App Debug** | authd, dnsproxy, sslvpn, miglogd, wad, sip, … |
-| **System Top** | top / top-mem / top-summary |
-| **HA / Routing** | status, checksums, OSPF/BGP/RIB |
-| **TAC / Support** | tac report, crashlog, support bundle |
-| **SSH Logger** | `ssh \| Tee-Object` з timestamp-логом |
-| **Saved Commands** | SQLite, search, edit |
+| **Sniffer** | simple + BPF JSON, IPv6 host |
+| **Flows** | debug flow + iprope + IPv6 |
+| **Network** | ARP, NIC, IP list, LACP, IPv6 ND |
+| **Policy Lookup** | `diagnose firewall iprope lookup` |
+| **VPN** | IKE (version-aware) + SSL monitor/list/debug |
+| **App Debug** | Realtime + `diagnose test application` |
+| **DHCP** | lease-list, sniffer 67/68, dhcprelay |
+| **SD-WAN** | health-check, service, member, zone |
+| **Auth / FSSO** | auth list, fsso list, authd debug |
+| **System Top / HA / Routing** | top, HA, OSPF/BGP/RIB |
+| **TAC / Support** | tac report, crashlog, debug cli 7 |
+| **SSH Logger** | `ssh \| Tee-Object` |
+| **Saved / Settings / About** | SQLite, theme, EN/UK |
 
-Глобально: **перемикач FortiOS 6.0–8.0**, safety-блоки (reset / filter clear / stop+reset).
+Глобально: **FortiOS 6.0–8.0**, safety-блоки, tooltips.
 
 ## Встановлення
 
@@ -30,31 +36,20 @@ pip install -r requirements.txt
 python src/main.py
 ```
 
-## Гарячі клавіші
-
-- `Ctrl+Enter` — Copy
-- `Ctrl+S` — Save .txt
-
 ## Збірка .exe
 
 ```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
+pyinstaller build.spec
+# або:
 pyinstaller --onefile --windowed --name FortiDebugBuilder --paths src src/main.py
 ```
 
-Готовий файл: `dist/FortiDebugBuilder.exe`
-
 ## Документація
 
-- `doc/PLAN.md` — початковий план
-- `doc/RELEASE_2_PLAN.md` — план Release 2
-- `CHANGELOG.md` — історія змін
+- `doc/PLAN.md`, `doc/RELEASE_2_PLAN.md`, `doc/RELEASE_3_PLAN.md`
+- `CHANGELOG.md`
 
 ## Безпека debug
-
-Завжди використовуй фільтри. Після роботи:
 
 ```
 diagnose debug disable

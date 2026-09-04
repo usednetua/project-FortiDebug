@@ -46,7 +46,6 @@ class MainWindow(ctk.CTk):
         )
         self.logo.grid(row=0, column=0, padx=20, pady=(20, 6))
 
-        # FortiOS version selector
         ctk.CTkLabel(self.sidebar, text="FortiOS", font=ctk.CTkFont(size=12)).grid(
             row=1, column=0, padx=12, sticky="w"
         )

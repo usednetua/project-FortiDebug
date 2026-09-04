@@ -1,8 +1,15 @@
-"""VPN / IKE tab — version-aware syntax."""
+"""VPN / IKE tab — version-aware syntax (verified against Fortinet docs)."""
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
-from core.fortios_version import ike_log_filter_cmd, ike_log_filter_clear, DEFAULT_VERSION
+from core.fortios_version import (
+    DEFAULT_VERSION,
+    ike_log_filter_clear,
+    ike_log_filter_base,
+    ike_filter_remote_peer,
+    ike_filter_name,
+    uses_new_ike_filter_syntax,
+)
 
 
 class VpnTab(BaseTab):
@@ -25,7 +32,7 @@ class VpnTab(BaseTab):
         self.phase2.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
         self.phase2.bind("<KeyRelease>", self.notify_change)
 
-        ctk.CTkLabel(self, text="Peer IPv4").grid(row=3, column=0, sticky="w", padx=10, pady=4)
+        ctk.CTkLabel(self, text="Peer IPv4 (remote)").grid(row=3, column=0, sticky="w", padx=10, pady=4)
         self.peer = ctk.CTkEntry(self, placeholder_text="")
         self.peer.grid(row=3, column=1, sticky="ew", padx=10, pady=4)
         self.peer.bind("<KeyRelease>", self.notify_change)
@@ -63,15 +70,22 @@ class VpnTab(BaseTab):
         self.stop_block.select()
         self.stop_block.grid(row=8, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
-        self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray")
-        self.ver_hint.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=6)
+        self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray", wraplength=480, justify="left")
+        self.ver_hint.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=8)
 
     def generate_commands(self) -> str:
         version = self.get_version()
-        filter_cmd = ike_log_filter_cmd(version)
-        self.ver_hint.configure(
-            text=f"Syntax: {filter_cmd}  (FortiOS {version.value})"
-        )
+        base = ike_log_filter_base(version)
+        new = uses_new_ike_filter_syntax(version)
+
+        if new:
+            self.ver_hint.configure(
+                text=f"FortiOS {version.value}: «{base}» + rem-addr4 (змінено з 7.4.1)"
+            )
+        else:
+            self.ver_hint.configure(
+                text=f"FortiOS {version.value}: «{base}» + dst-addr4 (до 7.4.1)"
+            )
 
         lines = []
 
@@ -95,10 +109,9 @@ class VpnTab(BaseTab):
             lines.append(ike_log_filter_clear(version))
 
             if peer:
-                # rem-addr4 is common; older may use different names
-                lines.append(f"{filter_cmd} rem-addr4 {peer}")
+                lines.append(ike_filter_remote_peer(version, peer))
             if phase1:
-                lines.append(f"{filter_cmd} name {phase1}")
+                lines.append(ike_filter_name(version, phase1))
 
             level = self.ike_level.get().split()[0]
             lines.append(f"diagnose debug application ike {level}")

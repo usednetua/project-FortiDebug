@@ -1,7 +1,9 @@
-"""Sniffer tab — diagnose sniffer packet with simple + BPF modes."""
+"""Sniffer tab — BPF presets JSON, IPv6 host."""
 
 import customtkinter as ctk
+from tkinter import simpledialog, messagebox
 from ui.tabs.base_tab import BaseTab
+from core.config import load_bpf_presets, save_bpf_preset, delete_bpf_preset
 
 
 class SnifferTab(BaseTab):
@@ -14,7 +16,7 @@ class SnifferTab(BaseTab):
         "6": "Ethernet data + interface names (full)",
     }
 
-    BPF_PRESETS = {
+    BUILTIN_PRESETS = {
         "TCP SYN": "tcp[tcpflags] & (tcp-syn) != 0",
         "TCP RST": "tcp[tcpflags] & (tcp-rst) != 0",
         "New TCP (SYN no ACK)": "tcp[tcpflags] & (tcp-syn|tcp-ack) == tcp-syn",
@@ -33,6 +35,14 @@ class SnifferTab(BaseTab):
     def __init__(self, master, on_change=None, **kwargs):
         super().__init__(master, on_change=on_change, **kwargs)
         self._build_ui()
+
+    def _all_presets(self):
+        merged = dict(self.BUILTIN_PRESETS)
+        merged.update(load_bpf_presets())
+        return merged
+
+    def _preset_names(self):
+        return [""] + list(self._all_presets().keys())
 
     def _build_ui(self):
         title = ctk.CTkLabel(self, text="Sniffer", font=ctk.CTkFont(size=18, weight="bold"))
@@ -53,7 +63,6 @@ class SnifferTab(BaseTab):
         )
         self.verbose.set("4")
         self.verbose.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
-
         self.verbose_hint = ctk.CTkLabel(self, text=self.VERBOSE_HELP["4"], text_color="gray")
         self.verbose_hint.grid(row=2, column=2, sticky="w", padx=5)
 
@@ -80,8 +89,10 @@ class SnifferTab(BaseTab):
         self.simple_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
         self.simple_frame.grid_columnconfigure(1, weight=1)
 
-        ctk.CTkLabel(self.simple_frame, text="Host").grid(row=0, column=0, sticky="w", padx=8, pady=3)
-        self.s_host = ctk.CTkEntry(self.simple_frame, placeholder_text="10.0.0.1")
+        ctk.CTkLabel(self.simple_frame, text="Host (v4/v6)").grid(
+            row=0, column=0, sticky="w", padx=8, pady=3
+        )
+        self.s_host = ctk.CTkEntry(self.simple_frame, placeholder_text="10.0.0.1 or 2001:db8::1")
         self.s_host.grid(row=0, column=1, sticky="ew", padx=8, pady=3)
         self.s_host.bind("<KeyRelease>", self.notify_change)
         self.s_host_dir = ctk.CTkOptionMenu(
@@ -103,7 +114,7 @@ class SnifferTab(BaseTab):
         ctk.CTkLabel(self.simple_frame, text="Protocol").grid(row=2, column=0, sticky="w", padx=8, pady=3)
         self.s_proto = ctk.CTkOptionMenu(
             self.simple_frame,
-            values=["any", "tcp", "udp", "icmp", "arp"],
+            values=["any", "tcp", "udp", "icmp", "arp", "ip6"],
             command=lambda _: self.notify_change(),
         )
         self.s_proto.set("any")
@@ -112,18 +123,23 @@ class SnifferTab(BaseTab):
         self.bpf_frame = ctk.CTkFrame(self)
         ctk.CTkLabel(self.bpf_frame, text="Presets").grid(row=0, column=0, sticky="w", padx=8, pady=4)
         self.preset = ctk.CTkOptionMenu(
-            self.bpf_frame,
-            values=[""] + list(self.BPF_PRESETS.keys()),
-            command=self._apply_preset,
+            self.bpf_frame, values=self._preset_names(), command=self._apply_preset
         )
         self.preset.set("")
         self.preset.grid(row=0, column=1, sticky="ew", padx=8, pady=4)
+
+        btn_row = ctk.CTkFrame(self.bpf_frame, fg_color="transparent")
+        btn_row.grid(row=0, column=2, padx=4)
+        ctk.CTkButton(btn_row, text="Save BPF", width=80, command=self._save_bpf).pack(
+            side="left", padx=2
+        )
+        ctk.CTkButton(btn_row, text="Del", width=50, command=self._del_bpf).pack(side="left", padx=2)
 
         ctk.CTkLabel(self.bpf_frame, text="BPF expression").grid(
             row=1, column=0, sticky="nw", padx=8, pady=4
         )
         self.bpf_text = ctk.CTkTextbox(self.bpf_frame, height=80)
-        self.bpf_text.grid(row=1, column=1, sticky="ew", padx=8, pady=4)
+        self.bpf_text.grid(row=1, column=1, columnspan=2, sticky="ew", padx=8, pady=4)
         self.bpf_text.bind("<KeyRelease>", self.notify_change)
         self.bpf_frame.grid_columnconfigure(1, weight=1)
         self.bpf_frame.grid_remove()
@@ -136,22 +152,49 @@ class SnifferTab(BaseTab):
         if self.use_bpf.get():
             self.simple_frame.grid_remove()
             self.bpf_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+            self.preset.configure(values=self._preset_names())
         else:
             self.bpf_frame.grid_remove()
             self.simple_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
         self.notify_change()
 
     def _apply_preset(self, name):
-        if name and name in self.BPF_PRESETS:
+        presets = self._all_presets()
+        if name and name in presets:
             self.bpf_text.delete("1.0", "end")
-            self.bpf_text.insert("1.0", self.BPF_PRESETS[name])
+            self.bpf_text.insert("1.0", presets[name])
             self.notify_change()
+
+    def _save_bpf(self):
+        expr = self.bpf_text.get("1.0", "end-1c").strip()
+        if not expr:
+            messagebox.showwarning("Empty", "BPF expression is empty")
+            return
+        name = simpledialog.askstring("Save BPF", "Preset name:")
+        if not name:
+            return
+        save_bpf_preset(name.strip(), expr)
+        self.preset.configure(values=self._preset_names())
+        self.preset.set(name.strip())
+        messagebox.showinfo("Saved", f"Saved «{name.strip()}»")
+
+    def _del_bpf(self):
+        name = self.preset.get()
+        custom = load_bpf_presets()
+        if name not in custom:
+            messagebox.showinfo("Info", "Only custom presets can be deleted")
+            return
+        if messagebox.askyesno("Delete", f"Delete «{name}»?"):
+            delete_bpf_preset(name)
+            self.preset.configure(values=self._preset_names())
+            self.preset.set("")
 
     def _build_simple_filter(self) -> str:
         parts = []
         host = self.s_host.get().strip()
         if host:
             d = self.s_host_dir.get()
+            # IPv6 hosts work with host/src host/dst host in FortiOS sniffer BPF
             if d == "src":
                 parts.append(f"src host {host}")
             elif d == "dst":
@@ -188,7 +231,6 @@ class SnifferTab(BaseTab):
         else:
             filt = self._build_simple_filter()
 
-        # diagnose sniffer packet <intf> '<filter>' <verbose> [<count>] [<tsformat>]
         cmd = f"diagnose sniffer packet {iface} '{filt}' {verbose} {count}"
         if ts_flag:
             cmd += f" {ts_flag}"

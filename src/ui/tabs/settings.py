@@ -1,8 +1,9 @@
-"""Settings tab — theme and language."""
+"""Settings tab — theme and language (persisted)."""
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.i18n import t, get_lang
+from core.config import load_config, save_config
 
 
 class SettingsTab(BaseTab):
@@ -13,6 +14,8 @@ class SettingsTab(BaseTab):
         self._build_ui()
 
     def _build_ui(self):
+        cfg = load_config()
+
         self.title_lbl = ctk.CTkLabel(
             self, text=t("settings_title"), font=ctk.CTkFont(size=18, weight="bold")
         )
@@ -26,7 +29,9 @@ class SettingsTab(BaseTab):
             values=[t("theme_light"), t("theme_dark"), t("theme_system")],
             command=self._theme_changed,
         )
-        self.theme_menu.set(t("theme_dark"))
+        theme = cfg.get("theme", "Dark")
+        theme_map = {"Light": t("theme_light"), "Dark": t("theme_dark"), "System": t("theme_system")}
+        self.theme_menu.set(theme_map.get(theme, t("theme_dark")))
         self.theme_menu.grid(row=1, column=1, sticky="ew", padx=10, pady=6)
 
         self.lang_lbl = ctk.CTkLabel(self, text=t("language"))
@@ -55,11 +60,13 @@ class SettingsTab(BaseTab):
             "Системна": "System",
         }
         mode = mapping.get(label, "Dark")
+        save_config({"theme": mode})
         if self.on_theme:
             self.on_theme(mode)
 
     def _lang_changed(self, label: str):
         lang = "uk" if label.startswith("Укр") or label == "Ukrainian" else "en"
+        save_config({"language": lang})
         if self.on_lang:
             self.on_lang(lang)
 

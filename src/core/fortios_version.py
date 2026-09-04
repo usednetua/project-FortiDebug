@@ -3,7 +3,6 @@
 Sources (Fortinet Community + docs):
 - From FortiOS 7.4.1: 'diagnose vpn ike log-filter' -> 'diagnose vpn ike log filter'
 - From 7.4.1: dst-addr4 -> rem-addr4, src-addr4 -> loc-addr4
-- Flow / session / sniffer syntax is stable across 6.0–8.0 for our use cases.
 """
 
 from enum import Enum
@@ -33,7 +32,6 @@ VERSION_LABELS = {
     FortiOSVersion.V8_0: "8.0.x",
 }
 
-# Order for comparisons
 _VERSION_ORDER = list(FortiOSVersion)
 
 
@@ -50,13 +48,6 @@ def version_gte(current: FortiOSVersion, minimum: FortiOSVersion) -> bool:
 
 
 def uses_new_ike_filter_syntax(version: FortiOSVersion) -> bool:
-    """True for FortiOS 7.4.1+ (we treat whole 7.4.x branch as new syntax).
-
-    Documented change point: v7.4.1
-    - log-filter  ->  log filter
-    - dst-addr4   ->  rem-addr4
-    - src-addr4   ->  loc-addr4
-    """
     return version_gte(version, FortiOSVersion.V7_4)
 
 
@@ -71,7 +62,6 @@ def ike_log_filter_clear(version: FortiOSVersion) -> str:
 
 
 def ike_filter_remote_peer(version: FortiOSVersion, ip: str) -> str:
-    """Filter by remote gateway IP."""
     base = ike_log_filter_base(version)
     if uses_new_ike_filter_syntax(version):
         return f"{base} rem-addr4 {ip}"
@@ -79,7 +69,6 @@ def ike_filter_remote_peer(version: FortiOSVersion, ip: str) -> str:
 
 
 def ike_filter_local_peer(version: FortiOSVersion, ip: str) -> str:
-    """Filter by local gateway IP."""
     base = ike_log_filter_base(version)
     if uses_new_ike_filter_syntax(version):
         return f"{base} loc-addr4 {ip}"
@@ -88,6 +77,14 @@ def ike_filter_local_peer(version: FortiOSVersion, ip: str) -> str:
 
 def ike_filter_name(version: FortiOSVersion, name: str) -> str:
     return f"{ike_log_filter_base(version)} name {name}"
+
+
+def ike_filter_interface(version: FortiOSVersion, index: str) -> str:
+    """Filter by interface index (0 = all). Newer CLI may use ifindex."""
+    base = ike_log_filter_base(version)
+    if uses_new_ike_filter_syntax(version):
+        return f"{base} ifindex {index}"
+    return f"{base} interface {index}"
 
 
 def flow_trace_start(count: str = "1000", ipv6: bool = False) -> str:

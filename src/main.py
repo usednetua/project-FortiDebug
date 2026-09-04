@@ -3,10 +3,16 @@
 
 import customtkinter as ctk
 from ui.main_window import MainWindow
+from core.config import load_config
+from core.i18n import set_lang
 
 
 def main():
-    ctk.set_appearance_mode("Dark")
+    cfg = load_config()
+    theme = cfg.get("theme", "Dark")
+    lang = cfg.get("language", "uk")
+    set_lang(lang)
+    ctk.set_appearance_mode(theme)
     ctk.set_default_color_theme("blue")
     app = MainWindow()
     app.mainloop()

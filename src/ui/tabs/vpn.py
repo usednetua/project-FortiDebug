@@ -1,4 +1,4 @@
-"""VPN / IKE tab — version-aware + safety blocks."""
+"""VPN / IKE tab — version-aware, interface filter, P1/P2 status."""
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
@@ -8,6 +8,7 @@ from core.fortios_version import (
     ike_log_filter_base,
     ike_filter_remote_peer,
     ike_filter_name,
+    ike_filter_interface,
     uses_new_ike_filter_syntax,
 )
 from core.safety import preamble, epilogue
@@ -38,47 +39,57 @@ class VpnTab(BaseTab):
         self.peer.grid(row=3, column=1, sticky="ew", padx=10, pady=4)
         self.peer.bind("<KeyRelease>", self.notify_change)
 
-        ctk.CTkLabel(self, text="IKE debug level").grid(row=4, column=0, sticky="w", padx=10, pady=4)
+        ctk.CTkLabel(self, text="Interface index").grid(row=4, column=0, sticky="w", padx=10, pady=4)
+        self.ifindex = ctk.CTkEntry(self, placeholder_text="optional (0=all)")
+        self.ifindex.grid(row=4, column=1, sticky="ew", padx=10, pady=4)
+        self.ifindex.bind("<KeyRelease>", self.notify_change)
+
+        ctk.CTkLabel(self, text="IKE debug level").grid(row=5, column=0, sticky="w", padx=10, pady=4)
         self.ike_level = ctk.CTkOptionMenu(
             self,
             values=["-1 (all)", "0", "1", "2", "3", "4"],
             command=lambda _: self.notify_change(),
         )
         self.ike_level.set("-1 (all)")
-        self.ike_level.grid(row=4, column=1, sticky="ew", padx=10, pady=4)
+        self.ike_level.grid(row=5, column=1, sticky="ew", padx=10, pady=4)
 
         self.show_gateway = ctk.CTkCheckBox(
             self, text="Show IKE gateway list", command=self.notify_change
         )
         self.show_gateway.select()
-        self.show_gateway.grid(row=5, column=0, columnspan=2, sticky="w", padx=10, pady=6)
+        self.show_gateway.grid(row=6, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
         self.show_tunnel = ctk.CTkCheckBox(
             self, text="Show tunnel list", command=self.notify_change
         )
         self.show_tunnel.select()
-        self.show_tunnel.grid(row=6, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        self.show_tunnel.grid(row=7, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+
+        self.show_status = ctk.CTkCheckBox(
+            self, text="IKE status + tunnel stats", command=self.notify_change
+        )
+        self.show_status.grid(row=8, column=0, columnspan=2, sticky="w", padx=10, pady=2)
 
         self.live_debug = ctk.CTkCheckBox(
             self, text="Enable live IKE debug", command=self.notify_change
         )
         self.live_debug.select()
-        self.live_debug.grid(row=7, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        self.live_debug.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
         self.timestamps = ctk.CTkCheckBox(
             self, text="Console timestamps", command=self.notify_change
         )
         self.timestamps.select()
-        self.timestamps.grid(row=8, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        self.timestamps.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=2)
 
         self.stop_block = ctk.CTkCheckBox(
             self, text="Append stop-debug block", command=self.notify_change
         )
         self.stop_block.select()
-        self.stop_block.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=4)
+        self.stop_block.grid(row=11, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
         self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray", wraplength=480, justify="left")
-        self.ver_hint.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=8)
+        self.ver_hint.grid(row=12, column=0, columnspan=2, sticky="w", padx=10, pady=8)
 
     def generate_commands(self) -> str:
         version = self.get_version()
@@ -94,30 +105,34 @@ class VpnTab(BaseTab):
         )
 
         lines = []
-
-        if self.show_gateway.get():
-            lines.append("diagnose vpn ike gateway list")
-        if self.show_tunnel.get():
-            lines.append("diagnose vpn tunnel list")
-
         phase1 = self.phase1.get().strip()
         phase2 = self.phase2.get().strip()
         peer = self.peer.get().strip()
+        ifidx = self.ifindex.get().strip()
 
-        if phase1:
-            lines.append(f"diagnose vpn ike gateway list name {phase1}")
-        if phase2:
-            lines.append(f"diagnose vpn tunnel list name {phase2}")
+        if self.show_status.get():
+            lines.append("diagnose vpn ike status")
+            lines.append("diagnose vpn ipsec status")
+
+        if self.show_gateway.get():
+            lines.append("diagnose vpn ike gateway list")
+            if phase1:
+                lines.append(f"diagnose vpn ike gateway list name {phase1}")
+
+        if self.show_tunnel.get():
+            lines.append("diagnose vpn tunnel list")
+            if phase2:
+                lines.append(f"diagnose vpn tunnel list name {phase2}")
 
         if self.live_debug.get():
-            lines.extend(
-                preamble(reset=True, timestamps=bool(self.timestamps.get()))
-            )
+            lines.extend(preamble(reset=True, timestamps=bool(self.timestamps.get())))
             lines.append(ike_log_filter_clear(version))
             if peer:
                 lines.append(ike_filter_remote_peer(version, peer))
             if phase1:
                 lines.append(ike_filter_name(version, phase1))
+            if ifidx:
+                lines.append(ike_filter_interface(version, ifidx))
 
             level = self.ike_level.get().split()[0]
             lines.append(f"diagnose debug application ike {level}")

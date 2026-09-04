@@ -15,6 +15,7 @@ from ui.tabs.ha import HaTab
 from ui.tabs.routing import RoutingTab
 from ui.tabs.ssh_logger import SshLoggerTab
 from ui.tabs.saved import SavedTab
+from ui.tabs.recipes import RecipesTab
 from core.storage import save_command
 from core.fortios_version import (
     FortiOSVersion,
@@ -39,7 +40,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(13, weight=1)
+        self.sidebar.grid_rowconfigure(14, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
@@ -60,6 +61,7 @@ class MainWindow(ctk.CTk):
 
         self.nav_buttons = {}
         sections = [
+            ("recipes", "Recipes"),
             ("sessions", "Sessions"),
             ("ping", "Ping"),
             ("traceroute", "Traceroute"),
@@ -114,6 +116,9 @@ class MainWindow(ctk.CTk):
         self.tabs = {}
         self.current_tab = None
 
+        self.tabs["recipes"] = RecipesTab(
+            self.content, on_change=self.on_tab_change, get_version=self.get_version
+        )
         self.tabs["sessions"] = SessionsTab(self.content, on_change=self.on_tab_change)
         self.tabs["ping"] = PingTab(self.content, on_change=self.on_tab_change)
         self.tabs["traceroute"] = TracerouteTab(self.content, on_change=self.on_tab_change)
@@ -126,7 +131,7 @@ class MainWindow(ctk.CTk):
         self.tabs["ssh_logger"] = SshLoggerTab(self.content, on_change=self.on_tab_change)
         self.tabs["saved"] = SavedTab(self.content, on_change=self.on_tab_change)
 
-        self.show_tab("sessions")
+        self.show_tab("recipes")
 
     def get_version(self) -> FortiOSVersion:
         return self.fortios_version

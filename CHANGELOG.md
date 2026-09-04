@@ -9,19 +9,22 @@
 ## [Unreleased]
 
 ### Added
+- **Flows v2**:
+  - `diagnose debug flow show iprope enable`
+  - IPv6: `filter6` / `trace start6`
+  - фільтр `addr` (будь-яка сторона)
+  - Presets: Traffic denied, NAT check, Policy match
 - **Safety-блоки** у Flows / VPN / HA / Routing:
   - `diagnose debug reset`
-  - `diagnose debug flow filter clear` (Flows)
-  - `diagnose debug console timestamp enable`
-  - `diagnose debug info` (опційно)
-  - обов’язковий stop: `diagnose debug disable` + `diagnose debug reset`
-- Flows: виправлено `trace start` (було `trace-start`), додано filter clear, show function-name
+  - `diagnose debug flow filter clear`
+  - timestamps, optional `diagnose debug info`
+  - stop: `diagnose debug disable` + `diagnose debug reset`
 
 ### Planned (Release 2)
-- Flows v2: iprope, IPv6, presets
 - Recipes / Workflows
 - Application Debug tab
 - TAC / Support helper
+- Sessions / Sniffer enrichment
 - Див. `doc/RELEASE_2_PLAN.md`
 
 ---
@@ -29,10 +32,10 @@
 ## [0.1.0] — 2026-09-03 / 2026-09-04
 
 ### Added
-- Початкова структура проекту (Python + CustomTkinter)
-- **Sessions**, **Ping**, **Traceroute**, **Sniffer**, **Flows**, **VPN**, **System Top**, **HA**, **Routing**
-- **SSH Logger**, **Saved Commands** (SQLite)
-- Перемикач **FortiOS 6.0–8.0** + version-aware IKE syntax
+- Початкова структура (Python + CustomTkinter)
+- Sessions, Ping, Traceroute, Sniffer, Flows, VPN, System Top, HA, Routing
+- SSH Logger, Saved Commands (SQLite)
+- Перемикач FortiOS 6.0–8.0 + version-aware IKE syntax
 - `doc/PLAN.md`, `doc/RELEASE_2_PLAN.md`
 
 ### Notes

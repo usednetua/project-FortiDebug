@@ -1,7 +1,7 @@
 """Main application window."""
 
 import customtkinter as ctk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, simpledialog
 import pyperclip
 
 from ui.tabs.sessions import SessionsTab
@@ -14,6 +14,8 @@ from ui.tabs.system_top import SystemTopTab
 from ui.tabs.ha import HaTab
 from ui.tabs.routing import RoutingTab
 from ui.tabs.ssh_logger import SshLoggerTab
+from ui.tabs.saved import SavedTab
+from core.storage import save_command
 
 
 class MainWindow(ctk.CTk):
@@ -85,7 +87,7 @@ class MainWindow(ctk.CTk):
         self.btn_save_txt.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
         self.btn_save_later = ctk.CTkButton(
-            self.bottom, text="Save for Later", width=130, command=self.save_for_later, state="disabled"
+            self.bottom, text="Save for Later", width=130, command=self.save_for_later
         )
         self.btn_save_later.grid(row=1, column=2, padx=5, pady=5, sticky="w")
 
@@ -102,11 +104,7 @@ class MainWindow(ctk.CTk):
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)
         self.tabs["ssh_logger"] = SshLoggerTab(self.content, on_change=self.on_tab_change)
-
-        # Placeholder
-        frame = ctk.CTkFrame(self.content)
-        ctk.CTkLabel(frame, text="Saved Commands — coming soon", font=ctk.CTkFont(size=16)).pack(expand=True)
-        self.tabs["saved"] = frame
+        self.tabs["saved"] = SavedTab(self.content, on_change=self.on_tab_change)
 
         self.show_tab("sessions")
 
@@ -123,6 +121,9 @@ class MainWindow(ctk.CTk):
         tab = self.tabs[key]
         tab.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         self.current_tab = key
+
+        if key == "saved" and hasattr(tab, "refresh"):
+            tab.refresh()
 
         if hasattr(tab, "generate_commands"):
             self.on_tab_change()
@@ -157,4 +158,19 @@ class MainWindow(ctk.CTk):
             messagebox.showinfo("Saved", f"Saved to {path}")
 
     def save_for_later(self):
-        messagebox.showinfo("Soon", "Saved Commands module will be available later.")
+        text = self.preview.get("1.0", "end-1c").strip()
+        if not text or text.startswith("#"):
+            messagebox.showwarning("Empty", "Nothing to save.")
+            return
+
+        title = simpledialog.askstring("Save for Later", "Title:")
+        if not title:
+            return
+        category = simpledialog.askstring("Save for Later", "Category (optional):") or ""
+        notes = simpledialog.askstring("Save for Later", "Notes (optional):") or ""
+
+        save_command(title.strip(), text, category.strip(), notes.strip())
+        messagebox.showinfo("Saved", f"Saved as «{title.strip()}»")
+
+        if "saved" in self.tabs and hasattr(self.tabs["saved"], "refresh"):
+            self.tabs["saved"].refresh()

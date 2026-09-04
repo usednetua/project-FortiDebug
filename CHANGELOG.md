@@ -6,21 +6,18 @@
 
 ---
 
-## [Unreleased]
+## [0.2.0] — 2026-09-04
 
 ### Added
-- **UX**: dark theme за замовч., Ctrl+Enter = Copy, Ctrl+S = Save .txt, кнопка «Copy stop-debug»
-- **Sessions enrichment**: IPv6, clear, full-stat
-- **Sniffer enrichment**: timestamp format, presets DNS / IKE-ESP / SYN
-- **TAC / Support**
-- **Application Debug**
-- **Recipes / Workflows** — 6 playbooks
-- **Flows v2**: iprope, IPv6, presets
-- **Safety-блоки**
-
-### Planned (Release 2)
-- README update / build.spec
-- Див. `doc/RELEASE_2_PLAN.md`
+- **Recipes / Workflows** — 6 playbooks (Traffic, VPN, High CPU, Policy/NAT, HA, DNS)
+- **Application Debug** — authd, dnsproxy, ike, sslvpn, miglogd, fgtlogd, urlfilter, wad, sip, …
+- **TAC / Support** — tac report, debug report, support bundle
+- **Flows v2** — iprope, IPv6, addr filter, presets
+- **Sessions** — IPv6 session6, clear, full-stat
+- **Sniffer** — timestamp `a`/`l`, presets DNS / IKE-ESP / SYN
+- **Safety-блоки** (reset / clear / timestamps / stop+reset)
+- **UX** — dark theme, Ctrl+Enter Copy, Ctrl+S Save, Copy stop-debug
+- Оновлений README
 
 ---
 

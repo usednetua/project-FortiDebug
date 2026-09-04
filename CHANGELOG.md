@@ -9,15 +9,17 @@
 ## [Unreleased]
 
 ### Added
-- **Sessions**: policy id, ext-sip, ext-dip, duration; warning comment before clear
-- **Sniffer**: IPv6 host у simple; Save/Load custom BPF → AppData JSON
-- **VPN**: interface index filter; Phase1/Phase2 status commands
-- **Config persist**: theme + language у `%APPDATA%\FortiDebugBuilder\config.json`
-- **Validators**: IPv6 support
-- Settings / About (theme, language, version, used.net.ua)
+- **Tooltips** — `ui/widgets/tooltip.py`, підказки у Flows / Sessions / Sniffer
+- **build.spec** — PyInstaller one-file windowed
+- **Unit tests** — validators, safety, fortios_version, flows/sessions generators
+- Sessions: policy, ext-sip/dip, duration
+- Sniffer: BPF JSON, IPv6 host
+- VPN: interface/ifindex, status
+- Config persist (theme/lang)
+- Settings / About
 
 ### Changed
-- `doc/RELEASE_2_PLAN.md` — статусна таблиця
+- `doc/RELEASE_2_PLAN.md` — оновлений статус
 
 ---
 

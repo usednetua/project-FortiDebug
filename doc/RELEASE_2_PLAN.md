@@ -12,27 +12,27 @@
 | 2 | Flows v2 | ✅ Done | |
 | 3 | Recipes / Workflows | ✅ Done | |
 | 4 | Application Debug | ✅ Done | |
-| 5a | Sessions enrichment | ✅ Done | policy, ext-sip/dip, duration, clear warning |
-| 5b | Sniffer enrichment | ✅ Done | BPF JSON, IPv6 host, ts, presets |
-| 5c | VPN enrichment | ✅ Done | interface/ifindex, status+stats |
+| 5a | Sessions enrichment | ✅ Done | |
+| 5b | Sniffer enrichment | ✅ Done | |
+| 5c | VPN enrichment | ✅ Done | |
 | 6 | TAC / Support | ✅ Done | |
-| 7 | UX polish | 🟡 Partial | hotkeys/theme ✅; tooltips ❌ |
-| 8 | README / CHANGELOG / build | 🟡 Partial | build.spec + icon ❌ |
+| 7 | UX polish | ✅ Done | tooltips helper + Flows/Sessions/Sniffer |
+| 8 | README / CHANGELOG / build | ✅ Done | build.spec (icon optional) |
 | — | Settings + About | ✅ Done | |
-| — | Config persist | ✅ Done | theme/lang AppData |
+| — | Config persist | ✅ Done | |
 | — | Validators IPv6 | ✅ Done | |
-| — | Unit tests | ❌ Todo | |
+| — | Unit tests | ✅ Done | pytest: validators, safety, fortios, builders |
 
 **Легенда:** ✅ Done · 🟡 Partial · ❌ Todo
 
 ---
 
-## Залишилось
+## Залишилось (опційно)
 
-1. Tooltips у UI
-2. `build.spec` + іконка
-3. Unit-тести (pytest)
+1. Іконка `.ico` для EXE
+2. Більше tooltips на всіх вкладках
+3. GUI-тести (опційно)
 
 ---
 
-*Оновлено: 2026-09-04*
+*Оновлено: 2026-09-05*

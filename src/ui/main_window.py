@@ -9,6 +9,8 @@ from ui.tabs.ping import PingTab
 from ui.tabs.traceroute import TracerouteTab
 from ui.tabs.sniffer import SnifferTab
 from ui.tabs.flows import FlowsTab
+from ui.tabs.network import NetworkTab
+from ui.tabs.policy_lookup import PolicyLookupTab
 from ui.tabs.vpn import VpnTab
 from ui.tabs.system_top import SystemTopTab
 from ui.tabs.ha import HaTab
@@ -38,6 +40,8 @@ NAV_KEYS = [
     ("traceroute", "traceroute"),
     ("sniffer", "sniffer"),
     ("flows", "flows"),
+    ("network", "network"),
+    ("policy_lookup", "policy_lookup"),
     ("vpn", "vpn"),
     ("app_debug", "app_debug"),
     ("system_top", "system_top"),
@@ -57,7 +61,7 @@ class MainWindow(ctk.CTk):
 
         set_lang("uk")
         self.title(t("app_title"))
-        self.geometry("1100x740")
+        self.geometry("1100x760")
         self.minsize(900, 600)
 
         self.fortios_version = DEFAULT_VERSION
@@ -67,7 +71,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(20, weight=1)
+        self.sidebar.grid_rowconfigure(22, weight=1)
 
         self.logo = ctk.CTkLabel(
             self.sidebar, text="FortiDebug", font=ctk.CTkFont(size=20, weight="bold")
@@ -146,6 +150,8 @@ class MainWindow(ctk.CTk):
         self.tabs["traceroute"] = TracerouteTab(self.content, on_change=self.on_tab_change)
         self.tabs["sniffer"] = SnifferTab(self.content, on_change=self.on_tab_change)
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
+        self.tabs["network"] = NetworkTab(self.content, on_change=self.on_tab_change)
+        self.tabs["policy_lookup"] = PolicyLookupTab(self.content, on_change=self.on_tab_change)
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change, get_version=self.get_version)
         self.tabs["app_debug"] = AppDebugTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)

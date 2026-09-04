@@ -9,23 +9,23 @@
 ## [Unreleased]
 
 ### Added
-- `doc/RELEASE_3_PLAN.md` — план наступного релізу (Network, Policy lookup, VIP, SSL VPN, …)
+- **Network** tab: ARP, clear ARP, IP list, NIC info, netlink interfaces, IPv6 neighbors
+- **Policy lookup** tab: `diagnose firewall iprope lookup`
+- `doc/RELEASE_3_PLAN.md`
 
 ---
 
 ## [0.3.0] — 2026-09-05
 
 ### Added
-- Tooltips, build.spec, unit tests
-- Sessions filters, Sniffer BPF JSON, VPN ifindex/stats
-- Config persist, Settings, About
+- Tooltips, build.spec, unit tests, Sessions/Sniffer/VPN enrichment, Settings/About
 
 ---
 
 ## [0.2.0] — 2026-09-04
 
 ### Added
-- Recipes, App Debug, TAC, Flows v2, safety-блоки, UX polish
+- Recipes, App Debug, TAC, Flows v2, safety-блоки
 
 ---
 

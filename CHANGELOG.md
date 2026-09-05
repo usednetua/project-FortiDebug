@@ -9,14 +9,13 @@
 ## [Unreleased]
 
 ### Added
-- `scripts/generate_icon.py` — генерація `src/resources/icons/app.ico`
-- `src/core/cmd_builders.py` — pure helpers (network, policy lookup)
-- Unit tests: network cmds, policy lookup
-- Tooltips: Ping, HA, DHCP, SD-WAN, Auth, UTM/IPS
-- `doc/RELEASE_4_PLAN.md`
+- Recipe **First steps connectivity** (sniffer → session → flow → route)
+- `scripts/generate_icon.py`, cmd_builders + unit tests
+- Tooltips (Ping, HA, …)
 
 ### Changed
-- `build.spec` — icon path увімкнено
+- FortiOS version зберігається в `config.json`
+- Content area — `CTkScrollableFrame` (довгі вкладки)
 
 ---
 

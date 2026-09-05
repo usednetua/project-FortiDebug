@@ -27,6 +27,7 @@ from ui.tabs.tac import TacTab
 from ui.tabs.settings import SettingsTab
 from ui.tabs.about import AboutTab
 from core.storage import save_command
+from core.config import load_config, save_config
 from core.fortios_version import (
     FortiOSVersion,
     DEFAULT_VERSION,
@@ -67,17 +68,17 @@ class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        set_lang("uk")
+        cfg = load_config()
+        set_lang(cfg.get("language", "uk"))
         self.title(t("app_title"))
         self.geometry("1100x820")
         self.minsize(900, 600)
 
-        self.fortios_version = DEFAULT_VERSION
+        self.fortios_version = parse_version(cfg.get("fortios", VERSION_LABELS[DEFAULT_VERSION]))
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # Fixed header of sidebar
         self.sidebar = ctk.CTkFrame(self, width=210, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
         self.sidebar.grid_rowconfigure(3, weight=1)
@@ -96,10 +97,9 @@ class MainWindow(ctk.CTk):
             command=self._on_version_change,
             width=170,
         )
-        self.version_menu.set(VERSION_LABELS[DEFAULT_VERSION])
+        self.version_menu.set(VERSION_LABELS.get(self.fortios_version, VERSION_LABELS[DEFAULT_VERSION]))
         self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 6), sticky="ew")
 
-        # Scrollable nav
         self.nav_scroll = ctk.CTkScrollableFrame(self.sidebar, width=190, fg_color="transparent")
         self.nav_scroll.grid(row=3, column=0, sticky="nsew", padx=4, pady=(0, 8))
         self.nav_scroll.grid_columnconfigure(0, weight=1)
@@ -119,10 +119,10 @@ class MainWindow(ctk.CTk):
             btn.grid(row=i, column=0, padx=6, pady=1, sticky="ew")
             self.nav_buttons[key] = btn
 
-        self.content = ctk.CTkFrame(self, corner_radius=0)
+        # Scrollable content for tall tabs
+        self.content = ctk.CTkScrollableFrame(self, corner_radius=0)
         self.content.grid(row=0, column=1, sticky="nsew")
         self.content.grid_columnconfigure(0, weight=1)
-        self.content.grid_rowconfigure(0, weight=1)
 
         self.bottom = ctk.CTkFrame(self)
         self.bottom.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -195,13 +195,16 @@ class MainWindow(ctk.CTk):
 
     def _on_version_change(self, label: str):
         self.fortios_version = parse_version(label)
+        save_config({"fortios": label})
         self.on_tab_change()
 
     def _set_theme(self, mode: str):
         ctk.set_appearance_mode(mode)
+        save_config({"theme": mode})
 
     def _set_lang(self, lang: str):
         set_lang(lang)
+        save_config({"language": lang})
         self._refresh_ui_labels()
 
     def _refresh_ui_labels(self):

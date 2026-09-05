@@ -9,10 +9,12 @@ from core.fortios_version import (
     ike_filter_name,
 )
 from core.safety import preamble, epilogue
+from ui.widgets.tooltip import tip
 
 
 class RecipesTab(BaseTab):
     RECIPES = [
+        "First steps connectivity",
         "Traffic not passing",
         "VPN down / rekey",
         "High CPU",
@@ -39,6 +41,7 @@ class RecipesTab(BaseTab):
         )
         self.recipe.set(self.RECIPES[0])
         self.recipe.grid(row=1, column=1, sticky="ew", padx=10, pady=4)
+        tip(self.recipe, "First steps: sniffer → session → flow → routing")
 
         ctk.CTkLabel(self, text="Source / Client IP").grid(row=2, column=0, sticky="w", padx=10, pady=4)
         self.src = ctk.CTkEntry(self, placeholder_text="optional")
@@ -82,6 +85,8 @@ class RecipesTab(BaseTab):
         wan = self.wan.get().strip() or "any"
         version = self.get_version()
 
+        if name == "First steps connectivity":
+            return self._first_steps(src, dst, port)
         if name == "Traffic not passing":
             return self._traffic_not_passing(src, dst, port)
         if name == "VPN down / rekey":
@@ -97,6 +102,61 @@ class RecipesTab(BaseTab):
         if name == "DNS issues":
             return self._dns(src, dst)
         return "# select a recipe"
+
+    def _first_steps(self, src: str, dst: str, port: str) -> str:
+        """Community first-steps: sniffer → session → flow → routing."""
+        lines = [
+            "# === Recipe: First steps connectivity ===",
+            "# Порядок: sniffer → session → debug flow → routing",
+            "",
+            "# 1) Sniffer",
+        ]
+        filt_parts = []
+        if src:
+            filt_parts.append(f"host {src}")
+        if dst:
+            filt_parts.append(f"host {dst}")
+        if port:
+            filt_parts.append(f"port {port}")
+        filt = " and ".join(filt_parts) if filt_parts else ""
+        lines.append(f"diagnose sniffer packet any '{filt}' 4 0 l")
+        lines.append("")
+        lines.append("# 2) Sessions")
+        lines.append("diagnose sys session filter clear")
+        if src:
+            lines.append(f"diagnose sys session filter src {src}")
+        if dst:
+            lines.append(f"diagnose sys session filter dst {dst}")
+        if port:
+            lines.append(f"diagnose sys session filter dport {port}")
+        lines.append("diagnose sys session list")
+        lines.append("")
+        lines.append("# 3) Debug flow + iprope")
+        lines.extend(preamble(reset=True, clear_flow_filter=True, timestamps=True))
+        if src:
+            lines.append(f"diagnose debug flow filter saddr {src}")
+        if dst:
+            lines.append(f"diagnose debug flow filter daddr {dst}")
+        if port:
+            lines.append(f"diagnose debug flow filter port {port}")
+        lines.append("diagnose debug flow show function-name enable")
+        lines.append("diagnose debug flow show iprope enable")
+        lines.append("diagnose debug flow show console enable")
+        lines.append("diagnose debug enable")
+        lines.append("diagnose debug flow trace start 100")
+        lines.extend(epilogue(stop=True))
+        lines.append("")
+        lines.append("# 4) Routing")
+        if dst:
+            lines.append(f"get router info routing-table details {dst}")
+        else:
+            lines.append("get router info routing-table all")
+        lines.append("")
+        lines.append("# 5) Optional: policy lookup (заповни sport/proto/intf вручну)")
+        lines.append(
+            "# diagnose firewall iprope lookup <src> <sport> <dst> <dport> <proto> <intf>"
+        )
+        return "\n".join(lines)
 
     def _traffic_not_passing(self, src: str, dst: str, port: str) -> str:
         lines = ["# === Recipe: Traffic not passing ===", ""]

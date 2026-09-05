@@ -7,6 +7,9 @@ from core.fortios_version import (
     ike_log_filter_clear,
     ike_filter_remote_peer,
     ike_filter_name,
+    sdwan_cmd,
+    sdwan_service_cmd,
+    version_banner,
 )
 from core.safety import preamble, epilogue
 from ui.widgets.tooltip import tip
@@ -17,6 +20,8 @@ class RecipesTab(BaseTab):
         "First steps connectivity",
         "Traffic not passing",
         "VPN down / rekey",
+        "SSL VPN login fail",
+        "SD-WAN member dead",
         "High CPU",
         "Policy / NAT check",
         "VIP / port forward",
@@ -41,7 +46,7 @@ class RecipesTab(BaseTab):
         )
         self.recipe.set(self.RECIPES[0])
         self.recipe.grid(row=1, column=1, sticky="ew", padx=10, pady=4)
-        tip(self.recipe, "First steps: sniffer → session → flow → routing")
+        tip(self.recipe, "First steps / VPN / SSL / SD-WAN playbooks")
 
         ctk.CTkLabel(self, text="Source / Client IP").grid(row=2, column=0, sticky="w", padx=10, pady=4)
         self.src = ctk.CTkEntry(self, placeholder_text="optional")
@@ -70,7 +75,7 @@ class RecipesTab(BaseTab):
 
         note = ctk.CTkLabel(
             self,
-            text="Готовий набір команд під типові інциденти. Заповни поля → Copy.",
+            text="Готовий набір команд під типові інциденти. Заповни поля → Copy / Export bundle.",
             text_color="gray",
             wraplength=480,
         )
@@ -91,6 +96,10 @@ class RecipesTab(BaseTab):
             return self._traffic_not_passing(src, dst, port)
         if name == "VPN down / rekey":
             return self._vpn_down(version, peer)
+        if name == "SSL VPN login fail":
+            return self._ssl_login_fail(src)
+        if name == "SD-WAN member dead":
+            return self._sdwan_dead(version)
         if name == "High CPU":
             return self._high_cpu()
         if name == "Policy / NAT check":
@@ -104,7 +113,6 @@ class RecipesTab(BaseTab):
         return "# select a recipe"
 
     def _first_steps(self, src: str, dst: str, port: str) -> str:
-        """Community first-steps: sniffer → session → flow → routing."""
         lines = [
             "# === Recipe: First steps connectivity ===",
             "# Порядок: sniffer → session → debug flow → routing",
@@ -152,7 +160,7 @@ class RecipesTab(BaseTab):
         else:
             lines.append("get router info routing-table all")
         lines.append("")
-        lines.append("# 5) Optional: policy lookup (заповни sport/proto/intf вручну)")
+        lines.append("# 5) Optional: policy lookup")
         lines.append(
             "# diagnose firewall iprope lookup <src> <sport> <dst> <dport> <proto> <intf>"
         )
@@ -198,7 +206,11 @@ class RecipesTab(BaseTab):
         return "\n".join(lines)
 
     def _vpn_down(self, version, peer: str) -> str:
-        lines = ["# === Recipe: VPN down / rekey ===", ""]
+        lines = [
+            version_banner(version, "IKE filter syntax"),
+            "# === Recipe: VPN down / rekey ===",
+            "",
+        ]
         lines.append("diagnose vpn ike gateway list")
         lines.append("diagnose vpn tunnel list")
         lines.append("")
@@ -212,6 +224,47 @@ class RecipesTab(BaseTab):
         lines.append("diagnose debug application ike -1")
         lines.append("diagnose debug enable")
         lines.extend(epilogue(stop=True))
+        return "\n".join(lines)
+
+    def _ssl_login_fail(self, client_ip: str) -> str:
+        lines = [
+            "# === Recipe: SSL VPN login fail ===",
+            "# Порядок: monitor → list → sslvpn/authd/fnbamd debug",
+            "",
+            "get vpn ssl monitor",
+            "diagnose vpn ssl list",
+            "",
+        ]
+        lines.extend(preamble(reset=True, timestamps=True))
+        if client_ip:
+            lines.append(f"diagnose vpn ssl debug-filter src-addr4 {client_ip}")
+        lines.append("diagnose debug application sslvpn -1")
+        lines.append("diagnose debug application authd -1")
+        lines.append("diagnose debug application fnbamd -1")
+        lines.append("diagnose debug enable")
+        lines.extend(epilogue(stop=True))
+        lines.append("")
+        lines.append("# Optional: firewall auth list after attempt")
+        lines.append("diagnose firewall auth list")
+        return "\n".join(lines)
+
+    def _sdwan_dead(self, version) -> str:
+        lines = [
+            version_banner(version, "SD-WAN diagnose prefix"),
+            "# === Recipe: SD-WAN member dead ===",
+            "",
+            sdwan_cmd(version, "health-check"),
+            sdwan_cmd(version, "member"),
+            sdwan_service_cmd(version),
+            sdwan_cmd(version, "zone"),
+            "",
+            "# Interface / route check",
+            "diagnose ip address list",
+            "get router info routing-table all",
+            "",
+            "# Optional link-monitor",
+            "diagnose sys link-monitor status",
+        ]
         return "\n".join(lines)
 
     def _high_cpu(self) -> str:

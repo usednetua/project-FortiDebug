@@ -6,19 +6,23 @@
 
 ---
 
+## [Unreleased] — Release 5
+
+### Added
+- `doc/RELEASE_5_PLAN.md` (таблиця статусу)
+- **Export bundle** — .txt з метаданими (версія app, FortiOS, вкладка, час)
+- **Пошук у sidebar** — фільтр вкладок
+- Recipes: **SSL VPN login fail**, **SD-WAN member dead**
+
+---
+
 ## [0.5.1] — 2026-09-05
 
 ### Added
-- Tooltips: Auth, DHCP, UTM/IPS, TAC
-- `build.spec` (PyInstaller) + інструкції іконки
-- Unit-тести IKE / SD-WAN / Policy Lookup extended
+- Tooltips Auth/DHCP/UTM/TAC, build.spec, тести IKE/SD-WAN
 
 ### Fixed
-- SD-WAN: `virtual-wan-link` (≤6.4), `service4` (≥7.4)
-- Policy Lookup: optional pol_type/auth на ≥7.4
-
-### Changed
-- Версія додатку → **0.5.1**
+- SD-WAN version syntax, Policy Lookup ≥7.4
 
 ---
 
@@ -46,7 +50,7 @@
 ## [0.3.0] — 2026-09-05
 
 ### Added
-- Tooltips helper, build.spec, unit tests, Settings/About
+- Tooltips helper, unit tests, Settings/About
 
 ---
 

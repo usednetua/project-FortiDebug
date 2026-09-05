@@ -1,5 +1,7 @@
 """Main application window."""
 
+from datetime import datetime
+
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, simpledialog
 import pyperclip
@@ -27,7 +29,7 @@ from ui.tabs.wireless import WirelessTab
 from ui.tabs.hardware import HardwareTab
 from ui.tabs.tac import TacTab
 from ui.tabs.settings import SettingsTab
-from ui.tabs.about import AboutTab
+from ui.tabs.about import AboutTab, APP_VERSION
 from core.storage import save_command
 from core.config import load_config, save_config
 from core.fortios_version import (
@@ -85,7 +87,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(self, width=210, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(3, weight=1)
+        self.sidebar.grid_rowconfigure(4, weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
 
         self.logo = ctk.CTkLabel(
@@ -102,10 +104,14 @@ class MainWindow(ctk.CTk):
             width=170,
         )
         self.version_menu.set(VERSION_LABELS.get(self.fortios_version, VERSION_LABELS[DEFAULT_VERSION]))
-        self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 6), sticky="ew")
+        self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 4), sticky="ew")
+
+        self.nav_search = ctk.CTkEntry(self.sidebar, placeholder_text="🔍 search…", width=170)
+        self.nav_search.grid(row=3, column=0, padx=12, pady=(0, 6), sticky="ew")
+        self.nav_search.bind("<KeyRelease>", self._filter_nav)
 
         self.nav_scroll = ctk.CTkScrollableFrame(self.sidebar, width=190, fg_color="transparent")
-        self.nav_scroll.grid(row=3, column=0, sticky="nsew", padx=4, pady=(0, 8))
+        self.nav_scroll.grid(row=4, column=0, sticky="nsew", padx=4, pady=(0, 8))
         self.nav_scroll.grid_columnconfigure(0, weight=1)
 
         self.nav_buttons = {}
@@ -134,7 +140,7 @@ class MainWindow(ctk.CTk):
         self.preview = ctk.CTkTextbox(
             self.bottom, height=130, font=ctk.CTkFont(family="Consolas", size=13)
         )
-        self.preview.grid(row=0, column=0, columnspan=5, sticky="ew", padx=5, pady=(5, 8))
+        self.preview.grid(row=0, column=0, columnspan=6, sticky="ew", padx=5, pady=(5, 8))
 
         self.btn_copy = ctk.CTkButton(self.bottom, text=t("copy"), width=90, command=self.copy_commands)
         self.btn_copy.grid(row=1, column=0, padx=4, pady=5, sticky="w")
@@ -149,14 +155,21 @@ class MainWindow(ctk.CTk):
         )
         self.btn_save_txt.grid(row=1, column=2, padx=4, pady=5, sticky="w")
 
+        self.btn_export = ctk.CTkButton(
+            self.bottom, text="Export bundle", width=120, command=self.export_bundle
+        )
+        self.btn_export.grid(row=1, column=3, padx=4, pady=5, sticky="w")
+
         self.btn_save_later = ctk.CTkButton(
             self.bottom, text=t("save_later"), width=120, command=self.save_for_later
         )
-        self.btn_save_later.grid(row=1, column=3, padx=4, pady=5, sticky="w")
+        self.btn_save_later.grid(row=1, column=4, padx=4, pady=5, sticky="w")
 
         self.bind("<Control-Return>", lambda e: self.copy_commands())
         self.bind("<Control-s>", lambda e: self.save_txt())
         self.bind("<Control-S>", lambda e: self.save_txt())
+        self.bind("<Control-e>", lambda e: self.export_bundle())
+        self.bind("<Control-E>", lambda e: self.export_bundle())
 
         self.tabs = {}
         self.current_tab = None
@@ -206,6 +219,16 @@ class MainWindow(ctk.CTk):
     def get_version(self) -> FortiOSVersion:
         return self.fortios_version
 
+    def _filter_nav(self, _event=None):
+        q = self.nav_search.get().strip().lower()
+        for key, btn in self.nav_buttons.items():
+            label = (btn.cget("text") or "").lower()
+            show = (not q) or (q in label) or (q in key.lower())
+            if show:
+                btn.grid()
+            else:
+                btn.grid_remove()
+
     def _on_version_change(self, label: str):
         self.fortios_version = parse_version(label)
         save_config({"fortios": label})
@@ -233,6 +256,7 @@ class MainWindow(ctk.CTk):
             self.tabs["settings"].refresh_labels()
         if hasattr(self.tabs.get("about"), "refresh_labels"):
             self.tabs["about"].refresh_labels()
+        self._filter_nav()
 
     def show_tab(self, key: str):
         if self.current_tab is not None:
@@ -269,6 +293,39 @@ class MainWindow(ctk.CTk):
     def copy_stop_debug(self):
         pyperclip.copy(STOP_DEBUG_BLOCK)
         messagebox.showinfo(t("copied"), t("stop_copied"))
+
+    def _bundle_header(self) -> str:
+        ver_label = VERSION_LABELS.get(self.fortios_version, self.fortios_version.value)
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        tab = self.current_tab or ""
+        return "\n".join(
+            [
+                "# FortiDebug Builder — export bundle",
+                f"# App version: {APP_VERSION}",
+                f"# FortiOS selector: {ver_label}",
+                f"# Tab: {tab}",
+                f"# Generated: {ts}",
+                "#",
+                "",
+            ]
+        )
+
+    def export_bundle(self):
+        body = self.preview.get("1.0", "end-1c").strip()
+        if not body:
+            messagebox.showwarning(t("empty"), t("empty"))
+            return
+        text = self._bundle_header() + body + "\n"
+        path = filedialog.asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
+            title="Export bundle",
+            initialfile=f"fortidebug_{self.current_tab or 'export'}.txt",
+        )
+        if path:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
+            messagebox.showinfo(t("saved_title"), path)
 
     def save_txt(self):
         text = self.preview.get("1.0", "end-1c").strip()

@@ -1,15 +1,31 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec for FortiDebug Builder
-# Usage: python scripts/generate_icon.py && pyinstaller build.spec
+# PyInstaller spec for FortiDebug Builder (Windows)
+#
+# Usage (from repo root, venv active):
+#   python scripts/generate_icon.py
+#   pyinstaller build.spec
+#
+# Output: dist/FortiDebugBuilder.exe
+
+import sys
+from pathlib import Path
 
 block_cipher = None
+root = Path(SPECPATH)
+src = root / "src"
+icon = root / "src" / "resources" / "icons" / "app.ico"
 
 a = Analysis(
-    ['src/main.py'],
-    pathex=['src'],
+    [str(src / "main.py")],
+    pathex=[str(src)],
     binaries=[],
-    datas=[],
-    hiddenimports=['customtkinter', 'pyperclip'],
+    datas=[
+        (str(src / "resources"), "resources"),
+    ] if (src / "resources").exists() else [],
+    hiddenimports=[
+        "customtkinter",
+        "pyperclip",
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -29,7 +45,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='FortiDebugBuilder',
+    name="FortiDebugBuilder",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -42,6 +58,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    version=None,
-    icon='src/resources/icons/app.ico',
+    icon=str(icon) if icon.exists() else None,
 )

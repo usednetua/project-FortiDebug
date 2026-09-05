@@ -30,29 +30,34 @@ class TacTab(BaseTab):
         )
         self.sys_status.select()
         self.sys_status.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.sys_status, "Версія FortiOS, serial, VDOM")
 
         self.perf = ctk.CTkCheckBox(
             self, text="get system performance status", command=self.notify_change
         )
         self.perf.select()
         self.perf.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.perf, "CPU / memory / sessions snapshot")
 
         self.crashlog = ctk.CTkCheckBox(
             self, text="diagnose debug crashlog read", command=self.notify_change
         )
         self.crashlog.select()
         self.crashlog.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.crashlog, "Останні crash / assert")
 
         self.debug_report = ctk.CTkCheckBox(
             self, text="diagnose debug report", command=self.notify_change
         )
         self.debug_report.grid(row=5, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.debug_report, "Короткий debug report")
 
         self.tac_report = ctk.CTkCheckBox(
             self, text="execute tac report (довго, багато виводу)", command=self.notify_change
         )
         self.tac_report.select()
         self.tac_report.grid(row=6, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.tac_report, "Повний TAC report — може зайняти хвилини")
 
         self.ha = ctk.CTkCheckBox(
             self, text="HA status + checksum cluster", command=self.notify_change
@@ -84,6 +89,7 @@ class TacTab(BaseTab):
             self, text="Support bundle (усі типові команди вище)", command=self.notify_change
         )
         self.bundle.grid(row=12, column=0, columnspan=2, sticky="w", padx=10, pady=8)
+        tip(self.bundle, "Готовий набір для тікета TAC")
 
     def generate_commands(self) -> str:
         if self.bundle.get():

@@ -6,13 +6,19 @@
 
 ---
 
-## [Unreleased]
+## [0.5.1] — 2026-09-05
 
 ### Added
-- Policy Lookup: optional `pol_type` / auth (FortiOS ≥7.4.1)
+- Tooltips: Auth, DHCP, UTM/IPS, TAC
+- `build.spec` (PyInstaller) + інструкції іконки
+- Unit-тести IKE / SD-WAN / Policy Lookup extended
 
 ### Fixed
-- SD-WAN: virtual-wan-link (≤6.4), service4 (≥7.4)
+- SD-WAN: `virtual-wan-link` (≤6.4), `service4` (≥7.4)
+- Policy Lookup: optional pol_type/auth на ≥7.4
+
+### Changed
+- Версія додатку → **0.5.1**
 
 ---
 

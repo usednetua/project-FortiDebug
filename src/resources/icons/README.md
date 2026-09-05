@@ -1,9 +1,16 @@
-# Icons
+# Application icon
 
-Generate `app.ico`:
+Generate `app.ico` (multi-size 16/32/48/256) without external deps:
 
 ```bash
+# from repository root
 python scripts/generate_icon.py
 ```
 
-Then build with `pyinstaller build.spec` (icon path is set in the spec).
+Output: `src/resources/icons/app.ico`
+
+Then build EXE:
+
+```bash
+pyinstaller build.spec
+```

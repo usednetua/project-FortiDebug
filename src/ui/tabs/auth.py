@@ -26,17 +26,20 @@ class AuthTab(BaseTab):
             self, text="Clear auth list ⚠", command=self.notify_change
         )
         self.auth_clear.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.auth_clear, "⚠ diagnose firewall auth clear — скидає auth-сесії")
 
         self.fsso = ctk.CTkCheckBox(
             self, text="diagnose debug authd fsso list", command=self.notify_change
         )
         self.fsso.select()
         self.fsso.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.fsso, "FSSO agent / user mapping")
 
         self.authd_debug = ctk.CTkCheckBox(
             self, text="Live authd debug (-1)", command=self.notify_change
         )
         self.authd_debug.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.authd_debug, "diagnose debug application authd -1 — шумно")
 
         self.timestamps = ctk.CTkCheckBox(
             self, text="Console timestamps", command=self.notify_change

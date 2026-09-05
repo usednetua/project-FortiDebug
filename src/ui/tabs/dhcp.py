@@ -20,6 +20,7 @@ class DhcpTab(BaseTab):
         self.iface.insert(0, "any")
         self.iface.grid(row=1, column=1, sticky="ew", padx=10, pady=4)
         self.iface.bind("<KeyRelease>", self.notify_change)
+        tip(self.iface, "Інтерфейс для sniffer 67/68")
 
         self.leases = ctk.CTkCheckBox(
             self, text="execute dhcp lease-list", command=self.notify_change
@@ -33,11 +34,13 @@ class DhcpTab(BaseTab):
         )
         self.sniffer.select()
         self.sniffer.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.sniffer, "diagnose sniffer packet … 'port 67 or port 68'")
 
         self.relay_debug = ctk.CTkCheckBox(
             self, text="Live dhcprelay debug", command=self.notify_change
         )
         self.relay_debug.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=3)
+        tip(self.relay_debug, "diagnose debug application dhcprelay -1")
 
         self.timestamps = ctk.CTkCheckBox(
             self, text="Console timestamps", command=self.notify_change

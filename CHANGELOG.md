@@ -9,7 +9,17 @@
 ## [Unreleased] — Release 5
 
 ### Added
-- **Recipes**: розширено до 28 playbooks (CPU/mem, sessions, DHCP, Auth/FSSO, OSPF/BGP, Wireless, IPS/UTM, LACP, local-in, conserv mode, NPU, certificate, FortiGuard, log disk, NTP, IPv6, multicast, explicit proxy, dial-up IPsec, …)
+- **Recipes**: розширено до **42 playbooks** (+10):
+  - ZTNA / Access Proxy (version-aware: `endpoint record list` → `ec-shm list` з 7.4.2+)
+  - FortiAnalyzer / remote logging (`fgtlogd` test levels + OFTP debug)
+  - WAD / Proxy engine (filters + category/level verbose)
+  - DoS / Flood protection
+  - User auth LDAP/RADIUS/TACACS (`fnbamd`/`authd` + sniffer ports)
+  - General TAC collect / healthcheck (`execute tac report` + perf/crashlog)
+  - ARP / Neighbor
+  - Link-monitor / health-check
+  - Antivirus / AV engine
+  - Traffic shaping / QoS
 - Export bundle, sidebar search, SSL/SD-WAN recipes
 
 ---

@@ -9,6 +9,10 @@
 ## [Unreleased] — Release 5
 
 ### Added
+- **Кодекс впровадження** (`doc/CODEX_IMPLEMENTATION.md`): обов’язковий процес перед будь-яким впровадженням
+  - детальний план у `doc/` перед стартом
+  - таблиця етапів / стану / приміток на початку плану
+  - перевірка сумісності після кожного етапу («не зламай!»)
 - **Recipes**: розширено до **42 playbooks** (+10), розбито на mixins:
   - `src/ui/tabs/recipe_extra.py` — усі 10 нових (повністю):
     - ZTNA / Access Proxy (version-aware: `endpoint record list` → `ec-shm list` з 7.4+)

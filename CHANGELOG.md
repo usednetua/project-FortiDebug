@@ -9,12 +9,19 @@
 ## [Unreleased] — Release 5
 
 ### Added
-- **CI / Release**: GitHub Actions workflow (`build-windows.yml`) — збірка `FortiDebugBuilder.exe` на `windows-latest` і автоматичний GitHub Release при пуші тегу `v*`
 - **Recipes**: розширено до 28 playbooks (CPU/mem, sessions, DHCP, Auth/FSSO, OSPF/BGP, Wireless, IPS/UTM, LACP, local-in, conserv mode, NPU, certificate, FortiGuard, log disk, NTP, IPv6, multicast, explicit proxy, dial-up IPsec, …)
 - Export bundle, sidebar search, SSL/SD-WAN recipes
 
+---
+
+## [0.5.2] — 2026-09-05
+
+### Added
+- **CI / Release**: GitHub Actions workflow (`.github/workflows/build-windows.yml`) — збірка `FortiDebugBuilder.exe` на `windows-latest` і автоматичний GitHub Release при пуші тегу `v*`
+
 ### Changed
 - `.gitignore`: прибрано ігнорування `*.spec`, щоб `build.spec` завжди був у репозиторії
+- README: секція «Автоматичний реліз»
 
 ---
 

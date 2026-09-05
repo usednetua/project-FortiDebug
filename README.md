@@ -2,7 +2,7 @@
 
 GUI для складання CLI-команд діагностики FortiGate.
 
-**Версія:** 0.5.1
+**Версія:** 0.5.2
 
 ## Можливості
 
@@ -37,12 +37,12 @@ CI збирає Windows `.exe` і створює GitHub Release при пуші 
 # 1. Онови CHANGELOG.md (обов'язково перед комітом)
 # 2. Закоміть зміни
 git add CHANGELOG.md
-git commit -m "chore: prepare v0.5.2"
+git commit -m "chore: prepare vX.Y.Z"
 
 # 3. Створи і запуш тег
-git tag v0.5.2
+git tag vX.Y.Z
 git push origin main
-git push origin v0.5.2
+git push origin vX.Y.Z
 ```
 
 Після успішного workflow на сторінці **Releases** з'явиться `FortiDebugBuilder.exe`.

@@ -1,14 +1,11 @@
 """FortiOS version helpers and verified syntax differences.
 
-Sources (Fortinet Community + docs):
-- From FortiOS 7.4.1: 'diagnose vpn ike log-filter' -> 'diagnose vpn ike log filter'
-- From 7.4.1: dst-addr4 -> rem-addr4, src-addr4 -> loc-addr4
-
-Wireless (wlac) core list commands (-c wtp/sta/vap) are stable across 6.4–7.6;
-always prefer selector notes + '?' on device for model-specific options.
-
-NPU CLI is primarily hardware-family (np6/np7/…) rather than FortiOS minor,
-but availability still depends on platform + FortiOS build.
+Verified sources (Fortinet Community + docs):
+- IKE ≥7.4.1: log-filter → log filter; dst-addr4 → rem-addr4; src-addr4 → loc-addr4
+- SD-WAN ≤6.4: diagnose sys virtual-wan-link (Community Tip)
+- SD-WAN ≥7.0: diagnose sys sdwan
+- SD-WAN ≥7.4.4: service → service4 / service6
+- iprope lookup: 6-arg form stable; ≥7.4.1 optional pol_type/auth args
 """
 
 from enum import Enum
@@ -86,11 +83,30 @@ def ike_filter_name(version: FortiOSVersion, name: str) -> str:
 
 
 def ike_filter_interface(version: FortiOSVersion, index: str) -> str:
-    """Filter by interface index (0 = all). Newer CLI may use ifindex."""
     base = ike_log_filter_base(version)
     if uses_new_ike_filter_syntax(version):
         return f"{base} ifindex {index}"
     return f"{base} interface {index}"
+
+
+def sdwan_diag_prefix(version: FortiOSVersion) -> str:
+    """Base for diagnose sys … SD-WAN commands."""
+    if version_gte(version, FortiOSVersion.V7_0):
+        return "diagnose sys sdwan"
+    # Community: v6.4 and below often use virtual-wan-link
+    return "diagnose sys virtual-wan-link"
+
+
+def sdwan_service_cmd(version: FortiOSVersion) -> str:
+    """service vs service4 (from 7.4.4; we map whole 7.4.x → service4)."""
+    prefix = sdwan_diag_prefix(version)
+    if version_gte(version, FortiOSVersion.V7_4):
+        return f"{prefix} service4"
+    return f"{prefix} service"
+
+
+def sdwan_cmd(version: FortiOSVersion, sub: str) -> str:
+    return f"{sdwan_diag_prefix(version)} {sub}"
 
 
 def flow_trace_start(count: str = "1000", ipv6: bool = False) -> str:
@@ -104,7 +120,6 @@ def session_prefix(ipv6: bool = False) -> str:
 
 
 def version_banner(version: FortiOSVersion, note: str = "") -> str:
-    """Comment line for generated CLI — reminds operator of selected FortiOS."""
     label = VERSION_LABELS.get(version, version.value)
     extra = f" — {note}" if note else ""
     return f"# FortiOS {label}{extra}"
@@ -121,3 +136,12 @@ def hardware_version_note(version: FortiOSVersion) -> str:
         "NPU CLI залежить від ASIC (np6/np7), не лише від FortiOS; "
         f"обрано {VERSION_LABELS.get(version, version.value)}"
     )
+
+
+def sdwan_version_note(version: FortiOSVersion) -> str:
+    prefix = sdwan_diag_prefix(version)
+    if version_gte(version, FortiOSVersion.V7_4):
+        return f"{prefix}; service → service4 (з 7.4.4)"
+    if version_gte(version, FortiOSVersion.V7_0):
+        return f"{prefix}"
+    return f"{prefix} (legacy name на 6.x)"

@@ -8,10 +8,12 @@
 
 ## [Unreleased]
 
+### Fixed
+- **SD-WAN**: на FortiOS ≤6.4 — `diagnose sys virtual-wan-link …`
+- **SD-WAN**: на FortiOS ≥7.4 — `service4` замість `service` (з 7.4.4)
+
 ### Changed
-- Tooltips: Sniffer, Routing, SD-WAN
-- SD-WAN підключено до FortiOS selector (банер у CLI)
-- Wireless / Hardware — version-aware
+- Version-aware helpers у `fortios_version.py` для SD-WAN prefix
 
 ---
 

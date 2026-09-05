@@ -15,7 +15,6 @@ dist/
 *.sqlite3
 .idea/
 .vscode/
-*.spec
 .DS_Store
 Thumbs.db
 *.log

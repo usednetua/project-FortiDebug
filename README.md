@@ -10,7 +10,7 @@ Recipes, Sessions, Ping/Traceroute, Sniffer, Flows, Network, Policy Lookup (vers
 
 Глобально: FortiOS 6.0–8.0 selector, safety-блоки, tooltips, config persist, scrollable UI.
 
-## Встановлення
+## Встановлення (з джерела)
 
 ```bash
 python -m venv venv
@@ -19,7 +19,7 @@ pip install -r requirements.txt
 python src/main.py
 ```
 
-## Збірка .exe
+## Збірка .exe локально
 
 ```bash
 pip install pyinstaller
@@ -28,6 +28,26 @@ pyinstaller build.spec
 ```
 
 Результат: `dist/FortiDebugBuilder.exe`
+
+## Автоматичний реліз (GitHub Actions)
+
+CI збирає Windows `.exe` і створює GitHub Release при пуші тегу:
+
+```bash
+# 1. Онови CHANGELOG.md (обов'язково перед комітом)
+# 2. Закоміть зміни
+git add CHANGELOG.md
+git commit -m "chore: prepare v0.5.2"
+
+# 3. Створи і запуш тег
+git tag v0.5.2
+git push origin main
+git push origin v0.5.2
+```
+
+Після успішного workflow на сторінці **Releases** з'явиться `FortiDebugBuilder.exe`.
+
+Можна також запустити workflow вручну (Actions → Build Windows EXE → Run workflow) — тоді буде тільки artifact без Release.
 
 ## Тести
 
@@ -38,5 +58,5 @@ pytest tests/ -q
 
 ## Документація
 
-- `doc/PLAN.md`, `RELEASE_2_PLAN.md`, `RELEASE_3_PLAN.md`, `RELEASE_4_PLAN.md`
+- `doc/PLAN.md`, `RELEASE_2_PLAN.md`, `RELEASE_3_PLAN.md`, `RELEASE_4_PLAN.md`, `RELEASE_5_PLAN.md`
 - `CHANGELOG.md`

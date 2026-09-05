@@ -6,14 +6,20 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+- `doc/RELEASE_4_PLAN.md` — план Release 4 (polish, tests, wireless, NPU)
+
+---
+
 ## [0.4.1] — 2026-09-05
 
 ### Added
-- **UTM / IPS** tab
+- UTM / IPS tab
 
 ### Changed
-- Скрольований sidebar (багато вкладок)
-- README оновлено
+- Scrollable sidebar, README
 
 ---
 

@@ -2,51 +2,45 @@
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
-from core.fortios_version import (
-    DEFAULT_VERSION,
-    ike_log_filter_clear,
-    ike_filter_remote_peer,
-    ike_filter_name,
-    sdwan_cmd,
-    sdwan_service_cmd,
-    version_banner,
-)
-from core.safety import preamble, epilogue
+from core.fortios_version import DEFAULT_VERSION
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(BaseTab):
+    """Temporary stub — full 42 playbooks being restored."""
+
     RECIPES = [
         "First steps connectivity",
         "Traffic not passing",
-        "VPN down / rekey",
-        "Dial-up IPsec",
-        "SSL VPN login fail",
-        "SD-WAN member dead",
-        "High CPU",
-        "High memory / conserv mode",
-        "Session table full",
-        "Policy / NAT check",
-        "VIP / port forward",
-        "Local-in / admin access",
-        "HA out-of-sync",
-        "OSPF neighbor down",
-        "BGP neighbor down",
-        "Static route / RIB",
-        "DHCP no lease",
-        "Auth / FSSO",
-        "DNS issues",
-        "Webfilter / URL block",
-        "IPS / UTM hit",
-        "Explicit proxy",
-        "Wireless AP / client",
-        "LACP / aggregate",
-        "Interface / link down",
-        "NPU / offload check",
-        "Certificate / SSL inspect",
-        "FortiGuard / license",
-        "Log disk / crashlog",
-        "NTP / time sync",
-        "IPv6 connectivity",
-        "Multicast",
+        "(restoring full list — see CHANGELOG)",
     ]
+
+    def __init__(self, master, on_change=None, get_version=None, **kwargs):
+        super().__init__(master, on_change=on_change, **kwargs)
+        self.get_version = get_version or (lambda: DEFAULT_VERSION)
+        self._build_ui()
+
+    def _build_ui(self):
+        title = ctk.CTkLabel(
+            self, text="Recipes / Workflows", font=ctk.CTkFont(size=18, weight="bold")
+        )
+        title.grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(5, 8))
+        ctk.CTkLabel(
+            self,
+            text="⚠ Full recipes temporarily unavailable — restoring…",
+            text_color="orange",
+        ).grid(row=1, column=0, columnspan=2, sticky="w", padx=10, pady=(0, 8))
+        ctk.CTkLabel(self, text="Scenario").grid(row=2, column=0, sticky="w", padx=10, pady=4)
+        self.recipe = ctk.CTkOptionMenu(
+            self, values=self.RECIPES, command=lambda _: self.notify_change(), width=280
+        )
+        self.recipe.set(self.RECIPES[0])
+        self.recipe.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
+        self.grid_columnconfigure(1, weight=1)
+
+    def generate_commands(self) -> str:
+        return (
+            "# Recipes temporarily stubbed during expansion.\n"
+            "# Full 42 playbooks will be restored shortly.\n"
+            "# See CHANGELOG.md [Unreleased].\n"
+        )

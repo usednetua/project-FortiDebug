@@ -6,16 +6,14 @@
 
 ---
 
-## [Unreleased]
+## [0.5.0] — 2026-09-05
 
 ### Added
-- Recipe **First steps connectivity** (sniffer → session → flow → route)
-- `scripts/generate_icon.py`, cmd_builders + unit tests
-- Tooltips (Ping, HA, …)
-
-### Changed
-- FortiOS version зберігається в `config.json`
-- Content area — `CTkScrollableFrame` (довгі вкладки)
+- **Wireless** tab — wlac wtp/sta/vap, CAPWAP cw_acd debug (docs-verified)
+- **Hardware / NPU** tab — cpu/mem, deviceinfo nic, NP6/NP7 port-list & session-stats
+- Recipe **First steps connectivity**
+- `scripts/generate_icon.py`, `cmd_builders` + unit tests
+- FortiOS persist, scrollable content, tooltips (Ping/HA/…)
 
 ---
 

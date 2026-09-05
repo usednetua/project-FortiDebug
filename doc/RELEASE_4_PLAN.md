@@ -1,8 +1,6 @@
 # FortiDebug Builder — Release 4 Plan
 
-**Мета:** полірування + розширені діагностики.
-
-**Базова:** 0.4.1 → **ціль 0.5.0**
+**Реліз:** **0.5.0** — завершено
 
 ---
 
@@ -11,20 +9,20 @@
 | # | Крок | Стан | Пріоритет | Примітки |
 |---|------|------|-----------|----------|
 | 1 | Іконка `.ico` + `build.spec` | 🟡 Partial | P0 | generate_icon.py |
-| 2 | Tooltips | 🟡 Partial | P0 | Ping, HA, … |
+| 2 | Tooltips | 🟡 Partial | P0 | основні вкладки |
 | 3 | Unit-тести Network / Policy | ✅ Done | P0 | |
-| 4 | FortiOS version persist | ✅ Done | P1 | config.json |
-| 5 | Content area scroll | ✅ Done | P1 | CTkScrollableFrame |
-| 6 | Wireless / CAPWAP | ❌ Todo | P2 | |
-| 7 | NPU / hardware | ❌ Todo | P2 | |
+| 4 | FortiOS version persist | ✅ Done | P1 | |
+| 5 | Content area scroll | ✅ Done | P1 | |
+| 6 | Wireless / CAPWAP | ✅ Done | P2 | docs-verified wlac |
+| 7 | NPU / hardware | ✅ Done | P2 | np6/np7 overview |
 | 8 | Recipe First steps | ✅ Done | P1 | |
-| 9 | README / 0.5.0 | 🟡 Partial | P0 | після C |
+| 9 | README / 0.5.0 | ✅ Done | P0 | |
 
 ---
 
-## Наступне
+## Release 4 — завершено
 
-Етап C: Wireless + NPU/hardware → потім bump 0.5.0.
+Опційно надалі: згенерувати `app.ico` перед збіркою EXE, розширити tooltips/GUI-тести.
 
 ---
 

@@ -23,6 +23,8 @@ from ui.tabs.dhcp import DhcpTab
 from ui.tabs.sdwan import SdwanTab
 from ui.tabs.auth import AuthTab
 from ui.tabs.utm_ips import UtmIpsTab
+from ui.tabs.wireless import WirelessTab
+from ui.tabs.hardware import HardwareTab
 from ui.tabs.tac import TacTab
 from ui.tabs.settings import SettingsTab
 from ui.tabs.about import AboutTab
@@ -53,6 +55,8 @@ NAV_KEYS = [
     ("sdwan", "sdwan"),
     ("auth", "auth"),
     ("utm_ips", "utm_ips"),
+    ("wireless", "wireless"),
+    ("hardware", "hardware"),
     ("system_top", "system_top"),
     ("ha", "ha"),
     ("routing", "routing"),
@@ -119,7 +123,6 @@ class MainWindow(ctk.CTk):
             btn.grid(row=i, column=0, padx=6, pady=1, sticky="ew")
             self.nav_buttons[key] = btn
 
-        # Scrollable content for tall tabs
         self.content = ctk.CTkScrollableFrame(self, corner_radius=0)
         self.content.grid(row=0, column=1, sticky="nsew")
         self.content.grid_columnconfigure(0, weight=1)
@@ -174,6 +177,8 @@ class MainWindow(ctk.CTk):
         self.tabs["sdwan"] = SdwanTab(self.content, on_change=self.on_tab_change)
         self.tabs["auth"] = AuthTab(self.content, on_change=self.on_tab_change)
         self.tabs["utm_ips"] = UtmIpsTab(self.content, on_change=self.on_tab_change)
+        self.tabs["wireless"] = WirelessTab(self.content, on_change=self.on_tab_change)
+        self.tabs["hardware"] = HardwareTab(self.content, on_change=self.on_tab_change)
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)

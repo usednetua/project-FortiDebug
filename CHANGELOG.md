@@ -6,14 +6,18 @@
 
 ---
 
+## [Unreleased]
+
+### Changed
+- **Wireless** і **Hardware/NPU** підключені до глобального FortiOS selector
+- У згенерований CLI додається рядок `# FortiOS x.x — …` з приміткою щодо синтаксису
+
+---
+
 ## [0.5.0] — 2026-09-05
 
 ### Added
-- **Wireless** tab — wlac wtp/sta/vap, CAPWAP cw_acd debug (docs-verified)
-- **Hardware / NPU** tab — cpu/mem, deviceinfo nic, NP6/NP7 port-list & session-stats
-- Recipe **First steps connectivity**
-- `scripts/generate_icon.py`, `cmd_builders` + unit tests
-- FortiOS persist, scrollable content, tooltips (Ping/HA/…)
+- Wireless, Hardware/NPU, First steps recipe, icon script, tests, persist, scroll
 
 ---
 

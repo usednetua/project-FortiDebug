@@ -177,8 +177,12 @@ class MainWindow(ctk.CTk):
         self.tabs["sdwan"] = SdwanTab(self.content, on_change=self.on_tab_change)
         self.tabs["auth"] = AuthTab(self.content, on_change=self.on_tab_change)
         self.tabs["utm_ips"] = UtmIpsTab(self.content, on_change=self.on_tab_change)
-        self.tabs["wireless"] = WirelessTab(self.content, on_change=self.on_tab_change)
-        self.tabs["hardware"] = HardwareTab(self.content, on_change=self.on_tab_change)
+        self.tabs["wireless"] = WirelessTab(
+            self.content, on_change=self.on_tab_change, get_version=self.get_version
+        )
+        self.tabs["hardware"] = HardwareTab(
+            self.content, on_change=self.on_tab_change, get_version=self.get_version
+        )
         self.tabs["system_top"] = SystemTopTab(self.content, on_change=self.on_tab_change)
         self.tabs["ha"] = HaTab(self.content, on_change=self.on_tab_change)
         self.tabs["routing"] = RoutingTab(self.content, on_change=self.on_tab_change)

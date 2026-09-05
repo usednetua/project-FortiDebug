@@ -1,19 +1,24 @@
 """Wireless / CAPWAP diagnostics (FortiAP managed by FortiGate).
 
-Commands verified against Fortinet docs:
-- diagnose wireless-controller wlac -c wtp|sta|vap
-- diagnose debug application cw_acd
+Commands verified against Fortinet docs (stable wlac -c wtp|sta|vap across 6.4–7.6).
+Always respect global FortiOS selector for banners / future syntax forks.
 """
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
+from core.fortios_version import (
+    DEFAULT_VERSION,
+    version_banner,
+    wireless_version_note,
+)
 from core.safety import preamble, epilogue
 from ui.widgets.tooltip import tip
 
 
 class WirelessTab(BaseTab):
-    def __init__(self, master, on_change=None, **kwargs):
+    def __init__(self, master, on_change=None, get_version=None, **kwargs):
         super().__init__(master, on_change=on_change, **kwargs)
+        self.get_version = get_version or (lambda: DEFAULT_VERSION)
         self._build_ui()
 
     def _build_ui(self):
@@ -24,7 +29,7 @@ class WirelessTab(BaseTab):
 
         note = ctk.CTkLabel(
             self,
-            text="Потрібен wireless-controller / FortiAP. Синтаксис: docs FortiOS 7.x wlac.",
+            text="Потрібен wireless-controller / FortiAP. Синтаксис залежить від FortiOS (селектор зліва).",
             text_color="gray",
             wraplength=480,
         )
@@ -77,10 +82,18 @@ class WirelessTab(BaseTab):
         self.stop_block.select()
         self.stop_block.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
+        self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray", wraplength=480, justify="left")
+        self.ver_hint.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=6)
+
         self.grid_columnconfigure(1, weight=1)
 
     def generate_commands(self) -> str:
-        lines = []
+        version = self.get_version()
+        note = wireless_version_note(version)
+        self.ver_hint.configure(text=f"FortiOS {version.value}: {note}")
+
+        lines = [version_banner(version, note), ""]
+
         if self.wtp.get():
             lines.append("diagnose wireless-controller wlac -c wtp")
         if self.sta.get():
@@ -100,4 +113,7 @@ class WirelessTab(BaseTab):
             lines.append("diagnose debug enable")
             lines.extend(epilogue(stop=bool(self.stop_block.get())))
 
-        return "\n".join(lines) if lines else "# select options"
+        body = [ln for ln in lines[2:] if ln or ln == ""]
+        if not any(ln and not ln.startswith("#") for ln in lines):
+            return "\n".join(lines[:1] + ["", "# select options"])
+        return "\n".join(lines)

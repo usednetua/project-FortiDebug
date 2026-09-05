@@ -1,17 +1,23 @@
 """Hardware / NPU overview (safe diagnostics).
 
-NP6 commands from Fortinet Hardware Acceleration docs.
-NP7 options are limited overview — full matrix is model-specific.
+NPU CLI is ASIC-family driven (np6/np7/…); FortiOS selector still applied
+for banners and future version-specific forks.
 """
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
+from core.fortios_version import (
+    DEFAULT_VERSION,
+    version_banner,
+    hardware_version_note,
+)
 from ui.widgets.tooltip import tip
 
 
 class HardwareTab(BaseTab):
-    def __init__(self, master, on_change=None, **kwargs):
+    def __init__(self, master, on_change=None, get_version=None, **kwargs):
         super().__init__(master, on_change=on_change, **kwargs)
+        self.get_version = get_version or (lambda: DEFAULT_VERSION)
         self._build_ui()
 
     def _build_ui(self):
@@ -22,7 +28,7 @@ class HardwareTab(BaseTab):
 
         warn = ctk.CTkLabel(
             self,
-            text="NPU команди залежать від моделі (NP6/NP7). Перевір ? на своєму FGT.",
+            text="NPU залежить від ASIC + FortiOS (селектор зліва). Перевір ? на FGT.",
             text_color="#e67e22",
             wraplength=480,
         )
@@ -77,17 +83,24 @@ class HardwareTab(BaseTab):
             self, text="session-stats (NP6-style)", command=self.notify_change
         )
         self.session_stats.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=3)
-        tip(self.session_stats, "diagnose npu np6 session-stats <id>")
+        tip(self.session_stats, "diagnose npu np6 session-stats <id> — добре задокументовано для NP6")
 
         self.npu_feature = ctk.CTkCheckBox(
             self, text="npu-feature", command=self.notify_change
         )
         self.npu_feature.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=3)
 
+        self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray", wraplength=480, justify="left")
+        self.ver_hint.grid(row=11, column=0, columnspan=2, sticky="w", padx=10, pady=6)
+
         self.grid_columnconfigure(1, weight=1)
 
     def generate_commands(self) -> str:
-        lines = []
+        version = self.get_version()
+        note = hardware_version_note(version)
+        self.ver_hint.configure(text=note)
+
+        lines = [version_banner(version, note), ""]
         family = self.npu_family.get()
         npu_id = self.npu_id.get().strip() or "0"
         nic = self.nic.get().strip()
@@ -111,11 +124,13 @@ class HardwareTab(BaseTab):
                 lines.append(f"diagnose npu np6 session-stats {npu_id}")
             else:
                 lines.append(
-                    f"# session-stats: primarily documented for np6 — check diagnose npu {family} ?"
+                    f"# session-stats: primarily documented for np6 — verify: diagnose npu {family} ?"
                 )
                 lines.append(f"diagnose npu {family} session-stats {npu_id}")
 
         if self.npu_feature.get():
             lines.append(f"diagnose npu {family} npu-feature")
 
-        return "\n".join(lines) if lines else "# select options"
+        if len(lines) <= 2:
+            return "\n".join(lines[:1] + ["", "# select options"])
+        return "\n".join(lines)

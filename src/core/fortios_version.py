@@ -3,6 +3,12 @@
 Sources (Fortinet Community + docs):
 - From FortiOS 7.4.1: 'diagnose vpn ike log-filter' -> 'diagnose vpn ike log filter'
 - From 7.4.1: dst-addr4 -> rem-addr4, src-addr4 -> loc-addr4
+
+Wireless (wlac) core list commands (-c wtp/sta/vap) are stable across 6.4–7.6;
+always prefer selector notes + '?' on device for model-specific options.
+
+NPU CLI is primarily hardware-family (np6/np7/…) rather than FortiOS minor,
+but availability still depends on platform + FortiOS build.
 """
 
 from enum import Enum
@@ -95,3 +101,23 @@ def flow_trace_start(count: str = "1000", ipv6: bool = False) -> str:
 
 def session_prefix(ipv6: bool = False) -> str:
     return "diagnose sys session6" if ipv6 else "diagnose sys session"
+
+
+def version_banner(version: FortiOSVersion, note: str = "") -> str:
+    """Comment line for generated CLI — reminds operator of selected FortiOS."""
+    label = VERSION_LABELS.get(version, version.value)
+    extra = f" — {note}" if note else ""
+    return f"# FortiOS {label}{extra}"
+
+
+def wireless_version_note(version: FortiOSVersion) -> str:
+    if version_gte(version, FortiOSVersion.V7_0):
+        return "wlac -c/-d; перевіряй «diagnose wireless-controller wlac help»"
+    return "wlac базові -c/-d; частина опцій може відрізнятись на 6.x"
+
+
+def hardware_version_note(version: FortiOSVersion) -> str:
+    return (
+        "NPU CLI залежить від ASIC (np6/np7), не лише від FortiOS; "
+        f"обрано {VERSION_LABELS.get(version, version.value)}"
+    )

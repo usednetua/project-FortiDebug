@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 # PyInstaller spec for FortiDebug Builder
-# Usage: pyinstaller build.spec
+# Usage: python scripts/generate_icon.py && pyinstaller build.spec
 
 block_cipher = None
 
@@ -43,5 +43,5 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     version=None,
-    # icon='src/resources/icons/app.ico',  # add when icon available
+    icon='src/resources/icons/app.ico',
 )

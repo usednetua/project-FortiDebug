@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.safety import preamble, epilogue
+from ui.widgets.tooltip import tip
 
 
 class HaTab(BaseTab):
@@ -25,6 +26,7 @@ class HaTab(BaseTab):
 
         self.checksum = ctk.CTkCheckBox(self, text="Cluster checksum", command=self.notify_change)
         self.checksum.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.checksum, "diagnose sys ha checksum cluster — out-of-sync detection")
 
         self.global_cs = ctk.CTkCheckBox(self, text="Global checksum", command=self.notify_change)
         self.global_cs.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=2)
@@ -49,6 +51,7 @@ class HaTab(BaseTab):
             self, text="Reset HA uptime (may trigger failover!)", command=self.notify_change
         )
         self.reset_uptime.grid(row=9, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.reset_uptime, "⚠ Може викликати failover — лише за потреби")
 
         ctk.CTkLabel(self, text="Manage unit index").grid(row=10, column=0, sticky="w", padx=10, pady=4)
         self.manage_idx = ctk.CTkEntry(self, placeholder_text="0 / 1 ...")
@@ -65,9 +68,11 @@ class HaTab(BaseTab):
         )
         self.hatalk = ctk.CTkCheckBox(self, text="hatalk (heartbeat)", command=self.notify_change)
         self.hatalk.grid(row=13, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.hatalk, "diagnose debug application hatalk -1")
 
         self.hasync = ctk.CTkCheckBox(self, text="hasync (config sync)", command=self.notify_change)
         self.hasync.grid(row=14, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.hasync, "diagnose debug application hasync -1")
 
         self.timestamps = ctk.CTkCheckBox(
             self, text="Console timestamps", command=self.notify_change

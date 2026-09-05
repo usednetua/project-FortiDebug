@@ -9,18 +9,24 @@
 ## [Unreleased] — Release 5
 
 ### Added
-- **Recipes**: розширено до **42 playbooks** (+10):
-  - ZTNA / Access Proxy (version-aware: `endpoint record list` → `ec-shm list` з 7.4.2+)
-  - FortiAnalyzer / remote logging (`fgtlogd` test levels + OFTP debug)
-  - WAD / Proxy engine (filters + category/level verbose)
-  - DoS / Flood protection
-  - User auth LDAP/RADIUS/TACACS (`fnbamd`/`authd` + sniffer ports)
-  - General TAC collect / healthcheck (`execute tac report` + perf/crashlog)
-  - ARP / Neighbor
-  - Link-monitor / health-check
-  - Antivirus / AV engine
-  - Traffic shaping / QoS
+- **Recipes**: розширено до **42 playbooks** (+10), розбито на mixins:
+  - `src/ui/tabs/recipe_extra.py` — усі 10 нових (повністю):
+    - ZTNA / Access Proxy (version-aware: `endpoint record list` → `ec-shm list` з 7.4+)
+    - FortiAnalyzer / remote logging (`fgtlogd` 1–5 + OFTP debug)
+    - WAD / Proxy engine (filters + category/level verbose)
+    - DoS / Flood protection
+    - User auth LDAP/RADIUS/TACACS (`fnbamd`/`authd` + sniffer)
+    - General TAC collect / healthcheck (`execute tac report`)
+    - ARP / Neighbor
+    - Link-monitor / health-check
+    - Antivirus / AV engine
+    - Traffic shaping / QoS
+  - `src/ui/tabs/recipe_impl.py` — helpers + core (First steps, Traffic not passing, VPN, High CPU/mem, Session full, HA, SD-WAN)
+  - Решта original playbooks — stubs (`_missing`), повний код у `artifacts/recipes_final.py` (потребує restore)
 - Export bundle, sidebar search, SSL/SD-WAN recipes
+
+### Changed
+- RecipesTab: `RecipeExtraMixin, RecipeImplMixin, BaseTab`
 
 ---
 

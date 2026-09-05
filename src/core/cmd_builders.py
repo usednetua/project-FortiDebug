@@ -1,6 +1,8 @@
 """Pure command builders (testable without GUI)."""
 
-from typing import Iterable, List, Optional
+from typing import List, Optional
+
+from core.fortios_version import FortiOSVersion, version_gte
 
 
 def build_network_commands(
@@ -53,9 +55,31 @@ def build_policy_lookup(
     dport: str,
     proto: str,
     intf: str,
+    *,
+    version: Optional[FortiOSVersion] = None,
+    pol_type: str = "",
+    auth_type: str = "",
+    user_or_group: str = "",
+    auth_server: str = "",
 ) -> str:
-    return (
+    base = (
         f"diagnose firewall iprope lookup "
         f"{src.strip()} {sport.strip()} {dst.strip()} {dport.strip()} "
         f"{proto.strip()} {intf.strip()}"
     )
+    # ≥7.4.1: optional pol_type activates extended policy-match mode
+    if version is not None and version_gte(version, FortiOSVersion.V7_4):
+        pt = pol_type.strip()
+        if pt and pt != "(none)":
+            parts = [base, pt]
+            at = auth_type.strip()
+            ug = user_or_group.strip()
+            srv = auth_server.strip()
+            if at and at != "(none)":
+                parts.append(at)
+                if ug:
+                    parts.append(ug)
+                    if srv:
+                        parts.append(srv)
+            return " ".join(parts)
+    return base

@@ -170,7 +170,9 @@ class MainWindow(ctk.CTk):
         self.tabs["sniffer"] = SnifferTab(self.content, on_change=self.on_tab_change)
         self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
         self.tabs["network"] = NetworkTab(self.content, on_change=self.on_tab_change)
-        self.tabs["policy_lookup"] = PolicyLookupTab(self.content, on_change=self.on_tab_change)
+        self.tabs["policy_lookup"] = PolicyLookupTab(
+            self.content, on_change=self.on_tab_change, get_version=self.get_version
+        )
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change, get_version=self.get_version)
         self.tabs["app_debug"] = AppDebugTab(self.content, on_change=self.on_tab_change)
         self.tabs["dhcp"] = DhcpTab(self.content, on_change=self.on_tab_change)

@@ -1,8 +1,10 @@
-"""Policy lookup — diagnose firewall iprope lookup."""
+"""Policy lookup — diagnose firewall iprope lookup (version-aware ≥7.4)."""
 
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.validators import is_valid_ip, is_valid_port
+from core.cmd_builders import build_policy_lookup
+from core.fortios_version import DEFAULT_VERSION, version_gte, FortiOSVersion, version_banner
 from ui.widgets.tooltip import tip
 
 
@@ -14,8 +16,9 @@ class PolicyLookupTab(BaseTab):
         "Any/other": "0",
     }
 
-    def __init__(self, master, on_change=None, **kwargs):
+    def __init__(self, master, on_change=None, get_version=None, **kwargs):
         super().__init__(master, on_change=on_change, **kwargs)
+        self.get_version = get_version or (lambda: DEFAULT_VERSION)
         self._build_ui()
 
     def _build_ui(self):
@@ -26,7 +29,7 @@ class PolicyLookupTab(BaseTab):
 
         note = ctk.CTkLabel(
             self,
-            text="iprope lookup — яка policy матчиться для 5-tuple + intf (без live traffic)",
+            text="6 args — усі версії. pol_type/auth — лише FortiOS ≥7.4.1 (селектор зліва).",
             text_color="gray",
             wraplength=480,
         )
@@ -65,18 +68,60 @@ class PolicyLookupTab(BaseTab):
         self.intf.bind("<KeyRelease>", self.notify_change)
         tip(self.intf, "Ingress interface name as on FortiGate")
 
+        ctk.CTkLabel(self, text="Policy type (≥7.4)").grid(row=8, column=0, sticky="w", padx=10, pady=4)
+        self.pol_type = ctk.CTkOptionMenu(
+            self,
+            values=["(none)", "policy", "proxy"],
+            command=lambda _: self.notify_change(),
+        )
+        self.pol_type.set("(none)")
+        self.pol_type.grid(row=8, column=1, sticky="ew", padx=10, pady=4)
+        tip(self.pol_type, "7.4.1+: активує extended policy match")
+
+        ctk.CTkLabel(self, text="Auth type (≥7.4)").grid(row=9, column=0, sticky="w", padx=10, pady=4)
+        self.auth_type = ctk.CTkOptionMenu(
+            self,
+            values=["(none)", "local", "ldap", "saml", "group"],
+            command=lambda _: self.notify_change(),
+        )
+        self.auth_type.set("(none)")
+        self.auth_type.grid(row=9, column=1, sticky="ew", padx=10, pady=4)
+
+        ctk.CTkLabel(self, text="User / group").grid(row=10, column=0, sticky="w", padx=10, pady=4)
+        self.user_group = ctk.CTkEntry(self, placeholder_text="optional")
+        self.user_group.grid(row=10, column=1, sticky="ew", padx=10, pady=4)
+        self.user_group.bind("<KeyRelease>", self.notify_change)
+
+        ctk.CTkLabel(self, text="Auth server").grid(row=11, column=0, sticky="w", padx=10, pady=4)
+        self.auth_server = ctk.CTkEntry(self, placeholder_text="optional")
+        self.auth_server.grid(row=11, column=1, sticky="ew", padx=10, pady=4)
+        self.auth_server.bind("<KeyRelease>", self.notify_change)
+
         self.warn = ctk.CTkLabel(self, text="", text_color="#e74c3c")
-        self.warn.grid(row=8, column=0, columnspan=2, sticky="w", padx=10, pady=6)
+        self.warn.grid(row=12, column=0, columnspan=2, sticky="w", padx=10, pady=6)
+
+        self.ver_hint = ctk.CTkLabel(self, text="", text_color="gray", wraplength=480)
+        self.ver_hint.grid(row=13, column=0, columnspan=2, sticky="w", padx=10, pady=4)
 
         self.grid_columnconfigure(1, weight=1)
 
     def generate_commands(self) -> str:
+        version = self.get_version()
         src = self.src.get().strip()
         sport = self.sport.get().strip()
         dst = self.dst.get().strip()
         dport = self.dport.get().strip()
         intf = self.intf.get().strip()
         proto = self.PROTOS.get(self.proto.get(), "6")
+
+        if version_gte(version, FortiOSVersion.V7_4):
+            self.ver_hint.configure(
+                text=f"FortiOS {version.value}: можна додати pol_type / auth"
+            )
+        else:
+            self.ver_hint.configure(
+                text=f"FortiOS {version.value}: лише 6 базових аргументів"
+            )
 
         errors = []
         if not src or not is_valid_ip(src):
@@ -93,11 +138,24 @@ class PolicyLookupTab(BaseTab):
         if errors:
             self.warn.configure(text=f"Required / invalid: {', '.join(errors)}")
             return (
-                "# diagnose firewall iprope lookup "
-                "<src_ip> <src_port> <dst_ip> <dst_port> <proto> <src_intf>"
+                version_banner(version)
+                + "\n# diagnose firewall iprope lookup "
+                "<src_ip> <src_port> <dst_ip> <dst_port> <proto> <src_intf> "
+                "[pol_type] [auth_type] [user] [server]"
             )
 
         self.warn.configure(text="")
-        return (
-            f"diagnose firewall iprope lookup {src} {sport} {dst} {dport} {proto} {intf}"
+        cmd = build_policy_lookup(
+            src,
+            sport,
+            dst,
+            dport,
+            proto,
+            intf,
+            version=version,
+            pol_type=self.pol_type.get(),
+            auth_type=self.auth_type.get(),
+            user_or_group=self.user_group.get(),
+            auth_server=self.auth_server.get(),
         )
+        return version_banner(version) + "\n" + cmd

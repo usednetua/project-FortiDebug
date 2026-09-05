@@ -8,12 +8,11 @@
 
 ## [Unreleased]
 
-### Fixed
-- **SD-WAN**: на FortiOS ≤6.4 — `diagnose sys virtual-wan-link …`
-- **SD-WAN**: на FortiOS ≥7.4 — `service4` замість `service` (з 7.4.4)
+### Added
+- Policy Lookup: optional `pol_type` / auth (FortiOS ≥7.4.1)
 
-### Changed
-- Version-aware helpers у `fortios_version.py` для SD-WAN prefix
+### Fixed
+- SD-WAN: virtual-wan-link (≤6.4), service4 (≥7.4)
 
 ---
 

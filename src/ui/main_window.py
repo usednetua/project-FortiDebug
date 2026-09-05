@@ -174,7 +174,9 @@ class MainWindow(ctk.CTk):
         self.tabs["vpn"] = VpnTab(self.content, on_change=self.on_tab_change, get_version=self.get_version)
         self.tabs["app_debug"] = AppDebugTab(self.content, on_change=self.on_tab_change)
         self.tabs["dhcp"] = DhcpTab(self.content, on_change=self.on_tab_change)
-        self.tabs["sdwan"] = SdwanTab(self.content, on_change=self.on_tab_change)
+        self.tabs["sdwan"] = SdwanTab(
+            self.content, on_change=self.on_tab_change, get_version=self.get_version
+        )
         self.tabs["auth"] = AuthTab(self.content, on_change=self.on_tab_change)
         self.tabs["utm_ips"] = UtmIpsTab(self.content, on_change=self.on_tab_change)
         self.tabs["wireless"] = WirelessTab(

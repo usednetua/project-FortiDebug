@@ -9,8 +9,9 @@
 ## [Unreleased]
 
 ### Changed
-- **Wireless** і **Hardware/NPU** підключені до глобального FortiOS selector
-- У згенерований CLI додається рядок `# FortiOS x.x — …` з приміткою щодо синтаксису
+- Tooltips: Sniffer, Routing, SD-WAN
+- SD-WAN підключено до FortiOS selector (банер у CLI)
+- Wireless / Hardware — version-aware
 
 ---
 

@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.safety import preamble, epilogue
+from ui.widgets.tooltip import tip
 
 
 class RoutingTab(BaseTab):
@@ -21,6 +22,7 @@ class RoutingTab(BaseTab):
             self, text="Status / neighbors / interfaces", command=self.notify_change
         )
         self.ospf_status.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.ospf_status, "get router info ospf status|neighbor|interface")
 
         self.ospf_lsdb = ctk.CTkCheckBox(self, text="LSDB + OSPF routes", command=self.notify_change)
         self.ospf_lsdb.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=2)
@@ -29,6 +31,7 @@ class RoutingTab(BaseTab):
             self, text="Live OSPF debug (verbose)", command=self.notify_change
         )
         self.ospf_debug.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.ospf_debug, "diagnose ip router ospf all enable — CPU intensive")
 
         ctk.CTkLabel(self, text="BGP", font=ctk.CTkFont(weight="bold")).grid(
             row=5, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 2)
@@ -41,6 +44,7 @@ class RoutingTab(BaseTab):
         self.bgp_neighbor = ctk.CTkEntry(self, placeholder_text="optional")
         self.bgp_neighbor.grid(row=7, column=1, sticky="ew", padx=10, pady=3)
         self.bgp_neighbor.bind("<KeyRelease>", self.notify_change)
+        tip(self.bgp_neighbor, "Потрібен для advertised/received routes")
 
         self.bgp_routes = ctk.CTkCheckBox(
             self, text="Routes / advertised-routes (needs neighbor)", command=self.notify_change
@@ -54,6 +58,7 @@ class RoutingTab(BaseTab):
 
         self.bgp_debug = ctk.CTkCheckBox(self, text="Live BGP debug", command=self.notify_change)
         self.bgp_debug.grid(row=10, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.bgp_debug, "diagnose ip router bgp all enable")
 
         ctk.CTkLabel(self, text="Static / RIB", font=ctk.CTkFont(weight="bold")).grid(
             row=11, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 2)
@@ -71,11 +76,13 @@ class RoutingTab(BaseTab):
 
         self.proute = ctk.CTkCheckBox(self, text="Policy routes (v4+v6)", command=self.notify_change)
         self.proute.grid(row=15, column=0, columnspan=2, sticky="w", padx=10, pady=2)
+        tip(self.proute, "diagnose firewall proute list / proute6 list")
 
         ctk.CTkLabel(self, text="Lookup destination IP").grid(row=16, column=0, sticky="w", padx=10, pady=3)
         self.lookup = ctk.CTkEntry(self, placeholder_text="optional")
         self.lookup.grid(row=16, column=1, sticky="ew", padx=10, pady=3)
         self.lookup.bind("<KeyRelease>", self.notify_change)
+        tip(self.lookup, "get router info routing-table details <ip>")
 
         self.timestamps = ctk.CTkCheckBox(
             self, text="Console timestamps (for live debug)", command=self.notify_change

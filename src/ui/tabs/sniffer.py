@@ -4,6 +4,7 @@ import customtkinter as ctk
 from tkinter import simpledialog, messagebox
 from ui.tabs.base_tab import BaseTab
 from core.config import load_bpf_presets, save_bpf_preset, delete_bpf_preset
+from ui.widgets.tooltip import tip
 
 
 class SnifferTab(BaseTab):
@@ -56,6 +57,7 @@ class SnifferTab(BaseTab):
         )
         self.interface.set("any")
         self.interface.grid(row=1, column=1, columnspan=2, sticky="ew", padx=10, pady=4)
+        tip(self.interface, "any = усі інтерфейси; для WAN краще конкретний if")
 
         ctk.CTkLabel(self, text="Verbose").grid(row=2, column=0, sticky="w", padx=10, pady=4)
         self.verbose = ctk.CTkOptionMenu(
@@ -65,11 +67,13 @@ class SnifferTab(BaseTab):
         self.verbose.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
         self.verbose_hint = ctk.CTkLabel(self, text=self.VERBOSE_HELP["4"], text_color="gray")
         self.verbose_hint.grid(row=2, column=2, sticky="w", padx=5)
+        tip(self.verbose, "4 — зазвичай достатньо; 6 — повний Ethernet dump")
 
         ctk.CTkLabel(self, text="Count (0=unlimited)").grid(row=3, column=0, sticky="w", padx=10, pady=4)
         self.count = ctk.CTkEntry(self, placeholder_text="0")
         self.count.grid(row=3, column=1, sticky="ew", padx=10, pady=4)
         self.count.bind("<KeyRelease>", self.notify_change)
+        tip(self.count, "0 = без ліміту; Ctrl+C щоб зупинити на FGT")
 
         ctk.CTkLabel(self, text="Timestamp").grid(row=4, column=0, sticky="w", padx=10, pady=4)
         self.ts = ctk.CTkOptionMenu(
@@ -79,11 +83,13 @@ class SnifferTab(BaseTab):
         )
         self.ts.set("l (relative)")
         self.ts.grid(row=4, column=1, sticky="ew", padx=10, pady=4)
+        tip(self.ts, "l = відносний час; a = абсолютний")
 
         self.use_bpf = ctk.CTkSwitch(
             self, text="Use custom BPF filter", command=self._toggle_mode
         )
         self.use_bpf.grid(row=5, column=0, columnspan=3, sticky="w", padx=10, pady=10)
+        tip(self.use_bpf, "Розширений BPF або простий host/port")
 
         self.simple_frame = ctk.CTkFrame(self)
         self.simple_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
@@ -95,6 +101,7 @@ class SnifferTab(BaseTab):
         self.s_host = ctk.CTkEntry(self.simple_frame, placeholder_text="10.0.0.1 or 2001:db8::1")
         self.s_host.grid(row=0, column=1, sticky="ew", padx=8, pady=3)
         self.s_host.bind("<KeyRelease>", self.notify_change)
+        tip(self.s_host, "IPv6 підтримується через host/src host/dst host")
         self.s_host_dir = ctk.CTkOptionMenu(
             self.simple_frame, values=["either", "src", "dst"], command=lambda _: self.notify_change()
         )
@@ -194,7 +201,6 @@ class SnifferTab(BaseTab):
         host = self.s_host.get().strip()
         if host:
             d = self.s_host_dir.get()
-            # IPv6 hosts work with host/src host/dst host in FortiOS sniffer BPF
             if d == "src":
                 parts.append(f"src host {host}")
             elif d == "dst":

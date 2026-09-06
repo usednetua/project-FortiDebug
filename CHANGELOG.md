@@ -6,21 +6,23 @@
 
 ---
 
-## [Unreleased] — Release 11 (0.12.0)
+## [0.12.0] — 2026-09-06 — Release 11
 
 ### Added
-- Recipes: **BFD neighbor**, **SAML SSO / admin login**
+- **Recipes +2 (57 total)** — `recipe_r11.py`:
+  - BFD neighbor
+  - SAML SSO / admin login
+- tests: R8–R11 bodies in `test_no_stubs.py`
 
-### Fixed / polish
-- `main_window`: live `get_vdom_map` + Settings `on_vdom_map` (refresh preview after save)
-- tests: coverage for R8–R10 recipe bodies
+### Changed
+- About / README → **0.12.0**
 
 ---
 
 ## [0.11.0] — 2026-09-06 — Release 10
 
 ### Added
-- IoC / Threat feed + Cloud SDN (55 recipes)
+- IoC / Threat feed + Cloud SDN (55)
 
 ---
 
@@ -41,7 +43,7 @@
 ## [0.8.0] — 2026-09-06 — Release 7
 
 ### Added
-- Restore stubs; global-scope VDOM carve-out
+- Restore stubs; global-scope VDOM
 
 ---
 
@@ -62,4 +64,4 @@
 ## [0.1.0] — 2026-09-03
 
 ### Added
-- Базові модулі, FortiOS selector
+- Базові модулі

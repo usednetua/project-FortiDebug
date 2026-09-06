@@ -38,7 +38,9 @@ from core.fortios_version import (
     VERSION_LABELS,
     parse_version,
 )
+from core.vdom import wrap_vdom_context, vdom_banner
 from core.i18n import t, set_lang, get_lang
+from ui.widgets.tooltip import tip
 
 STOP_DEBUG_BLOCK = "diagnose debug disable\ndiagnose debug reset"
 
@@ -81,13 +83,15 @@ class MainWindow(ctk.CTk):
         self.minsize(900, 600)
 
         self.fortios_version = parse_version(cfg.get("fortios", VERSION_LABELS[DEFAULT_VERSION]))
+        self.vdom_enabled = bool(cfg.get("vdom_enabled", False))
+        self.vdom_name = str(cfg.get("vdom_name", "root") or "root")
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
         self.sidebar = ctk.CTkFrame(self, width=210, corner_radius=0)
         self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        self.sidebar.grid_rowconfigure(4, weight=1)
+        self.sidebar.grid_rowconfigure(7, weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
 
         self.logo = ctk.CTkLabel(
@@ -106,12 +110,32 @@ class MainWindow(ctk.CTk):
         self.version_menu.set(VERSION_LABELS.get(self.fortios_version, VERSION_LABELS[DEFAULT_VERSION]))
         self.version_menu.grid(row=2, column=0, padx=12, pady=(0, 4), sticky="ew")
 
+        self.vdom_switch = ctk.CTkSwitch(
+            self.sidebar,
+            text=t("vdom_mode"),
+            command=self._on_vdom_toggle,
+            width=170,
+        )
+        self.vdom_switch.grid(row=3, column=0, padx=12, pady=(2, 2), sticky="w")
+        tip(self.vdom_switch, t("vdom_tip"))
+        if self.vdom_enabled:
+            self.vdom_switch.select()
+
+        self.vdom_name_entry = ctk.CTkEntry(
+            self.sidebar, placeholder_text=t("vdom_name_ph"), width=170
+        )
+        self.vdom_name_entry.insert(0, self.vdom_name)
+        self.vdom_name_entry.grid(row=4, column=0, padx=12, pady=(0, 4), sticky="ew")
+        self.vdom_name_entry.bind("<KeyRelease>", self._on_vdom_name_change)
+        tip(self.vdom_name_entry, t("vdom_name_tip"))
+        self._sync_vdom_name_state()
+
         self.nav_search = ctk.CTkEntry(self.sidebar, placeholder_text="🔍 search…", width=170)
-        self.nav_search.grid(row=3, column=0, padx=12, pady=(0, 6), sticky="ew")
+        self.nav_search.grid(row=5, column=0, padx=12, pady=(0, 6), sticky="ew")
         self.nav_search.bind("<KeyRelease>", self._filter_nav)
 
         self.nav_scroll = ctk.CTkScrollableFrame(self.sidebar, width=190, fg_color="transparent")
-        self.nav_scroll.grid(row=4, column=0, sticky="nsew", padx=4, pady=(0, 8))
+        self.nav_scroll.grid(row=7, column=0, sticky="nsew", padx=4, pady=(0, 8))
         self.nav_scroll.grid_columnconfigure(0, weight=1)
 
         self.nav_buttons = {}
@@ -174,14 +198,23 @@ class MainWindow(ctk.CTk):
         self.tabs = {}
         self.current_tab = None
 
+        vdom_kw = dict(get_vdom_mode=self.get_vdom_mode, get_vdom_name=self.get_vdom_name)
+
         self.tabs["recipes"] = RecipesTab(
-            self.content, on_change=self.on_tab_change, get_version=self.get_version
+            self.content,
+            on_change=self.on_tab_change,
+            get_version=self.get_version,
+            **vdom_kw,
         )
-        self.tabs["sessions"] = SessionsTab(self.content, on_change=self.on_tab_change)
+        self.tabs["sessions"] = SessionsTab(
+            self.content, on_change=self.on_tab_change, **vdom_kw
+        )
         self.tabs["ping"] = PingTab(self.content, on_change=self.on_tab_change)
         self.tabs["traceroute"] = TracerouteTab(self.content, on_change=self.on_tab_change)
         self.tabs["sniffer"] = SnifferTab(self.content, on_change=self.on_tab_change)
-        self.tabs["flows"] = FlowsTab(self.content, on_change=self.on_tab_change)
+        self.tabs["flows"] = FlowsTab(
+            self.content, on_change=self.on_tab_change, **vdom_kw
+        )
         self.tabs["network"] = NetworkTab(self.content, on_change=self.on_tab_change)
         self.tabs["policy_lookup"] = PolicyLookupTab(
             self.content, on_change=self.on_tab_change, get_version=self.get_version
@@ -219,6 +252,31 @@ class MainWindow(ctk.CTk):
     def get_version(self) -> FortiOSVersion:
         return self.fortios_version
 
+    def get_vdom_mode(self) -> bool:
+        return self.vdom_enabled
+
+    def get_vdom_name(self) -> str:
+        return (self.vdom_name or "root").strip() or "root"
+
+    def _sync_vdom_name_state(self):
+        state = "normal" if self.vdom_enabled else "disabled"
+        try:
+            self.vdom_name_entry.configure(state=state)
+        except Exception:
+            pass
+
+    def _on_vdom_toggle(self):
+        self.vdom_enabled = bool(self.vdom_switch.get())
+        self._sync_vdom_name_state()
+        save_config({"vdom_enabled": self.vdom_enabled, "vdom_name": self.get_vdom_name()})
+        self.on_tab_change()
+
+    def _on_vdom_name_change(self, _event=None):
+        self.vdom_name = self.vdom_name_entry.get().strip() or "root"
+        save_config({"vdom_name": self.vdom_name})
+        if self.vdom_enabled:
+            self.on_tab_change()
+
     def _filter_nav(self, _event=None):
         q = self.nav_search.get().strip().lower()
         for key, btn in self.nav_buttons.items():
@@ -246,6 +304,7 @@ class MainWindow(ctk.CTk):
     def _refresh_ui_labels(self):
         self.title(t("app_title"))
         self.fortios_lbl.configure(text=t("fortios"))
+        self.vdom_switch.configure(text=t("vdom_mode"))
         for key, btn in self.nav_buttons.items():
             btn.configure(text=t(key))
         self.btn_copy.configure(text=t("copy"))
@@ -281,6 +340,17 @@ class MainWindow(ctk.CTk):
         tab = self.tabs.get(self.current_tab)
         if tab and hasattr(tab, "generate_commands"):
             cmds = tab.generate_commands()
+            # Global VDOM wrap (tabs that already emit config vdom are left as-is)
+            if self.current_tab not in ("saved", "settings", "about", "ssh_logger"):
+                banner = vdom_banner(self.vdom_enabled, self.get_vdom_name())
+                body = cmds if cmds.startswith("#") or not cmds else cmds
+                wrapped = wrap_vdom_context(body, self.vdom_enabled, self.get_vdom_name())
+                if self.vdom_enabled:
+                    cmds = banner + "\n" + wrapped
+                else:
+                    # optional one-line mode marker only when off and non-empty
+                    if body.strip():
+                        cmds = banner + "\n" + body
             self.preview.delete("1.0", "end")
             self.preview.insert("1.0", cmds)
 
@@ -298,11 +368,17 @@ class MainWindow(ctk.CTk):
         ver_label = VERSION_LABELS.get(self.fortios_version, self.fortios_version.value)
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         tab = self.current_tab or ""
+        vdom_line = (
+            f"# VDOM mode: on ({self.get_vdom_name()})"
+            if self.vdom_enabled
+            else "# VDOM mode: off"
+        )
         return "\n".join(
             [
                 "# FortiDebug Builder — export bundle",
                 f"# App version: {APP_VERSION}",
                 f"# FortiOS selector: {ver_label}",
+                vdom_line,
                 f"# Tab: {tab}",
                 f"# Generated: {ts}",
                 "#",

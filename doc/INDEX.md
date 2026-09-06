@@ -29,7 +29,8 @@
 | [RELEASE_2_PLAN.md](./RELEASE_2_PLAN.md)–[RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | R2–R5 | 📦 Архів |
 | [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | 0.7.0 | ✅ Done / 📦 |
 | [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | 0.8.0 | ✅ Done / 📦 |
-| [RELEASE_8_PLAN.md](./RELEASE_8_PLAN.md) | 0.9.0 VDOM map + P2 | ✅ Done / 📦 |
+| [RELEASE_8_PLAN.md](./RELEASE_8_PLAN.md) | 0.9.0 | ✅ Done / 📦 |
+| [RELEASE_9_PLAN.md](./RELEASE_9_PLAN.md) | 0.10.0 IS-IS + Automation | ✅ Done / 📦 |
 
 ---
 

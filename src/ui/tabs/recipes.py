@@ -4,11 +4,12 @@ import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from ui.tabs.recipe_impl import RecipeImplMixin
 from ui.tabs.recipe_extra import RecipeExtraMixin
+from ui.tabs.recipe_r6 import RecipeR6Mixin
 from core.fortios_version import DEFAULT_VERSION
 from ui.widgets.tooltip import tip
 
 
-class RecipesTab(RecipeExtraMixin, RecipeImplMixin, BaseTab):
+class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
     RECIPES = [
         "First steps connectivity",
         "Traffic not passing",
@@ -52,6 +53,10 @@ class RecipesTab(RecipeExtraMixin, RecipeImplMixin, BaseTab):
         "Link-monitor / health-check",
         "Antivirus / AV engine",
         "Traffic shaping / QoS",
+        # --- Release 6 ---
+        "ADVPN / Shortcut tunnels",
+        "SIP / VoIP / ALG",
+        "Application Control / ISDB",
     ]
 
     def __init__(self, master, on_change=None, get_version=None, **kwargs):
@@ -149,6 +154,10 @@ class RecipesTab(RecipeExtraMixin, RecipeImplMixin, BaseTab):
             "Link-monitor / health-check": self._link_monitor,
             "Antivirus / AV engine": lambda: self._antivirus(src, dst),
             "Traffic shaping / QoS": self._shaper,
+            # Release 6
+            "ADVPN / Shortcut tunnels": lambda: self._advpn(version, peer, iface, src, dst),
+            "SIP / VoIP / ALG": lambda: self._sip_voip(src, dst, port, iface),
+            "Application Control / ISDB": lambda: self._app_control(version, src, dst),
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

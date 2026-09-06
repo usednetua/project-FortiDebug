@@ -6,17 +6,22 @@
 
 ---
 
-## [Unreleased] — Release 13 (0.14.0)
+## [0.14.0] — 2026-09-06 — Release 13
 
 ### Added
-- Recipes: **EVPN / VXLAN-EVPN**, **WebCache / WCCP**
+- **Recipes +2 (62 total)** — `recipe_r13.py`:
+  - EVPN / VXLAN-EVPN
+  - WebCache / WCCP
+
+### Changed
+- About / README → **0.14.0**
 
 ---
 
 ## [0.13.0] — 2026-09-06 — Release 12
 
 ### Added
-- GRE / VXLAN / CGNAT (60 recipes)
+- GRE / VXLAN / CGNAT (60)
 
 ---
 

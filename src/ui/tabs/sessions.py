@@ -17,10 +17,19 @@ class SessionsTab(BaseTab):
         "ESP (50)": 50,
     }
 
-    def __init__(self, master, on_change=None, get_vdom_mode=None, get_vdom_name=None, **kwargs):
+    def __init__(
+        self,
+        master,
+        on_change=None,
+        get_vdom_mode=None,
+        get_vdom_name=None,
+        get_vdom_map=None,
+        **kwargs,
+    ):
         super().__init__(master, on_change=on_change, **kwargs)
         self.get_vdom_mode = get_vdom_mode or (lambda: False)
         self.get_vdom_name = get_vdom_name or (lambda: "root")
+        self.get_vdom_map = get_vdom_map or (lambda: {})
         self._build_ui()
 
     def _build_ui(self):
@@ -59,10 +68,10 @@ class SessionsTab(BaseTab):
         self.proto.grid(row=6, column=1, sticky="ew", padx=10, pady=4)
 
         ctk.CTkLabel(self, text="VDOM index (override)").grid(row=7, column=0, sticky="w", padx=10, pady=4)
-        self.vdom = ctk.CTkEntry(self, placeholder_text="optional; global VDOM switch fills if empty")
+        self.vdom = ctk.CTkEntry(self, placeholder_text="optional; map/sidebar fills if empty")
         self.vdom.grid(row=7, column=1, sticky="ew", padx=10, pady=4)
         self.vdom.bind("<KeyRelease>", self.notify_change)
-        tip(self.vdom, "filter vd <index>. Якщо порожньо і VDOM mode ON — береться з sidebar (root→0)")
+        tip(self.vdom, "filter vd <index>. Порожньо → Settings map або root=0")
 
         ctk.CTkLabel(self, text="Policy ID").grid(row=8, column=0, sticky="w", padx=10, pady=4)
         self.policy = ctk.CTkEntry(self, placeholder_text="optional")
@@ -138,7 +147,10 @@ class SessionsTab(BaseTab):
         lines = [f"{pfx} filter clear"]
 
         vd = resolve_vd_index(
-            self.get_vdom_mode(), self.get_vdom_name(), self.vdom.get().strip()
+            self.get_vdom_mode(),
+            self.get_vdom_name(),
+            self.vdom.get().strip(),
+            self.get_vdom_map(),
         )
         if vd:
             lines.append(f"{pfx} filter vd {vd}")

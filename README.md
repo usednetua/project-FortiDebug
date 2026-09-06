@@ -2,12 +2,12 @@
 
 GUI для складання CLI-команд діагностики FortiGate.
 
-**Версія:** 0.15.0 (Release 14)
+**Версія:** 0.16.0 (Release 15)
 
 ## Можливості
 
 - **FortiOS** 6.0–8.0 · **VDOM mode** + **VDOM map**
-- **Recipes: 65** (LLDP, 802.1X, Captive portal, EVPN, GRE, VXLAN, …)
+- **Recipes: 70** — повний remote-user pack (SSL VPN + dial-up IPsec)
 
 ## Встановлення
 
@@ -18,7 +18,7 @@ pip install -r requirements.txt && python src/main.py
 ## CI Release
 
 ```bash
-git tag v0.15.0 && git push origin v0.15.0
+git tag v0.16.0 && git push origin v0.16.0
 ```
 
 ## Документація

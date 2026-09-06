@@ -2,23 +2,23 @@
 
 GUI для складання CLI-команд діагностики FortiGate.
 
-**Версія:** 0.9.0 (Release 8)
+**Версія:** 0.10.0 (Release 9)
 
 ## Можливості
 
 ### Глобальні перемикачі (sidebar)
 - **FortiOS** 6.0–8.0 — version-aware синтаксис
-- **VDOM mode** — `config vdom` / `edit <name>` … `end`; Sessions/Flows `filter vd`
-  - **Global scope:** HA, System Top, Hardware, TAC без VDOM-wrap
-  - **VDOM map** (Settings): `name=index` для `filter vd`
+- **VDOM mode** — `config vdom` / `edit <name>`; Sessions/Flows `filter vd`
+  - Global scope: HA / System Top / Hardware / TAC без wrap
+  - **VDOM map** (Settings): `name=index`
 
 ### Вкладки
-Recipes (**51** playbooks), Sessions, Ping/Traceroute, Sniffer, Flows, Network, Policy Lookup, VPN, App Debug, DHCP, SD-WAN, Auth/FSSO, UTM/IPS, Wireless, Hardware/NPU, System Top, HA, Routing, TAC, SSH Logger, Saved, Settings, About.
+Recipes (**53** playbooks), Sessions, Ping/Traceroute, Sniffer, Flows, Network, Policy Lookup, VPN, App Debug, DHCP, SD-WAN, Auth/FSSO, UTM/IPS, Wireless, Hardware/NPU, System Top, HA, Routing, TAC, SSH Logger, Saved, Settings, About.
 
 ### Recipes (виділене)
-- **R6:** ADVPN · SIP · App Control · Email · File/DLP · Transparent · Modem
-- **R7:** повні тіла (OSPF, BGP, NPU, …)
-- **R8:** RIP neighbor · SSL VPN web-mode · VDOM name→index map
+- **R6–R7:** ADVPN, SIP, AppCtrl, OSPF/BGP, NPU, …
+- **R8:** RIP · SSL VPN web-mode · VDOM map
+- **R9:** IS-IS neighbor / LSP · Automation Stitch
 
 ## Встановлення
 
@@ -29,19 +29,12 @@ pip install -r requirements.txt
 python src/main.py
 ```
 
-## Збірка .exe
+## Збірка .exe / CI Release
 
 ```bash
-pip install pyinstaller
-python scripts/generate_icon.py
 pyinstaller build.spec
-```
-
-## CI Release
-
-```bash
-git tag vX.Y.Z
-git push origin main && git push origin vX.Y.Z
+# або:
+git tag v0.10.0 && git push origin v0.10.0   # → GitHub Actions EXE + Release
 ```
 
 ## Тести
@@ -52,4 +45,4 @@ pip install pytest && pytest tests/ -q
 
 ## Документація
 
-**[doc/INDEX.md](doc/INDEX.md)** · `CHANGELOG.md` · `doc/RELEASE_8_PLAN.md` ✅
+**[doc/INDEX.md](doc/INDEX.md)** · `CHANGELOG.md` · `doc/RELEASE_9_PLAN.md` ✅

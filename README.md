@@ -2,13 +2,21 @@
 
 GUI для складання CLI-команд діагностики FortiGate.
 
-**Версія:** 0.5.2
+**Версія:** 0.7.0 (Release 6)
 
 ## Можливості
 
-Recipes, Sessions, Ping/Traceroute, Sniffer, Flows, Network, Policy Lookup (version-aware), VPN (IKE version-aware + SSL), App Debug, DHCP, SD-WAN (6.x virtual-wan-link / 7.4+ service4), Auth/FSSO, UTM/IPS, Wireless/CAPWAP, Hardware/NPU, System Top, HA, Routing, TAC, SSH Logger, Saved, Settings, About.
+### Глобальні перемикачі (sidebar)
+- **FortiOS** 6.0–8.0 — version-aware синтаксис (IKE, SD-WAN, ZTNA, …)
+- **VDOM mode** — multi-VDOM: `config vdom` / `edit <name>` … `end`; Sessions/Flows `filter vd`
 
-Глобально: FortiOS 6.0–8.0 selector, safety-блоки, tooltips, config persist, scrollable UI.
+### Вкладки
+Recipes (**49** playbooks), Sessions, Ping/Traceroute, Sniffer, Flows, Network, Policy Lookup, VPN (IKE + SSL), App Debug, DHCP, SD-WAN, Auth/FSSO, UTM/IPS, Wireless/CAPWAP, Hardware/NPU, System Top, HA, Routing, TAC, SSH Logger, Saved, Settings, About.
+
+Safety-блоки (preamble/epilogue), tooltips, config persist, export bundle, scrollable UI.
+
+### Recipes Release 6 (нові)
+ADVPN / Shortcut · SIP / VoIP / ALG · Application Control / ISDB · Email filter · File filter / DLP · Transparent / Bridging · Modem / LTE / PPP
 
 ## Встановлення (з джерела)
 
@@ -45,9 +53,9 @@ git push origin main
 git push origin vX.Y.Z
 ```
 
-Після успішного workflow на сторінці **Releases** з'явиться `FortiDebugBuilder.exe`.
+Після успішного workflow на **Releases** з’явиться `FortiDebugBuilder.exe`.
 
-Можна також запустити workflow вручну (Actions → Build Windows EXE → Run workflow) — тоді буде тільки artifact без Release.
+Можна також запустити workflow вручну (Actions → Build Windows EXE → Run workflow) — artifact без Release.
 
 ## Тести
 
@@ -58,5 +66,8 @@ pytest tests/ -q
 
 ## Документація
 
-- `doc/PLAN.md`, `RELEASE_2_PLAN.md`, `RELEASE_3_PLAN.md`, `RELEASE_4_PLAN.md`, `RELEASE_5_PLAN.md`
+Єдина точка входу: **[doc/INDEX.md](doc/INDEX.md)**
+
+- `doc/RELEASE_6_PLAN.md` — Release 6 (0.7.0) ✅
+- `doc/CODEX_IMPLEMENTATION.md` — кодекс впровадження
 - `CHANGELOG.md`

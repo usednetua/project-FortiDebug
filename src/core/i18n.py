@@ -4,6 +4,10 @@ STRINGS = {
     "en": {
         "app_title": "FortiDebug Builder",
         "fortios": "FortiOS",
+        "vdom_mode": "VDOM mode",
+        "vdom_tip": "Multi-VDOM: wrap commands in config vdom / edit <name>",
+        "vdom_name_ph": "VDOM name (root)",
+        "vdom_name_tip": "VDOM to edit when mode is ON (e.g. root, vd-LAN)",
         "recipes": "Recipes",
         "sessions": "Sessions",
         "ping": "Ping",
@@ -53,6 +57,10 @@ STRINGS = {
     "uk": {
         "app_title": "FortiDebug Builder",
         "fortios": "FortiOS",
+        "vdom_mode": "Режим VDOM",
+        "vdom_tip": "Multi-VDOM: обгортає команди в config vdom / edit <name>",
+        "vdom_name_ph": "Ім’я VDOM (root)",
+        "vdom_name_tip": "VDOM для edit, коли режим увімкнено (root, vd-LAN…)",
         "recipes": "Рецепти",
         "sessions": "Сесії",
         "ping": "Ping",

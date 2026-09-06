@@ -9,14 +9,19 @@
 ## [Unreleased] — Release 6 (0.7.0)
 
 ### Added
-- **План Release 6** (`doc/RELEASE_6_PLAN.md`): gap-аналіз відкритих (публічних) FortiGate debug recipes, яких ще немає в додатку
+- **План Release 6** (`doc/RELEASE_6_PLAN.md`): gap-аналіз відкритих (публічних) FortiGate debug recipes
   - P0: ADVPN / Shortcut tunnels, SIP / VoIP / ALG, Application Control / ISDB
   - P1: Email filter, File filter / DLP, Transparent / Bridging, Modem / LTE, VDOM-aware wrappers
   - P2 backlog (RIP, IS-IS, SSL web-mode, IoC pack, …)
-- Оновлено `doc/INDEX.md` — додано Release 6, R5 позначено як архів/майже закритий
+- **Recipes +3 (45 total)** — `src/ui/tabs/recipe_r6.py` (`RecipeR6Mixin`):
+  - **ADVPN / Shortcut tunnels** — IKE gateway list/summary, `sdwan advpn` / `advpn-session` (7.0+), health-check, live `ike`+`sdwan` debug, optional flow/sniffer
+  - **SIP / VoIP / ALG** — session (pinholes), `diagnose debug application sip -1`, sniffer 5060 + RTP hint, flow
+  - **Application Control / ISDB** — `internet-service-app-ctrl-list`, ips session, app list, debug ipsmonitor, flow
+- `RecipesTab`: MRO `RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab`
+- Оновлено `doc/INDEX.md` — Release 6 in progress
 
 ### Changed
-- Старт нового спринту за Кодексом впровадження (план перед кодом)
+- Старт спринту за Кодексом впровадження (план перед кодом)
 
 ---
 

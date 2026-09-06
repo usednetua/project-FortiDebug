@@ -18,9 +18,11 @@ Session / flow filters can also use numeric VDOM index:
 
     diagnose sys session filter vd <index>
     diagnose debug flow filter vd <index>
+
+Optional **name→index map** (Settings) resolves named VDOMs to filter vd indices.
 """
 
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 # Tabs whose output stays in global context even when VDOM mode is ON.
 GLOBAL_SCOPE_TABS: Set[str] = {
@@ -40,11 +42,55 @@ GLOBAL_SCOPE_RECIPES: Set[str] = {
     "Log disk / crashlog",
     "FortiGuard / license",
     "NTP / time sync",
-    "Certificate / SSL inspect",  # cert store is global on multi-VDOM
+    "Certificate / SSL inspect",
 }
 
 SCOPE_GLOBAL = "global"
 SCOPE_VDOM = "vdom"
+
+# Built-in defaults when user has not configured a map entry.
+DEFAULT_VDOM_MAP: Dict[str, str] = {
+    "root": "0",
+}
+
+
+def normalize_vdom_map(raw) -> Dict[str, str]:
+    """Return {lowercase_name: index_str} from config dict or text lines."""
+    out: Dict[str, str] = {}
+    if isinstance(raw, dict):
+        for k, v in raw.items():
+            name = str(k).strip()
+            idx = str(v).strip()
+            if name and idx:
+                out[name.lower()] = idx
+        return out
+    if isinstance(raw, str):
+        for line in raw.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                name, idx = line.split("=", 1)
+            elif ":" in line:
+                name, idx = line.split(":", 1)
+            else:
+                continue
+            name, idx = name.strip(), idx.strip()
+            if name and idx:
+                out[name.lower()] = idx
+    return out
+
+
+def vdom_map_to_text(mapping: Dict[str, str]) -> str:
+    """Serialize map for Settings textbox."""
+    if not mapping:
+        return "root=0\n"
+    lines = []
+    # stable order: root first, then alpha
+    items = sorted(mapping.items(), key=lambda kv: (0 if kv[0] == "root" else 1, kv[0]))
+    for name, idx in items:
+        lines.append(f"{name}={idx}")
+    return "\n".join(lines) + "\n"
 
 
 def vdom_enter(name: str) -> List[str]:
@@ -72,7 +118,6 @@ def should_wrap_vdom(
     recipe_name: str = "",
     scope: str = "",
 ) -> bool:
-    """Return True only when VDOM wrap is appropriate."""
     if not enabled:
         return False
     if (scope or "").strip().lower() == SCOPE_GLOBAL:
@@ -93,11 +138,6 @@ def wrap_vdom_context(
     recipe_name: str = "",
     scope: str = "",
 ) -> str:
-    """Wrap generated command body in config vdom / edit / end when appropriate.
-
-    Global-scope tabs/recipes keep the body unchanged (only a comment may be added
-    by the caller).
-    """
     if not should_wrap_vdom(enabled, tab_key, recipe_name, scope):
         return body
     if not (body or "").strip():
@@ -123,11 +163,21 @@ def flow_filter_vd_line(filter_cmd: str, vd: str) -> Optional[str]:
     return f"{filter_cmd} vd {vd}"
 
 
-def resolve_vd_index(vdom_mode: bool, vdom_name: str, explicit_vd: str = "") -> str:
-    """Prefer explicit field; if VDOM mode on and name looks like index, use it.
+def resolve_vd_index(
+    vdom_mode: bool,
+    vdom_name: str,
+    explicit_vd: str = "",
+    name_map: Optional[Dict[str, str]] = None,
+) -> str:
+    """Resolve filter vd index.
 
-    FortiGate filter vd expects numeric index (0 = root typically).
-    If name is non-numeric, return empty for filter (context edit uses name).
+    Priority:
+      1. explicit_vd (UI override field)
+      2. if VDOM mode off → empty
+      3. if name is numeric → use as index
+      4. name_map lookup (case-insensitive)
+      5. DEFAULT_VDOM_MAP (root→0)
+      6. empty (context edit still uses the name)
     """
     explicit = (explicit_vd or "").strip()
     if explicit:
@@ -135,11 +185,14 @@ def resolve_vd_index(vdom_mode: bool, vdom_name: str, explicit_vd: str = "") -> 
     if not vdom_mode:
         return ""
     name = (vdom_name or "").strip()
+    if not name:
+        name = "root"
     if name.isdigit():
         return name
-    if name.lower() in ("root", ""):
-        return "0"
-    return ""
+    merged: Dict[str, str] = dict(DEFAULT_VDOM_MAP)
+    if name_map:
+        merged.update({k.lower(): str(v).strip() for k, v in name_map.items() if str(v).strip()})
+    return merged.get(name.lower(), "")
 
 
 def vdom_banner(enabled: bool, name: str = "root", *, wrapped: bool = True) -> str:

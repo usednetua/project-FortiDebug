@@ -1,6 +1,6 @@
 # Індекс документації FortiDebug Builder
 
-**Останнє оновлення:** 2026-09-05  
+**Останнє оновлення:** 2026-09-06  
 **Правило:** при створенні, зміні або видаленні будь-якого файлу в `doc/` — оновити цей INDEX у тому ж зміні (див. `AGENTS.md`).
 
 ---
@@ -39,7 +39,8 @@
 | [RELEASE_2_PLAN.md](./RELEASE_2_PLAN.md) | План Release 2 | 📦 Архів |
 | [RELEASE_3_PLAN.md](./RELEASE_3_PLAN.md) | План Release 3 | 📦 Архів |
 | [RELEASE_4_PLAN.md](./RELEASE_4_PLAN.md) | План Release 4 | 📦 Архів |
-| [RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | План Release 5 (0.6.0) | 🔄 In progress |
+| [RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | План Release 5 (0.6.0) | 📦 Архів / майже закритий |
+| [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | План Release 6 (0.7.0) — gap відкритих recipes (ADVPN, SIP, App Control, …) | 🔄 In progress |
 
 ---
 

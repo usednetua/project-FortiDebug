@@ -5,7 +5,7 @@ import webbrowser
 from ui.tabs.base_tab import BaseTab
 from core.i18n import t
 
-APP_VERSION = "0.13.0"
+APP_VERSION = "0.14.0"
 AUTHOR = "used.net.ua"
 WEBSITE = "https://used.net.ua"
 
@@ -44,7 +44,7 @@ class AboutTab(BaseTab):
         ctk.CTkLabel(
             self,
             text="FortiDebug Builder — Windows CLI helper for FortiGate diagnostics.\n"
-            "60 recipes · FortiOS + VDOM map · global-scope carve-out.",
+            "62 recipes · FortiOS + VDOM map · global-scope carve-out.",
             text_color="gray",
             wraplength=480,
             justify="left",

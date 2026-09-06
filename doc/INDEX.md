@@ -19,8 +19,8 @@
 
 | Документ | Опис | Статус |
 |----------|------|--------|
-| [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | Кодекс впровадження: план перед кодом, таблиця етапів, перевірка «не зламай!» | ✅ Актуальний |
-| [INDEX.md](./INDEX.md) | Цей файл — каталог усієї документації в `doc/` | ✅ Актуальний |
+| [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | Кодекс впровадження | ✅ Актуальний |
+| [INDEX.md](./INDEX.md) | Каталог документації в `doc/` | ✅ Актуальний |
 
 ---
 
@@ -28,7 +28,7 @@
 
 | Документ | Опис | Статус |
 |----------|------|--------|
-| [PLAN.md](./PLAN.md) | Початковий максимально детальний план Windows FortiDebug Builder | 📦 Архів / база (історичний) |
+| [PLAN.md](./PLAN.md) | Початковий план Windows FortiDebug Builder | 📦 Архів / база |
 
 ---
 
@@ -36,11 +36,12 @@
 
 | Документ | Опис | Статус |
 |----------|------|--------|
-| [RELEASE_2_PLAN.md](./RELEASE_2_PLAN.md) | План Release 2 | 📦 Архів |
-| [RELEASE_3_PLAN.md](./RELEASE_3_PLAN.md) | План Release 3 | 📦 Архів |
-| [RELEASE_4_PLAN.md](./RELEASE_4_PLAN.md) | План Release 4 | 📦 Архів |
-| [RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | План Release 5 (0.6.0) | 📦 Архів |
-| [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | План Release 6 (0.7.0) — 49 recipes + global VDOM | ✅ Done / 📦 Архів |
+| [RELEASE_2_PLAN.md](./RELEASE_2_PLAN.md) | Release 2 | 📦 Архів |
+| [RELEASE_3_PLAN.md](./RELEASE_3_PLAN.md) | Release 3 | 📦 Архів |
+| [RELEASE_4_PLAN.md](./RELEASE_4_PLAN.md) | Release 4 | 📦 Архів |
+| [RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | Release 5 | 📦 Архів |
+| [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | Release 6 (0.7.0) — recipes + VDOM | ✅ Done / 📦 Архів |
+| [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | Release 7 (0.8.0) — restore stubs + polish | 🔄 In progress |
 
 ---
 
@@ -48,26 +49,26 @@
 
 | Документ | Опис | Статус |
 |----------|------|--------|
-| [FEATURE_DOC_INDEX_PLAN.md](./FEATURE_DOC_INDEX_PLAN.md) | План створення інтерактивного індексу документації | ✅ Done |
+| [FEATURE_DOC_INDEX_PLAN.md](./FEATURE_DOC_INDEX_PLAN.md) | Індекс документації | ✅ Done |
 
 ---
 
 ## 5. Як користуватись індексом
 
-1. **Новий документ у `doc/`** → додати рядок у відповідну таблицю + дату «Останнє оновлення».
-2. **Зміна статусу плану** → оновити колонку «Статус» тут і в таблиці всередині плану.
-3. **Видалення документа** → прибрати рядок з INDEX у тому ж коміті.
-4. **README** посилається на цей INDEX як єдину точку входу в документацію.
+1. Новий документ у `doc/` → рядок у таблиці + дата.  
+2. Зміна статусу плану → INDEX + таблиця всередині плану.  
+3. Видалення → прибрати з INDEX у тому ж коміті.  
+4. README → посилання на INDEX.
 
-### Легенда статусів
+### Легенда
 
 | Позначка | Значення |
 |----------|----------|
-| ✅ Актуальний / Done | Дійсний, підтримується |
+| ✅ Done / Актуальний | Дійсний |
 | 🔄 In progress | Активна робота |
-| 📦 Архів | Завершений / історичний |
+| 📦 Архів | Завершений |
 | ⬜ Todo | Заплановано |
 
 ---
 
-*Підтримується згідно з Кодексом впровадження та `AGENTS.md`.*
+*Кодекс впровадження + `AGENTS.md`.*

@@ -11,12 +11,14 @@ from ui.tabs.recipe_r10 import RecipeR10Mixin
 from ui.tabs.recipe_r11 import RecipeR11Mixin
 from ui.tabs.recipe_r12 import RecipeR12Mixin
 from ui.tabs.recipe_r13 import RecipeR13Mixin
+from ui.tabs.recipe_r14 import RecipeR14Mixin
 from core.fortios_version import DEFAULT_VERSION
 from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(
+    RecipeR14Mixin,
     RecipeR13Mixin,
     RecipeR12Mixin,
     RecipeR11Mixin,
@@ -89,9 +91,12 @@ class RecipesTab(
         "GRE / IP-in-IP tunnel",
         "VXLAN",
         "CGNAT / hyperscale session",
-        # Release 13
         "EVPN / VXLAN-EVPN",
         "WebCache / WCCP",
+        # Release 14
+        "LLDP / CDP neighbors",
+        "802.1X wired auth",
+        "Captive portal",
     ]
 
     def __init__(
@@ -244,6 +249,9 @@ class RecipesTab(
             "CGNAT / hyperscale session": lambda: self._cgnat(src, dst),
             "EVPN / VXLAN-EVPN": lambda: self._evpn(peer),
             "WebCache / WCCP": lambda: self._webcache_wccp(src, dst),
+            "LLDP / CDP neighbors": lambda: self._lldp_cdp(iface),
+            "802.1X wired auth": lambda: self._dot1x(src, iface),
+            "Captive portal": lambda: self._captive_portal(src),
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.safety import preamble, epilogue
+from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
@@ -14,8 +15,10 @@ class FlowsTab(BaseTab):
         "Policy match": {"fn": True, "iprope": True, "count": "100"},
     }
 
-    def __init__(self, master, on_change=None, **kwargs):
+    def __init__(self, master, on_change=None, get_vdom_mode=None, get_vdom_name=None, **kwargs):
         super().__init__(master, on_change=on_change, **kwargs)
+        self.get_vdom_mode = get_vdom_mode or (lambda: False)
+        self.get_vdom_name = get_vdom_name or (lambda: "root")
         self._build_ui()
 
     def _build_ui(self):
@@ -157,6 +160,10 @@ class FlowsTab(BaseTab):
                 except ValueError:
                     idx = 0
                 lines.insert(idx, "diagnose debug flow filter6 clear")
+
+        vd = resolve_vd_index(self.get_vdom_mode(), self.get_vdom_name(), "")
+        if vd:
+            lines.append(f"{filt} vd {vd}")
 
         addr = self.addr.get().strip()
         if addr:

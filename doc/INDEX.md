@@ -1,34 +1,24 @@
 # Індекс документації FortiDebug Builder
 
 **Останнє оновлення:** 2026-09-06  
-**Правило:** при створенні, зміні або видаленні будь-якого файлу в `doc/` — оновити цей INDEX у тому ж зміні (див. `AGENTS.md`).
-
----
-
-## Зміст
-
-1. [Кодекси та процеси](#1-кодекси-та-процеси)
-2. [Master plan](#2-master-plan)
-3. [Плани релізів](#3-плани-релізів)
-4. [Плани фіч / задач](#4-плани-фіч--задач)
-5. [Як користуватись індексом](#5-як-користуватись-індексом)
+**Правило:** при зміні `doc/` — оновити цей INDEX (див. `AGENTS.md`).
 
 ---
 
 ## 1. Кодекси та процеси
 
-| Документ | Опис | Статус |
-|----------|------|--------|
-| [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | Кодекс впровадження | ✅ Актуальний |
-| [INDEX.md](./INDEX.md) | Каталог документації в `doc/` | ✅ Актуальний |
+| Документ | Статус |
+|----------|--------|
+| [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | ✅ Актуальний |
+| [INDEX.md](./INDEX.md) | ✅ Актуальний |
 
 ---
 
 ## 2. Master plan
 
-| Документ | Опис | Статус |
-|----------|------|--------|
-| [PLAN.md](./PLAN.md) | Початковий план Windows FortiDebug Builder | 📦 Архів / база |
+| Документ | Статус |
+|----------|--------|
+| [PLAN.md](./PLAN.md) | 📦 Архів / база |
 
 ---
 
@@ -40,35 +30,18 @@
 | [RELEASE_3_PLAN.md](./RELEASE_3_PLAN.md) | Release 3 | 📦 Архів |
 | [RELEASE_4_PLAN.md](./RELEASE_4_PLAN.md) | Release 4 | 📦 Архів |
 | [RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | Release 5 | 📦 Архів |
-| [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | Release 6 (0.7.0) — recipes + VDOM | ✅ Done / 📦 Архів |
-| [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | Release 7 (0.8.0) — restore stubs + global scope | ✅ Done / 📦 Архів |
+| [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | 0.7.0 recipes + VDOM | ✅ Done / 📦 |
+| [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | 0.8.0 stubs + global scope | ✅ Done / 📦 |
+| [RELEASE_8_PLAN.md](./RELEASE_8_PLAN.md) | 0.9.0 VDOM map + P2 | 🔄 In progress |
 
 ---
 
-## 4. Плани фіч / задач
+## 4. Плани фіч
 
-| Документ | Опис | Статус |
-|----------|------|--------|
-| [FEATURE_DOC_INDEX_PLAN.md](./FEATURE_DOC_INDEX_PLAN.md) | Індекс документації | ✅ Done |
-
----
-
-## 5. Як користуватись індексом
-
-1. Новий документ у `doc/` → рядок у таблиці + дата.  
-2. Зміна статусу плану → INDEX + таблиця всередині плану.  
-3. Видалення → прибрати з INDEX у тому ж коміті.  
-4. README → посилання на INDEX.
-
-### Легенда
-
-| Позначка | Значення |
-|----------|----------|
-| ✅ Done / Актуальний | Дійсний |
-| 🔄 In progress | Активна робота |
-| 📦 Архів | Завершений |
-| ⬜ Todo | Заплановано |
+| Документ | Статус |
+|----------|--------|
+| [FEATURE_DOC_INDEX_PLAN.md](./FEATURE_DOC_INDEX_PLAN.md) | ✅ Done |
 
 ---
 
-*Кодекс впровадження + `AGENTS.md`.*
+*Кодекс + `AGENTS.md`.*

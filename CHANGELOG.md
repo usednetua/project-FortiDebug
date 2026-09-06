@@ -6,17 +6,23 @@
 
 ---
 
-## [Unreleased] — Release 8 (0.9.0)
+## [0.9.0] — 2026-09-06 — Release 8
 
 ### Added
-- **VDOM name→index map** (Settings): рядки `name=index` → `config.json` `vdom_map`
-  - `resolve_vd_index` використовує карту для `filter vd` (Sessions / Flows / Recipes)
-  - default `root=0`; іменовані VDOM (vd-LAN=1, …)
-- `normalize_vdom_map` / `vdom_map_to_text` у `core.vdom`
+- **VDOM name→index map** (Settings): `name=index` → `config.json` `vdom_map`
+  - `resolve_vd_index` для Sessions / Flows / Recipes `filter vd`
+  - default `root=0`
+- **Recipes +2 (51 total)** — `recipe_r8.py`:
+  - RIP neighbor / routes
+  - SSL VPN web-mode
+- `normalize_vdom_map` / `vdom_map_to_text`
 - `doc/RELEASE_8_PLAN.md`
 
 ### Changed
-- Settings: редактор карти + «Зберегти карту VDOM»
+- About / README → **0.9.0**
+
+### Backlog → 1.0.x
+- IS-IS, IoC pack, Automation Stitch, Cloud SDN
 
 ---
 
@@ -24,9 +30,6 @@
 
 ### Added
 - Restore 24 stubs; global-scope VDOM carve-out; тести
-
-### Changed
-- About / README → **0.8.0**
 
 ---
 

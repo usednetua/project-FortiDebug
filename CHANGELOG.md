@@ -6,29 +6,31 @@
 
 ---
 
+## [Unreleased] — Release 17 (0.18.0)
+
+### Added
+- Logging pack (`recipe_r17.py`):
+  - Log disk full / filesystem
+  - Syslog not received
+  - FAZ OFTP / connectivity deep
+  - Memory logging / miglogd
+  - Traffic log missing
+  - Event log search / filter
+  - Log rate / miglogd load
+
+---
+
 ## [0.17.0] — 2026-09-06 — Release 16
 
 ### Added
-- **WiFi / FortiAP pack +8 (78 total)** — `recipe_r16.py`:
-  - FortiAP offline / CAPWAP join
-  - WiFi client cannot associate
-  - WiFi 802.1X / WPA-Enterprise
-  - WiFi associated / no traffic
-  - WiFi roaming / sticky client
-  - Rogue AP / WIDS
-  - Radio RF / channel check
-  - cw_acd / controller load
-
-### Changed
-- About / README → **0.17.0**
-- Peer field hint: MAC / FAP SN
+- WiFi / FortiAP pack (78)
 
 ---
 
 ## [0.16.0] — 2026-09-06 — Release 15
 
 ### Added
-- Remote-user pack (70)
+- Remote-user pack
 
 ---
 

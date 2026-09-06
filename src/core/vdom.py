@@ -195,7 +195,8 @@ def resolve_vd_index(
     if name.isdigit():
         return name
     merged: Dict[str, str] = dict(DEFAULT_VDOM_MAP)
-    if name_map is None:
+    # Empty dict from tab default lambda → still load persisted Settings map
+    if not name_map:
         name_map = _load_map_from_config()
     if name_map:
         merged.update({k.lower(): str(v).strip() for k, v in name_map.items() if str(v).strip()})

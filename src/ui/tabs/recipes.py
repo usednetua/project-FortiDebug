@@ -54,11 +54,9 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         "Link-monitor / health-check",
         "Antivirus / AV engine",
         "Traffic shaping / QoS",
-        # --- Release 6 P0 ---
         "ADVPN / Shortcut tunnels",
         "SIP / VoIP / ALG",
         "Application Control / ISDB",
-        # --- Release 6 P1 ---
         "Email filter / Antispam",
         "File filter / DLP",
         "Transparent mode / Bridging",
@@ -72,12 +70,14 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         get_version=None,
         get_vdom_mode=None,
         get_vdom_name=None,
+        get_vdom_map=None,
         **kwargs,
     ):
         super().__init__(master, on_change=on_change, **kwargs)
         self.get_version = get_version or (lambda: DEFAULT_VERSION)
         self.get_vdom_mode = get_vdom_mode or (lambda: False)
         self.get_vdom_name = get_vdom_name or (lambda: "root")
+        self.get_vdom_map = get_vdom_map or (lambda: {})
         self._build_ui()
 
     def _build_ui(self):
@@ -118,18 +118,27 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         self.wan.grid(row=7, column=1, sticky="ew", padx=10, pady=4)
         self.wan.bind("<KeyRelease>", self.notify_change)
         ctk.CTkLabel(self, text="VDOM index override").grid(row=8, column=0, sticky="w", padx=10, pady=4)
-        self.vdom = ctk.CTkEntry(self, placeholder_text="optional; sidebar VDOM switch is primary")
+        self.vdom = ctk.CTkEntry(self, placeholder_text="optional; map/sidebar is primary")
         self.vdom.grid(row=8, column=1, sticky="ew", padx=10, pady=4)
         self.vdom.bind("<KeyRelease>", self.notify_change)
         tip(
             self.vdom,
-            "Override filter vd. Основний режим — перемикач VDOM у sidebar (config vdom + edit).",
+            "Override filter vd. Інакше — Settings map + sidebar VDOM name.",
         )
         self.grid_columnconfigure(1, weight=1)
 
+    def current_recipe_name(self) -> str:
+        try:
+            return self.recipe.get() or ""
+        except Exception:
+            return ""
+
     def _resolved_vd(self) -> str:
         return resolve_vd_index(
-            self.get_vdom_mode(), self.get_vdom_name(), self.vdom.get().strip()
+            self.get_vdom_mode(),
+            self.get_vdom_name(),
+            self.vdom.get().strip(),
+            self.get_vdom_map(),
         )
 
     def generate_commands(self) -> str:
@@ -184,11 +193,9 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
             "Link-monitor / health-check": self._link_monitor,
             "Antivirus / AV engine": lambda: self._antivirus(src, dst),
             "Traffic shaping / QoS": self._shaper,
-            # Release 6 P0
             "ADVPN / Shortcut tunnels": lambda: self._advpn(version, peer, iface, src, dst),
             "SIP / VoIP / ALG": lambda: self._sip_voip(src, dst, port, iface),
             "Application Control / ISDB": lambda: self._app_control(version, src, dst),
-            # Release 6 P1
             "Email filter / Antispam": lambda: self._email_filter(src, dst),
             "File filter / DLP": lambda: self._file_dlp(src, dst),
             "Transparent mode / Bridging": lambda: self._transparent_bridge(iface),

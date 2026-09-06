@@ -6,15 +6,18 @@
 
 ---
 
-## [Unreleased] — Release 15 (0.16.0)
+## [0.16.0] — 2026-09-06 — Release 15
 
 ### Added
-- Remote-user pack (`recipe_r15.py`):
+- **Remote-user pack +5 (70 total)** — `recipe_r15.py`:
   - SSL VPN connected / no traffic
   - Dial-up IPsec up / inner traffic fail
   - SSL VPN realm / portal / group
   - SSL VPN DTLS / MTU / fragment
   - SSL VPN IP pool / wrong address
+
+### Changed
+- About / README → **0.16.0**
 
 ---
 

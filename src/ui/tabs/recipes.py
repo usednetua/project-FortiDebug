@@ -53,10 +53,15 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         "Link-monitor / health-check",
         "Antivirus / AV engine",
         "Traffic shaping / QoS",
-        # --- Release 6 ---
+        # --- Release 6 P0 ---
         "ADVPN / Shortcut tunnels",
         "SIP / VoIP / ALG",
         "Application Control / ISDB",
+        # --- Release 6 P1 ---
+        "Email filter / Antispam",
+        "File filter / DLP",
+        "Transparent mode / Bridging",
+        "Modem / LTE / PPP",
     ]
 
     def __init__(self, master, on_change=None, get_version=None, **kwargs):
@@ -154,10 +159,15 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
             "Link-monitor / health-check": self._link_monitor,
             "Antivirus / AV engine": lambda: self._antivirus(src, dst),
             "Traffic shaping / QoS": self._shaper,
-            # Release 6
+            # Release 6 P0
             "ADVPN / Shortcut tunnels": lambda: self._advpn(version, peer, iface, src, dst),
             "SIP / VoIP / ALG": lambda: self._sip_voip(src, dst, port, iface),
             "Application Control / ISDB": lambda: self._app_control(version, src, dst),
+            # Release 6 P1
+            "Email filter / Antispam": lambda: self._email_filter(src, dst),
+            "File filter / DLP": lambda: self._file_dlp(src, dst),
+            "Transparent mode / Bridging": lambda: self._transparent_bridge(iface),
+            "Modem / LTE / PPP": lambda: self._modem_lte(iface),
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

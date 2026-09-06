@@ -5,5 +5,5 @@
 | Документ | Версія | Статус |
 |----------|--------|--------|
 | [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | — | ✅ |
-| [RELEASE_11_PLAN.md](./RELEASE_11_PLAN.md) | 0.12.0 | ✅ |
-| [RELEASE_12_PLAN.md](./RELEASE_12_PLAN.md) | 0.13.0 GRE/VXLAN/CGNAT | ✅ |
+| [RELEASE_12_PLAN.md](./RELEASE_12_PLAN.md) | 0.13.0 | ✅ |
+| [RELEASE_13_PLAN.md](./RELEASE_13_PLAN.md) | 0.14.0 EVPN+WCCP | ✅ |

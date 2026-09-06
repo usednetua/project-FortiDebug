@@ -15,10 +15,19 @@ class FlowsTab(BaseTab):
         "Policy match": {"fn": True, "iprope": True, "count": "100"},
     }
 
-    def __init__(self, master, on_change=None, get_vdom_mode=None, get_vdom_name=None, **kwargs):
+    def __init__(
+        self,
+        master,
+        on_change=None,
+        get_vdom_mode=None,
+        get_vdom_name=None,
+        get_vdom_map=None,
+        **kwargs,
+    ):
         super().__init__(master, on_change=on_change, **kwargs)
         self.get_vdom_mode = get_vdom_mode or (lambda: False)
         self.get_vdom_name = get_vdom_name or (lambda: "root")
+        self.get_vdom_map = get_vdom_map or (lambda: {})
         self._build_ui()
 
     def _build_ui(self):
@@ -161,7 +170,9 @@ class FlowsTab(BaseTab):
                     idx = 0
                 lines.insert(idx, "diagnose debug flow filter6 clear")
 
-        vd = resolve_vd_index(self.get_vdom_mode(), self.get_vdom_name(), "")
+        vd = resolve_vd_index(
+            self.get_vdom_mode(), self.get_vdom_name(), "", self.get_vdom_map()
+        )
         if vd:
             lines.append(f"{filt} vd {vd}")
 

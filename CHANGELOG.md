@@ -6,10 +6,10 @@
 
 ---
 
-## [Unreleased] — Release 16 (0.17.0)
+## [0.17.0] — 2026-09-06 — Release 16
 
 ### Added
-- WiFi / FortiAP pack (`recipe_r16.py`):
+- **WiFi / FortiAP pack +8 (78 total)** — `recipe_r16.py`:
   - FortiAP offline / CAPWAP join
   - WiFi client cannot associate
   - WiFi 802.1X / WPA-Enterprise
@@ -19,12 +19,16 @@
   - Radio RF / channel check
   - cw_acd / controller load
 
+### Changed
+- About / README → **0.17.0**
+- Peer field hint: MAC / FAP SN
+
 ---
 
 ## [0.16.0] — 2026-09-06 — Release 15
 
 ### Added
-- Remote-user pack (70 recipes)
+- Remote-user pack (70)
 
 ---
 

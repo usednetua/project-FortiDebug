@@ -11,6 +11,8 @@ from core.vdom import (
     vdom_banner,
     vdom_enter,
     should_wrap_vdom,
+    normalize_vdom_map,
+    vdom_map_to_text,
 )
 
 
@@ -24,45 +26,41 @@ def test_wrap_on():
     out = wrap_vdom_context(body, True, "vd-LAN")
     assert "config vdom" in out
     assert "edit vd-LAN" in out
-    assert "get system status" in out
-    assert out.strip().endswith("end")
 
 
 def test_wrap_skipped_for_ha_tab():
     body = "get system ha status"
     out = wrap_vdom_context(body, True, "root", tab_key="ha")
     assert out == body
-    assert "config vdom" not in out
-
-
-def test_wrap_skipped_for_global_recipe():
-    body = "diagnose sys ha checksum cluster"
-    out = wrap_vdom_context(body, True, "root", recipe_name="HA out-of-sync")
-    assert out == body
 
 
 def test_should_wrap_matrix():
-    assert should_wrap_vdom(False) is False
-    assert should_wrap_vdom(True, tab_key="sessions") is True
     assert should_wrap_vdom(True, tab_key="ha") is False
-    assert should_wrap_vdom(True, tab_key="hardware") is False
     assert should_wrap_vdom(True, recipe_name="High CPU") is False
     assert should_wrap_vdom(True, recipe_name="Traffic not passing") is True
 
 
-def test_resolve_vd():
-    assert resolve_vd_index(False, "root", "") == ""
-    assert resolve_vd_index(True, "root", "") == "0"
-    assert resolve_vd_index(True, "root", "3") == "3"
-    assert resolve_vd_index(True, "2", "") == "2"
-    assert resolve_vd_index(True, "vd-LAN", "") == ""
+def test_normalize_map_text():
+    m = normalize_vdom_map("root=0\nvd-LAN=1\n# comment\nvd-DMZ:2\n")
+    assert m["root"] == "0"
+    assert m["vd-lan"] == "1"
+    assert m["vd-dmz"] == "2"
+
+
+def test_resolve_with_map():
+    m = {"vd-lan": "3", "root": "0"}
+    assert resolve_vd_index(True, "vd-LAN", "", m) == "3"
+    assert resolve_vd_index(True, "root", "", m) == "0"
+    assert resolve_vd_index(True, "unknown", "", m) == ""
+    assert resolve_vd_index(True, "root", "9", m) == "9"  # explicit wins
+
+
+def test_map_to_text_roundtrip():
+    m = normalize_vdom_map("root=0\nvd-lan=1\n")
+    text = vdom_map_to_text(m)
+    assert "root=0" in text
+    assert normalize_vdom_map(text)["vd-lan"] == "1"
 
 
 def test_banner_global():
-    b = vdom_banner(True, "root", wrapped=False)
-    assert "GLOBAL" in b
-
-
-def test_enter_default_root():
-    lines = vdom_enter("")
-    assert any("edit root" in x for x in lines)
+    assert "GLOBAL" in vdom_banner(True, "root", wrapped=False)

@@ -6,23 +6,24 @@
 
 ---
 
+## [Unreleased] — Release 12 (0.13.0)
+
+### Added
+- Recipes: **GRE / IP-in-IP tunnel**, **VXLAN**, **CGNAT / hyperscale session**
+
+---
+
 ## [0.12.0] — 2026-09-06 — Release 11
 
 ### Added
-- **Recipes +2 (57 total)** — `recipe_r11.py`:
-  - BFD neighbor
-  - SAML SSO / admin login
-- tests: R8–R11 bodies in `test_no_stubs.py`
-
-### Changed
-- About / README → **0.12.0**
+- BFD + SAML SSO (57 recipes)
 
 ---
 
 ## [0.11.0] — 2026-09-06 — Release 10
 
 ### Added
-- IoC / Threat feed + Cloud SDN (55)
+- IoC / Threat feed + Cloud SDN
 
 ---
 

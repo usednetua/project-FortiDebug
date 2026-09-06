@@ -6,15 +6,17 @@
 
 ---
 
+## [Unreleased] — Release 14 (0.15.0)
+
+### Added
+- Recipes: **LLDP / CDP neighbors**, **802.1X wired auth**, **Captive portal**
+
+---
+
 ## [0.14.0] — 2026-09-06 — Release 13
 
 ### Added
-- **Recipes +2 (62 total)** — `recipe_r13.py`:
-  - EVPN / VXLAN-EVPN
-  - WebCache / WCCP
-
-### Changed
-- About / README → **0.14.0**
+- EVPN + WebCache/WCCP (62)
 
 ---
 

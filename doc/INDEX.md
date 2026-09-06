@@ -5,5 +5,5 @@
 | Документ | Версія | Статус |
 |----------|--------|--------|
 | [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | — | ✅ |
-| [RELEASE_13_PLAN.md](./RELEASE_13_PLAN.md) | 0.14.0 | ✅ |
-| [RELEASE_14_PLAN.md](./RELEASE_14_PLAN.md) | 0.15.0 LLDP/802.1X/Captive | ✅ |
+| [RELEASE_14_PLAN.md](./RELEASE_14_PLAN.md) | 0.15.0 | ✅ |
+| [RELEASE_15_PLAN.md](./RELEASE_15_PLAN.md) | 0.16.0 remote users | ✅ |

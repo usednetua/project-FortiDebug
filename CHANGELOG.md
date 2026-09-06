@@ -6,25 +6,32 @@
 
 ---
 
+## [Unreleased] — Release 16 (0.17.0)
+
+### Added
+- WiFi / FortiAP pack (`recipe_r16.py`):
+  - FortiAP offline / CAPWAP join
+  - WiFi client cannot associate
+  - WiFi 802.1X / WPA-Enterprise
+  - WiFi associated / no traffic
+  - WiFi roaming / sticky client
+  - Rogue AP / WIDS
+  - Radio RF / channel check
+  - cw_acd / controller load
+
+---
+
 ## [0.16.0] — 2026-09-06 — Release 15
 
 ### Added
-- **Remote-user pack +5 (70 total)** — `recipe_r15.py`:
-  - SSL VPN connected / no traffic
-  - Dial-up IPsec up / inner traffic fail
-  - SSL VPN realm / portal / group
-  - SSL VPN DTLS / MTU / fragment
-  - SSL VPN IP pool / wrong address
-
-### Changed
-- About / README → **0.16.0**
+- Remote-user pack (70 recipes)
 
 ---
 
 ## [0.15.0] — 2026-09-06 — Release 14
 
 ### Added
-- LLDP / 802.1X / Captive portal (65)
+- LLDP / 802.1X / Captive portal
 
 ---
 

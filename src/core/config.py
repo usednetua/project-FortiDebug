@@ -28,6 +28,7 @@ def _defaults() -> Dict[str, Any]:
         "fortios": "7.4.x",
         "vdom_enabled": False,
         "vdom_name": "root",
+        "vdom_map": {"root": "0"},
     }
 
 
@@ -41,6 +42,9 @@ def load_config() -> Dict[str, Any]:
             data = json.load(f)
         if isinstance(data, dict):
             base.update(data)
+            # ensure vdom_map is always a dict
+            if not isinstance(base.get("vdom_map"), dict):
+                base["vdom_map"] = {"root": "0"}
         return base
     except (json.JSONDecodeError, OSError):
         return base

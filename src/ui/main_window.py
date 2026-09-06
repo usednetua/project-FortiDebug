@@ -38,7 +38,7 @@ from core.fortios_version import (
     VERSION_LABELS,
     parse_version,
 )
-from core.vdom import wrap_vdom_context, vdom_banner
+from core.vdom import wrap_vdom_context, vdom_banner, should_wrap_vdom
 from core.i18n import t, set_lang, get_lang
 from ui.widgets.tooltip import tip
 
@@ -336,21 +336,48 @@ class MainWindow(ctk.CTk):
         else:
             self.preview.delete("1.0", "end")
 
+    def _recipe_name(self, tab) -> str:
+        if self.current_tab != "recipes":
+            return ""
+        if hasattr(tab, "current_recipe_name"):
+            try:
+                return tab.current_recipe_name() or ""
+            except Exception:
+                pass
+        if hasattr(tab, "recipe"):
+            try:
+                return tab.recipe.get() or ""
+            except Exception:
+                pass
+        return ""
+
     def on_tab_change(self):
         tab = self.tabs.get(self.current_tab)
         if tab and hasattr(tab, "generate_commands"):
             cmds = tab.generate_commands()
-            # Global VDOM wrap (tabs that already emit config vdom are left as-is)
             if self.current_tab not in ("saved", "settings", "about", "ssh_logger"):
-                banner = vdom_banner(self.vdom_enabled, self.get_vdom_name())
-                body = cmds if cmds.startswith("#") or not cmds else cmds
-                wrapped = wrap_vdom_context(body, self.vdom_enabled, self.get_vdom_name())
-                if self.vdom_enabled:
-                    cmds = banner + "\n" + wrapped
-                else:
-                    # optional one-line mode marker only when off and non-empty
-                    if body.strip():
-                        cmds = banner + "\n" + body
+                recipe = self._recipe_name(tab)
+                do_wrap = should_wrap_vdom(
+                    self.vdom_enabled,
+                    tab_key=self.current_tab or "",
+                    recipe_name=recipe,
+                )
+                banner = vdom_banner(
+                    self.vdom_enabled,
+                    self.get_vdom_name(),
+                    wrapped=do_wrap,
+                )
+                body = cmds
+                if do_wrap:
+                    body = wrap_vdom_context(
+                        cmds,
+                        True,
+                        self.get_vdom_name(),
+                        tab_key=self.current_tab or "",
+                        recipe_name=recipe,
+                    )
+                if body.strip():
+                    cmds = banner + "\n" + body
             self.preview.delete("1.0", "end")
             self.preview.insert("1.0", cmds)
 

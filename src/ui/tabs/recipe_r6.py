@@ -1,4 +1,4 @@
-"""Release 6 recipe expansion — open playbooks gap (ADVPN, SIP, App Control)."""
+"""Release 6 recipe expansion — open playbooks gap (ADVPN, SIP, App Control + P1)."""
 
 from core.fortios_version import (
     FortiOSVersion,
@@ -14,7 +14,7 @@ from core.safety import preamble, epilogue
 
 
 class RecipeR6Mixin:
-    """P0 playbooks for Release 6: ADVPN, SIP/VoIP, Application Control / ISDB."""
+    """Release 6 playbooks: P0 ADVPN/SIP/AppCtrl + P1 Email/File-DLP/Transparent/Modem."""
 
     def _advpn(self, version, peer: str, iface: str, src: str, dst: str) -> str:
         lines = [
@@ -168,4 +168,151 @@ class RecipeR6Mixin:
         if src or dst:
             lines += ["", "# flow to see app / ISDB decision"]
             lines.extend(self._flow_block(src, dst, ""))
+        return "\n".join(lines)
+
+    # ----- P1 -----
+
+    def _email_filter(self, src: str, dst: str) -> str:
+        lines = [
+            "# === Recipe: Email filter / Antispam ===",
+            "# SMTP/IMAP/POP3 filtering, FortiGuard antispam, local filters",
+            "",
+            "get system email-server",
+            "diagnose test application emailfilter 1",
+            "diagnose test application emailfilter",
+            "",
+        ]
+        lines.extend(self._session_block(src, dst, "25"))
+        lines += [
+            "",
+            "diagnose sys session filter clear",
+            "diagnose sys session filter dport 25",
+            "diagnose sys session list",
+            "diagnose sys session filter clear",
+            "diagnose sys session filter dport 587",
+            "diagnose sys session list",
+            "",
+        ]
+        lines.extend(preamble(reset=True, timestamps=True))
+        lines += [
+            "diagnose debug application emailfilter -1",
+            "diagnose debug application smtp -1",
+            "diagnose debug enable",
+        ]
+        lines.extend(epilogue(stop=True))
+        parts = ["port 25 or port 465 or port 587 or port 110 or port 143 or port 993"]
+        if src:
+            parts.insert(0, f"host {src}")
+        if dst:
+            parts.insert(0 if not src else 1, f"host {dst}")
+        filt = " and ".join(parts) if len(parts) > 1 else parts[0]
+        lines += [
+            "",
+            f"diagnose sniffer packet any '{filt}' 4 0 l",
+        ]
+        if src or dst:
+            lines += ["", "# flow"]
+            lines.extend(self._flow_block(src, dst, "25"))
+        return "\n".join(lines)
+
+    def _file_dlp(self, src: str, dst: str) -> str:
+        lines = [
+            "# === Recipe: File filter / DLP ===",
+            "# File type/extension block, DLP fingerprints / sensitivity",
+            "",
+            "diagnose antivirus statistics",
+            "diagnose sys scanunit stats",
+            "",
+            "# DLP / file-filter related (names vary by version; use ? on device)",
+            "diagnose test application dlp",
+            "diagnose test application file-filter",
+            "",
+        ]
+        lines.extend(self._session_block(src, dst, ""))
+        lines += [""]
+        lines.extend(preamble(reset=True, timestamps=True))
+        lines += [
+            "diagnose debug application dlp -1",
+            "diagnose debug application scanunitd -1",
+            "# diagnose debug application file-filter -1",
+            "diagnose debug enable",
+        ]
+        lines.extend(epilogue(stop=True))
+        if src or dst:
+            lines += ["", "# flow"]
+            lines.extend(self._flow_block(src, dst, ""))
+        return "\n".join(lines)
+
+    def _transparent_bridge(self, iface: str) -> str:
+        lines = [
+            "# === Recipe: Transparent mode / Bridging ===",
+            "# Bridge table, FDB, transparent policies, L2 path",
+            "",
+            "get system status",
+            "# confirm Operation Mode: Transparent vs NAT",
+            "",
+            "diagnose netlink brctl list",
+            "diagnose netlink brctl name host root.b",
+            "show system interface",
+            "diagnose netlink interface list",
+            "",
+            "get system arp",
+            "diagnose ip arp list",
+            "",
+        ]
+        if iface and iface != "any":
+            lines += [
+                f"# interface focus: {iface}",
+                f"diagnose hardware deviceinfo nic {iface}",
+                f"diagnose sniffer packet {iface} 'arp or stp' 4 0 l",
+            ]
+        else:
+            lines.append("diagnose sniffer packet any 'arp or stp' 4 0 l")
+        lines += [
+            "",
+            "# policy / forward in transparent (use policy lookup tab too)",
+            "diagnose firewall iprope list",
+        ]
+        return "\n".join(lines)
+
+    def _modem_lte(self, iface: str) -> str:
+        lines = [
+            "# === Recipe: Modem / LTE / PPP ===",
+            "# Cellular link, PPP state, signal, link-monitor",
+            "",
+            "get system modem",
+            "diagnose sys modem",
+            "get system interface physical",
+            "diagnose netlink interface list",
+            "",
+            "diagnose sys link-monitor status",
+            "diagnose sys link-monitor interface",
+            "",
+            "get system performance status",
+            "diagnose ip address list",
+            "",
+        ]
+        if iface and iface != "any":
+            lines += [
+                f"# modem / wwan interface: {iface}",
+                f"diagnose hardware deviceinfo nic {iface}",
+                f"diagnose sniffer packet {iface} '' 4 20 l",
+            ]
+        else:
+            lines += [
+                "# set Interface field to wwan / lte / modem if known",
+                "# diagnose hardware deviceinfo nic <wwan>",
+            ]
+        lines += [
+            "",
+            "# PPP / modem daemons (availability varies)",
+            "diagnose sys top 5 20",
+            "# diagnose debug application modemd -1  # if present",
+        ]
+        lines.extend(preamble(reset=True, timestamps=True))
+        lines += [
+            "diagnose debug application link-monitor -1",
+            "diagnose debug enable",
+        ]
+        lines.extend(epilogue(stop=True))
         return "\n".join(lines)

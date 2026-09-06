@@ -6,27 +6,33 @@
 
 ---
 
+## [0.11.0] — 2026-09-06 — Release 10
+
+### Added
+- **Recipes +2 (55 total)** — `recipe_r10.py`:
+  - IoC / Threat feed (forticron, botnet tables, integrity hints)
+  - Cloud SDN connector (AWS/Azure/GCP/OCI/K8s status + debug)
+- `doc/RELEASE_10_PLAN.md`
+
+### Changed
+- About / README → **0.11.0**
+
+### Note
+- CI EXE: `git tag v0.11.0 && git push origin v0.11.0`
+
+---
+
 ## [0.10.0] — 2026-09-06 — Release 9
 
 ### Added
-- **Recipes +2 (53 total)** — `recipe_r9.py`:
-  - IS-IS neighbor / LSP
-  - Automation Stitch
-- `doc/RELEASE_9_PLAN.md`
-
-### Changed
-- About / README → **0.10.0**
-
-### Backlog
-- IoC pack, Cloud SDN
-- Теги `v0.9.0` / `v0.10.0` → CI EXE (`git tag` + push)
+- IS-IS + Automation Stitch (53 recipes)
 
 ---
 
 ## [0.9.0] — 2026-09-06 — Release 8
 
 ### Added
-- VDOM name→index map; RIP + SSL VPN web-mode (51 recipes)
+- VDOM map; RIP + SSL VPN web-mode
 
 ---
 
@@ -40,7 +46,7 @@
 ## [0.7.0] — 2026-09-06 — Release 6
 
 ### Added
-- Recipes +7 + глобальний VDOM mode
+- Recipes +7 + VDOM mode
 
 ---
 

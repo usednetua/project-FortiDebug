@@ -6,30 +6,36 @@
 
 ---
 
+## [Unreleased] — Release 15 (0.16.0)
+
+### Added
+- Remote-user pack (`recipe_r15.py`):
+  - SSL VPN connected / no traffic
+  - Dial-up IPsec up / inner traffic fail
+  - SSL VPN realm / portal / group
+  - SSL VPN DTLS / MTU / fragment
+  - SSL VPN IP pool / wrong address
+
+---
+
 ## [0.15.0] — 2026-09-06 — Release 14
 
 ### Added
-- **Recipes +3 (65 total)** — `recipe_r14.py`:
-  - LLDP / CDP neighbors
-  - 802.1X wired auth
-  - Captive portal
-
-### Changed
-- About / README → **0.15.0**
+- LLDP / 802.1X / Captive portal (65)
 
 ---
 
 ## [0.14.0] — 2026-09-06 — Release 13
 
 ### Added
-- EVPN + WebCache/WCCP (62)
+- EVPN + WebCache/WCCP
 
 ---
 
 ## [0.13.0] — 2026-09-06 — Release 12
 
 ### Added
-- GRE / VXLAN / CGNAT (60)
+- GRE / VXLAN / CGNAT
 
 ---
 

@@ -19,12 +19,12 @@ Session / flow filters can also use numeric VDOM index:
     diagnose sys session filter vd <index>
     diagnose debug flow filter vd <index>
 
-Optional **name→index map** (Settings) resolves named VDOMs to filter vd indices.
+Optional **name→index map** (Settings / config.json `vdom_map`) resolves named
+VDOMs to filter vd indices.
 """
 
 from typing import Dict, List, Optional, Set
 
-# Tabs whose output stays in global context even when VDOM mode is ON.
 GLOBAL_SCOPE_TABS: Set[str] = {
     "ha",
     "system_top",
@@ -32,7 +32,6 @@ GLOBAL_SCOPE_TABS: Set[str] = {
     "tac",
 }
 
-# Recipe scenario names that are global-only (no config vdom wrap).
 GLOBAL_SCOPE_RECIPES: Set[str] = {
     "HA out-of-sync",
     "NPU / offload check",
@@ -48,7 +47,6 @@ GLOBAL_SCOPE_RECIPES: Set[str] = {
 SCOPE_GLOBAL = "global"
 SCOPE_VDOM = "vdom"
 
-# Built-in defaults when user has not configured a map entry.
 DEFAULT_VDOM_MAP: Dict[str, str] = {
     "root": "0",
 }
@@ -82,15 +80,22 @@ def normalize_vdom_map(raw) -> Dict[str, str]:
 
 
 def vdom_map_to_text(mapping: Dict[str, str]) -> str:
-    """Serialize map for Settings textbox."""
     if not mapping:
         return "root=0\n"
     lines = []
-    # stable order: root first, then alpha
     items = sorted(mapping.items(), key=lambda kv: (0 if kv[0] == "root" else 1, kv[0]))
     for name, idx in items:
         lines.append(f"{name}={idx}")
     return "\n".join(lines) + "\n"
+
+
+def _load_map_from_config() -> Dict[str, str]:
+    try:
+        from core.config import load_config
+
+        return normalize_vdom_map(load_config().get("vdom_map") or {})
+    except Exception:
+        return {}
 
 
 def vdom_enter(name: str) -> List[str]:
@@ -175,7 +180,7 @@ def resolve_vd_index(
       1. explicit_vd (UI override field)
       2. if VDOM mode off → empty
       3. if name is numeric → use as index
-      4. name_map lookup (case-insensitive)
+      4. name_map (or config vdom_map) lookup
       5. DEFAULT_VDOM_MAP (root→0)
       6. empty (context edit still uses the name)
     """
@@ -190,6 +195,8 @@ def resolve_vd_index(
     if name.isdigit():
         return name
     merged: Dict[str, str] = dict(DEFAULT_VDOM_MAP)
+    if name_map is None:
+        name_map = _load_map_from_config()
     if name_map:
         merged.update({k.lower(): str(v).strip() for k, v in name_map.items() if str(v).strip()})
     return merged.get(name.lower(), "")

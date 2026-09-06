@@ -6,37 +6,41 @@
 
 ---
 
+## [0.10.0] — 2026-09-06 — Release 9
+
+### Added
+- **Recipes +2 (53 total)** — `recipe_r9.py`:
+  - IS-IS neighbor / LSP
+  - Automation Stitch
+- `doc/RELEASE_9_PLAN.md`
+
+### Changed
+- About / README → **0.10.0**
+
+### Backlog
+- IoC pack, Cloud SDN
+- Теги `v0.9.0` / `v0.10.0` → CI EXE (`git tag` + push)
+
+---
+
 ## [0.9.0] — 2026-09-06 — Release 8
 
 ### Added
-- **VDOM name→index map** (Settings): `name=index` → `config.json` `vdom_map`
-  - `resolve_vd_index` для Sessions / Flows / Recipes `filter vd`
-  - default `root=0`
-- **Recipes +2 (51 total)** — `recipe_r8.py`:
-  - RIP neighbor / routes
-  - SSL VPN web-mode
-- `normalize_vdom_map` / `vdom_map_to_text`
-- `doc/RELEASE_8_PLAN.md`
-
-### Changed
-- About / README → **0.9.0**
-
-### Backlog → 1.0.x
-- IS-IS, IoC pack, Automation Stitch, Cloud SDN
+- VDOM name→index map; RIP + SSL VPN web-mode (51 recipes)
 
 ---
 
 ## [0.8.0] — 2026-09-06 — Release 7
 
 ### Added
-- Restore 24 stubs; global-scope VDOM carve-out; тести
+- Restore stubs; global-scope VDOM carve-out
 
 ---
 
 ## [0.7.0] — 2026-09-06 — Release 6
 
 ### Added
-- Recipes +7 (49) + глобальний VDOM mode
+- Recipes +7 + глобальний VDOM mode
 
 ---
 

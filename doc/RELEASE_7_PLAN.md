@@ -2,6 +2,7 @@
 
 **Цільова версія:** 0.8.0  
 **Старт:** 2026-09-06  
+**Закрито:** 2026-09-06  
 **Тема:** відновлення stub-рецептів + polish VDOM / global-only commands
 
 ---
@@ -14,9 +15,9 @@
 | 1 | Restore 24 stubs → `recipe_impl.py` | ✅ Done | P0 | |
 | 2 | Smoke: жоден recipe не `pending restore` | ✅ Done | P0 | `test_no_stubs.py` |
 | 3 | Global-only cmds без VDOM wrap | ✅ Done | P1 | tabs HA/Top/HW/TAC + recipes |
-| 4 | VDOM name→index optional mapping (Settings) | ⬜ Todo | P2 | |
-| 5 | P2 recipes (RIP / IS-IS / SSL web-mode / …) | ⬜ Todo | P2 | backlog |
-| 6 | README + bump 0.8.0 + INDEX | ⬜ Todo | P0 | кінець спринту |
+| 4 | VDOM name→index optional mapping (Settings) | 📦 Backlog 0.9 | P2 | |
+| 5 | P2 recipes (RIP / IS-IS / SSL web-mode / …) | 📦 Backlog 0.9 | P2 | |
+| 6 | README + bump 0.8.0 + INDEX | ✅ Done | P0 | 2026-09-06 |
 
 ---
 
@@ -34,8 +35,16 @@
 - [x] Усі `_missing` замінені  
 - [x] Тест no stubs  
 - [x] Global-scope carve-out  
-- [ ] Version 0.8.0 + README  
+- [x] Version 0.8.0 + README  
 
 ---
 
-*Оновлено: 2026-09-06*
+## Backlog → 0.9.x (Release 8)
+
+1. VDOM name→index mapping у Settings  
+2. P2 recipes: RIP, IS-IS, SSL web-mode, IoC pack, Automation Stitch, Cloud SDN  
+3. Теги `v0.7.0` / `v0.8.0` + CI EXE (за бажанням)
+
+---
+
+*Закрито: 2026-09-06*

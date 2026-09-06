@@ -5,40 +5,23 @@
 
 ---
 
-## 1. Кодекси та процеси
+## 1. Кодекси
 
 | Документ | Статус |
 |----------|--------|
-| [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | ✅ Актуальний |
-| [INDEX.md](./INDEX.md) | ✅ Актуальний |
+| [CODEX_IMPLEMENTATION.md](./CODEX_IMPLEMENTATION.md) | ✅ |
+| [INDEX.md](./INDEX.md) | ✅ |
 
 ---
 
-## 2. Master plan
+## 2. Плани релізів
 
-| Документ | Статус |
-|----------|--------|
-| [PLAN.md](./PLAN.md) | 📦 Архів / база |
-
----
-
-## 3. Плани релізів
-
-| Документ | Опис | Статус |
-|----------|------|--------|
-| [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | 0.7.0 | ✅ Done / 📦 |
-| [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | 0.8.0 | ✅ Done / 📦 |
-| [RELEASE_8_PLAN.md](./RELEASE_8_PLAN.md) | 0.9.0 | ✅ Done / 📦 |
-| [RELEASE_9_PLAN.md](./RELEASE_9_PLAN.md) | 0.10.0 | ✅ Done / 📦 |
-| [RELEASE_10_PLAN.md](./RELEASE_10_PLAN.md) | 0.11.0 IoC + Cloud SDN | ✅ Done / 📦 |
-
----
-
-## 4. Плани фіч
-
-| Документ | Статус |
-|----------|--------|
-| [FEATURE_DOC_INDEX_PLAN.md](./FEATURE_DOC_INDEX_PLAN.md) | ✅ Done |
+| Документ | Версія | Статус |
+|----------|--------|--------|
+| [RELEASE_8_PLAN.md](./RELEASE_8_PLAN.md) | 0.9.0 | ✅ |
+| [RELEASE_9_PLAN.md](./RELEASE_9_PLAN.md) | 0.10.0 | ✅ |
+| [RELEASE_10_PLAN.md](./RELEASE_10_PLAN.md) | 0.11.0 | ✅ |
+| [RELEASE_11_PLAN.md](./RELEASE_11_PLAN.md) | 0.12.0 BFD+SAML | ✅ |
 
 ---
 

@@ -6,24 +6,30 @@
 
 ---
 
-## [Unreleased] — Release 12 (0.13.0)
+## [0.13.0] — 2026-09-06 — Release 12
 
 ### Added
-- Recipes: **GRE / IP-in-IP tunnel**, **VXLAN**, **CGNAT / hyperscale session**
+- **Recipes +3 (60 total)** — `recipe_r12.py`:
+  - GRE / IP-in-IP tunnel
+  - VXLAN
+  - CGNAT / hyperscale session
+
+### Changed
+- About / README → **0.13.0**
 
 ---
 
 ## [0.12.0] — 2026-09-06 — Release 11
 
 ### Added
-- BFD + SAML SSO (57 recipes)
+- BFD + SAML SSO (57)
 
 ---
 
 ## [0.11.0] — 2026-09-06 — Release 10
 
 ### Added
-- IoC / Threat feed + Cloud SDN
+- IoC + Cloud SDN
 
 ---
 
@@ -37,14 +43,14 @@
 ## [0.9.0] — 2026-09-06 — Release 8
 
 ### Added
-- VDOM map; RIP + SSL VPN web-mode
+- VDOM map; RIP + SSL web-mode
 
 ---
 
 ## [0.8.0] — 2026-09-06 — Release 7
 
 ### Added
-- Restore stubs; global-scope VDOM
+- Restore stubs; global VDOM carve-out
 
 ---
 
@@ -58,7 +64,7 @@
 ## [0.5.2] — 2026-09-05
 
 ### Added
-- CI / Release Windows EXE
+- CI Windows EXE
 
 ---
 

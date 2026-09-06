@@ -8,12 +8,14 @@ from ui.tabs.recipe_r6 import RecipeR6Mixin
 from ui.tabs.recipe_r8 import RecipeR8Mixin
 from ui.tabs.recipe_r9 import RecipeR9Mixin
 from ui.tabs.recipe_r10 import RecipeR10Mixin
+from ui.tabs.recipe_r11 import RecipeR11Mixin
 from core.fortios_version import DEFAULT_VERSION
 from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(
+    RecipeR11Mixin,
     RecipeR10Mixin,
     RecipeR9Mixin,
     RecipeR8Mixin,
@@ -76,9 +78,11 @@ class RecipesTab(
         "SSL VPN web-mode",
         "IS-IS neighbor / LSP",
         "Automation Stitch",
-        # Release 10
         "IoC / Threat feed",
         "Cloud SDN connector",
+        # Release 11
+        "BFD neighbor",
+        "SAML SSO / admin login",
     ]
 
     def __init__(
@@ -224,6 +228,8 @@ class RecipesTab(
             "Automation Stitch": self._automation_stitch,
             "IoC / Threat feed": lambda: self._ioc_threat_feed(src),
             "Cloud SDN connector": self._cloud_sdn,
+            "BFD neighbor": lambda: self._bfd(peer),
+            "SAML SSO / admin login": lambda: self._saml_sso(src),
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

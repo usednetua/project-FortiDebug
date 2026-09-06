@@ -6,49 +6,36 @@
 
 ---
 
-## [0.7.0] — 2026-09-06 — Release 6
+## [Unreleased] — Release 7 (0.8.0)
 
 ### Added
-- **Recipes +7 (49 total)** — `src/ui/tabs/recipe_r6.py` (`RecipeR6Mixin`):
-  - **P0:** ADVPN / Shortcut tunnels; SIP / VoIP / ALG; Application Control / ISDB
-  - **P1:** Email filter / Antispam; File filter / DLP; Transparent mode / Bridging; Modem / LTE / PPP
-- **Глобальний перемикач VDOM** (sidebar, поруч із FortiOS):
-  - Switch **VDOM mode** + поле імені VDOM (default `root`)
-  - **ON:** preview → `config vdom` / `edit <name>` … `end` / `end`
-  - **OFF:** без multi-VDOM контексту
-  - Sessions / Flows / Recipes: `filter vd` через `resolve_vd_index`
-  - Persist: `vdom_enabled`, `vdom_name` у config.json
-- `src/core/vdom.py`, `tests/test_vdom.py`, `tests/test_recipes_r6.py`
-- План: `doc/RELEASE_6_PLAN.md`
+- **Restore stubs:** 24 playbooks у `recipe_impl.py` відновлено з `artifacts/recipes_final.py`
+  (Dial-up IPsec, SSL VPN, Policy/NAT, VIP, Local-in, OSPF, BGP, Routing, DHCP, Auth/FSSO,
+  DNS, Webfilter, IPS/UTM, Explicit proxy, Wireless, LACP, Interface, NPU, Certificate,
+  FortiGuard, Log disk, NTP, IPv6, Multicast)
+- `doc/RELEASE_7_PLAN.md` — план 0.8.0
 
 ### Changed
-- `_session_block` / `_flow_block` — optional `vd` (backward-compatible)
-- Export bundle header включає стан VDOM mode
-- About / README version **0.7.0**
+- Більше немає stub `# pending restore` у Recipes (усі 49 з реальними тілами)
 
 ---
 
-## [Unreleased] — Release 5
+## [0.7.0] — 2026-09-06 — Release 6
 
 ### Added
-- **Індекс документації** (`doc/INDEX.md`)
-- **Кодекс впровадження** (`doc/CODEX_IMPLEMENTATION.md`)
-- **Recipes**: 42 playbooks (+10), mixins `recipe_extra` / `recipe_impl`
-- Export bundle, sidebar search, SSL/SD-WAN recipes
+- **Recipes +7 (49 total)** — `RecipeR6Mixin`: ADVPN, SIP/VoIP, App Control/ISDB, Email, File/DLP, Transparent, Modem/LTE
+- **Глобальний VDOM mode** (sidebar) + `core.vdom` + filter vd
+- `tests/test_vdom.py`, `tests/test_recipes_r6.py`
 
 ### Changed
-- `AGENTS.md`: обов’язок актуалізувати `doc/INDEX.md`
+- About / README → **0.7.0**
 
 ---
 
 ## [0.5.2] — 2026-09-05
 
 ### Added
-- **CI / Release**: GitHub Actions — збірка `FortiDebugBuilder.exe` + Release на тег `v*`
-
-### Changed
-- `.gitignore`: `build.spec` у репозиторії
-- README: секція «Автоматичний реліз»
+- CI / Release: Windows EXE + GitHub Release на тег `v*`
 
 ---
 
@@ -66,13 +53,6 @@
 
 ### Added
 - Wireless, Hardware/NPU, First steps, persist, scroll
-
----
-
-## [0.4.0] — 2026-09-05
-
-### Added
-- Network, Policy Lookup, VIP, SSL, DHCP, SD-WAN, Auth, …
 
 ---
 

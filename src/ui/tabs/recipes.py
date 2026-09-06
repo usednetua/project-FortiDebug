@@ -13,12 +13,14 @@ from ui.tabs.recipe_r12 import RecipeR12Mixin
 from ui.tabs.recipe_r13 import RecipeR13Mixin
 from ui.tabs.recipe_r14 import RecipeR14Mixin
 from ui.tabs.recipe_r15 import RecipeR15Mixin
+from ui.tabs.recipe_r16 import RecipeR16Mixin
 from core.fortios_version import DEFAULT_VERSION
 from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(
+    RecipeR16Mixin,
     RecipeR15Mixin,
     RecipeR14Mixin,
     RecipeR13Mixin,
@@ -98,12 +100,20 @@ class RecipesTab(
         "LLDP / CDP neighbors",
         "802.1X wired auth",
         "Captive portal",
-        # Release 15 — remote users
         "SSL VPN connected / no traffic",
         "Dial-up IPsec up / inner traffic fail",
         "SSL VPN realm / portal / group",
         "SSL VPN DTLS / MTU / fragment",
         "SSL VPN IP pool / wrong address",
+        # Release 16 — WiFi
+        "FortiAP offline / CAPWAP join",
+        "WiFi client cannot associate",
+        "WiFi 802.1X / WPA-Enterprise",
+        "WiFi associated / no traffic",
+        "WiFi roaming / sticky client",
+        "Rogue AP / WIDS",
+        "Radio RF / channel check",
+        "cw_acd / controller load",
     ]
 
     def __init__(
@@ -153,7 +163,7 @@ class RecipesTab(
         self.port.grid(row=5, column=1, sticky="ew", padx=10, pady=4)
         self.port.bind("<KeyRelease>", self.notify_change)
         ctk.CTkLabel(self, text="Peer / Phase1 / Neighbor").grid(row=6, column=0, sticky="w", padx=10, pady=4)
-        self.peer = ctk.CTkEntry(self, placeholder_text="IP or name")
+        self.peer = ctk.CTkEntry(self, placeholder_text="IP or name / MAC / FAP SN")
         self.peer.grid(row=6, column=1, sticky="ew", padx=10, pady=4)
         self.peer.bind("<KeyRelease>", self.notify_change)
         ctk.CTkLabel(self, text="Interface").grid(row=7, column=0, sticky="w", padx=10, pady=4)
@@ -268,6 +278,16 @@ class RecipesTab(
             "SSL VPN realm / portal / group": lambda: self._ssl_realm_portal_group(src),
             "SSL VPN DTLS / MTU / fragment": lambda: self._ssl_dtls_mtu(src),
             "SSL VPN IP pool / wrong address": lambda: self._ssl_ip_pool(src),
+            "FortiAP offline / CAPWAP join": lambda: self._wifi_ap_offline(peer, iface),
+            "WiFi client cannot associate": lambda: self._wifi_client_assoc(peer, src),
+            "WiFi 802.1X / WPA-Enterprise": lambda: self._wifi_wpa_enterprise(peer, src),
+            "WiFi associated / no traffic": lambda: self._wifi_assoc_no_traffic(
+                src, dst, port
+            ),
+            "WiFi roaming / sticky client": lambda: self._wifi_roaming(peer),
+            "Rogue AP / WIDS": self._wifi_rogue_wids,
+            "Radio RF / channel check": lambda: self._wifi_radio_rf(peer),
+            "cw_acd / controller load": self._wifi_cw_acd_load,
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

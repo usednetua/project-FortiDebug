@@ -11,17 +11,17 @@
 | # | Крок | Стан | Пріоритет | Примітки |
 |---|------|------|-----------|----------|
 | 0 | План R8 + INDEX + CHANGELOG | ✅ Done | P0 | |
-| 1 | `vdom_map` у config + `resolve_vd_index` | 🔄 | P0 | name → filter vd index |
-| 2 | Settings UI: редактор mapping | 🔄 | P0 | |
-| 3 | Тести mapping | ⬜ | P1 | |
-| 4 | P2 recipe (мінімум 1–2) | ⬜ | P2 | RIP / SSL web-mode … |
-| 5 | README + bump 0.9.0 | ⬜ | P0 | кінець спринту |
+| 1 | `vdom_map` у config + `resolve_vd_index` | ✅ Done | P0 | auto-load from config |
+| 2 | Settings UI: редактор mapping | ✅ Done | P0 | |
+| 3 | Тести mapping | ✅ Done | P1 | |
+| 4 | P2 recipe (мінімум 1–2) | ⬜ Todo | P2 | RIP / SSL web-mode … |
+| 5 | README + bump 0.9.0 | ⬜ Todo | P0 | |
 
 ---
 
 ## VDOM map
 
-Користувач задає відповідність імен VDOM числовим індексам (як на FortiGate у `diagnose sys session filter vd`):
+Settings → текст:
 
 ```
 root=0
@@ -29,7 +29,7 @@ vd-LAN=1
 vd-DMZ=2
 ```
 
-Зберігається в `config.json` → `vdom_map: { "root": "0", ... }`.
+→ `config.json` `vdom_map`. Sessions/Flows/Recipes: `filter vd` через `resolve_vd_index`.
 
 ---
 

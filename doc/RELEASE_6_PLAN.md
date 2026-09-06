@@ -20,31 +20,30 @@
 | 7 | Recipe: **File filter + DLP** | ✅ Done | P1 | combined |
 | 8 | Recipe: **Transparent mode / Bridging** | ✅ Done | P1 | |
 | 9 | Recipe: **Modem / LTE / PPP** | ✅ Done | P1 | |
-| 10 | Recipe: **VDOM-aware wrappers** | ⬜ Todo | P1 | optional vd field |
-| 11 | Regression «не зламай!» | ⬜ Todo | P0 | smoke 49 + helpers |
-| 12 | Тести (pytest) на нові генератори | ⬜ Todo | P1 | |
+| 10 | **VDOM-aware wrappers** | ✅ Done | P1 | UI field + session/flow `vd` |
+| 11 | Regression «не зламай!» | ✅ Done | P0 | helpers backward-compatible (`vd=""`); headless tests |
+| 12 | Тести (pytest) на нові генератори | ✅ Done | P1 | `tests/test_recipes_r6.py` |
 | 13 | README + bump 0.7.0 + INDEX | ⬜ Todo | P0 | |
 
-**Поточна кількість playbooks: 49** (42 + 3 P0 + 4 P1).
+**Playbooks: 49** (42 + 3 P0 + 4 P1). VDOM — UI field, не окремий recipe.
 
 ---
 
 ## Критерії готовності Release 6
 
 - [x] Мінімум 3 P0 recipes у UI і в dispatch  
-- [x] P1: щонайменше 2 з 5 (зроблено 4; лишився VDOM)  
-- [ ] Жодної регресії на існуючих  
-- [ ] CHANGELOG, INDEX, README оновлені (CHANGELOG/INDEX частково)  
-- [ ] Теги / CI зелені (якщо pytest у workflow)
+- [x] P1: ≥2 з 5 (+ VDOM field)  
+- [x] Helpers без breaking change (`vd` optional)  
+- [x] `test_recipes_r6.py` додано  
+- [ ] README + version 0.7.0  
 
 ---
 
 ## Залишок
 
-1. **VDOM** (крок 10) — optional поле / `vd` у filters  
-2. **Regression** (11) — import RecipesTab, generate усі 49 без exception  
-3. **pytest** (12) — unit на `_advpn` / `_sip_voip` / `_email_filter`  
-4. **README + 0.7.0** (13)
+1. **README** — згадати 49 recipes, R6 list, VDOM field  
+2. **Bump 0.7.0** (about / package metadata якщо є)  
+3. INDEX: після релізу статус R6 → Done / Архів  
 
 P2 backlog (0.8.x): RIP, IS-IS, SSL web-mode, IoC pack, Automation Stitch, Cloud SDN.
 

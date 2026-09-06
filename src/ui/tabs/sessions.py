@@ -3,6 +3,7 @@
 import customtkinter as ctk
 from ui.tabs.base_tab import BaseTab
 from core.validators import is_valid_ip, is_valid_port, is_valid_policy_id
+from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
@@ -16,8 +17,10 @@ class SessionsTab(BaseTab):
         "ESP (50)": 50,
     }
 
-    def __init__(self, master, on_change=None, **kwargs):
+    def __init__(self, master, on_change=None, get_vdom_mode=None, get_vdom_name=None, **kwargs):
         super().__init__(master, on_change=on_change, **kwargs)
+        self.get_vdom_mode = get_vdom_mode or (lambda: False)
+        self.get_vdom_name = get_vdom_name or (lambda: "root")
         self._build_ui()
 
     def _build_ui(self):
@@ -55,10 +58,11 @@ class SessionsTab(BaseTab):
         self.proto.set("Any")
         self.proto.grid(row=6, column=1, sticky="ew", padx=10, pady=4)
 
-        ctk.CTkLabel(self, text="VDOM index").grid(row=7, column=0, sticky="w", padx=10, pady=4)
-        self.vdom = ctk.CTkEntry(self, placeholder_text="(optional)")
+        ctk.CTkLabel(self, text="VDOM index (override)").grid(row=7, column=0, sticky="w", padx=10, pady=4)
+        self.vdom = ctk.CTkEntry(self, placeholder_text="optional; global VDOM switch fills if empty")
         self.vdom.grid(row=7, column=1, sticky="ew", padx=10, pady=4)
         self.vdom.bind("<KeyRelease>", self.notify_change)
+        tip(self.vdom, "filter vd <index>. Якщо порожньо і VDOM mode ON — береться з sidebar (root→0)")
 
         ctk.CTkLabel(self, text="Policy ID").grid(row=8, column=0, sticky="w", padx=10, pady=4)
         self.policy = ctk.CTkEntry(self, placeholder_text="optional")
@@ -133,6 +137,12 @@ class SessionsTab(BaseTab):
         pfx = "diagnose sys session6" if self.ipv6.get() else "diagnose sys session"
         lines = [f"{pfx} filter clear"]
 
+        vd = resolve_vd_index(
+            self.get_vdom_mode(), self.get_vdom_name(), self.vdom.get().strip()
+        )
+        if vd:
+            lines.append(f"{pfx} filter vd {vd}")
+
         src = self.src_ip.get().strip()
         if src and is_valid_ip(src):
             lines.append(f"{pfx} filter src {src}")
@@ -149,10 +159,6 @@ class SessionsTab(BaseTab):
         proto_val = self.PROTOCOLS.get(self.proto.get())
         if proto_val is not None:
             lines.append(f"{pfx} filter proto {proto_val}")
-
-        vdom = self.vdom.get().strip()
-        if vdom:
-            lines.append(f"{pfx} filter vd {vdom}")
 
         policy = self.policy.get().strip()
         if policy and is_valid_policy_id(policy):

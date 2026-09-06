@@ -12,7 +12,17 @@ from core.safety import preamble, epilogue
 
 
 class RecipeImplMixin:
-    """Helpers + core recipes. Extended by RecipeExtraMixin."""
+    """Helpers + core recipes. Extended by RecipeExtraMixin / RecipeR6Mixin."""
+
+    def _vdom_banner(self, vd: str) -> list:
+        """Advisory lines when VDOM index/name is set (CLI context is operator responsibility)."""
+        if not vd:
+            return []
+        return [
+            f"# VDOM context: {vd}",
+            f"# If multi-VDOM: config vdom → edit <name>  OR  session/flow filter vd <index>",
+            "",
+        ]
 
     def _sniffer(self, iface: str, src: str, dst: str, port: str, proto: str = "") -> str:
         parts = []
@@ -27,8 +37,10 @@ class RecipeImplMixin:
         filt = " and ".join(parts) if parts else ""
         return f"diagnose sniffer packet {iface} '{filt}' 4 0 l"
 
-    def _session_block(self, src: str, dst: str, port: str) -> list:
+    def _session_block(self, src: str, dst: str, port: str, vd: str = "") -> list:
         lines = ["diagnose sys session filter clear"]
+        if vd:
+            lines.append(f"diagnose sys session filter vd {vd}")
         if src:
             lines.append(f"diagnose sys session filter src {src}")
         if dst:
@@ -38,8 +50,10 @@ class RecipeImplMixin:
         lines.append("diagnose sys session list")
         return lines
 
-    def _flow_block(self, src: str, dst: str, port: str, count: str = "100") -> list:
+    def _flow_block(self, src: str, dst: str, port: str, count: str = "100", vd: str = "") -> list:
         lines = list(preamble(reset=True, clear_flow_filter=True, timestamps=True))
+        if vd:
+            lines.append(f"diagnose debug flow filter vd {vd}")
         if src:
             lines.append(f"diagnose debug flow filter saddr {src}")
         if dst:
@@ -56,8 +70,8 @@ class RecipeImplMixin:
         lines.extend(epilogue(stop=True))
         return lines
 
-    def _first_steps(self, src: str, dst: str, port: str) -> str:
-        lines = [
+    def _first_steps(self, src: str, dst: str, port: str, vd: str = "") -> str:
+        lines = self._vdom_banner(vd) + [
             "# === Recipe: First steps connectivity ===",
             "# sniffer → session → flow → routing",
             "",
@@ -66,9 +80,9 @@ class RecipeImplMixin:
             "",
             "# 2) Sessions",
         ]
-        lines.extend(self._session_block(src, dst, port))
+        lines.extend(self._session_block(src, dst, port, vd))
         lines += ["", "# 3) Debug flow"]
-        lines.extend(self._flow_block(src, dst, port))
+        lines.extend(self._flow_block(src, dst, port, vd=vd))
         lines += ["", "# 4) Routing"]
         lines.append(
             f"get router info routing-table details {dst}"
@@ -77,11 +91,11 @@ class RecipeImplMixin:
         )
         return "\n".join(lines)
 
-    def _traffic_not_passing(self, src: str, dst: str, port: str) -> str:
-        lines = ["# === Recipe: Traffic not passing ===", "", "# Sessions"]
-        lines.extend(self._session_block(src, dst, port))
+    def _traffic_not_passing(self, src: str, dst: str, port: str, vd: str = "") -> str:
+        lines = self._vdom_banner(vd) + ["# === Recipe: Traffic not passing ===", "", "# Sessions"]
+        lines.extend(self._session_block(src, dst, port, vd))
         lines += ["", "# Flow"]
-        lines.extend(self._flow_block(src, dst, port, "200"))
+        lines.extend(self._flow_block(src, dst, port, "200", vd=vd))
         lines += ["", "# Sniffer", self._sniffer("any", src, dst, port)]
         return "\n".join(lines)
 

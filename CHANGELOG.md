@@ -6,19 +6,26 @@
 
 ---
 
-## [Unreleased] — Release 7 (0.8.0)
+## [0.8.0] — 2026-09-06 — Release 7
 
 ### Added
 - **Restore stubs:** 24 playbooks у `recipe_impl.py` відновлено з `artifacts/recipes_final.py`
-- **Global-scope VDOM carve-out:** вкладки HA / System Top / Hardware / TAC і recipes
-  (HA, High CPU/mem, NPU, TAC, FortiGuard, NTP, Log disk, Certificate) **не** обгортаються в
-  `config vdom` навіть коли VDOM mode ON — лише коментар `# GLOBAL scope`
+  (Dial-up IPsec, SSL VPN, Policy/NAT, VIP, Local-in, OSPF, BGP, Routing, DHCP, Auth/FSSO,
+  DNS, Webfilter, IPS/UTM, Explicit proxy, Wireless, LACP, Interface, NPU, Certificate,
+  FortiGuard, Log disk, NTP, IPv6, Multicast)
+- **Global-scope VDOM carve-out:** вкладки HA / System Top / Hardware / TAC і відповідні recipes
+  **не** обгортаються в `config vdom` при VDOM mode ON — банер `# GLOBAL scope`
 - `should_wrap_vdom()`, `GLOBAL_SCOPE_TABS`, `GLOBAL_SCOPE_RECIPES` у `core.vdom`
-- `doc/RELEASE_7_PLAN.md`, `tests/test_no_stubs.py`
+- `tests/test_no_stubs.py`, розширені `tests/test_vdom.py`
+- `doc/RELEASE_7_PLAN.md`
 
 ### Changed
-- Більше немає stub `# pending restore` у Recipes
-- `wrap_vdom_context` приймає `tab_key` / `recipe_name` / `scope`
+- Усі 49 recipes з повними CLI-тілами (без `# pending restore`)
+- About / README → **0.8.0**
+
+### Backlog → 0.9.x
+- VDOM name→index mapping у Settings
+- P2 recipes: RIP, IS-IS, SSL web-mode, IoC, Automation Stitch, Cloud SDN
 
 ---
 

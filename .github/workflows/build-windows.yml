@@ -1,11 +1,10 @@
 name: Build Windows EXE
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
   workflow_dispatch:
-    # Manual run: builds artifact only (no release unless you push a tag)
+    # Manual run: builds artifact only (no release unless a Release is published)
 
 permissions:
   contents: write
@@ -40,14 +39,12 @@ jobs:
           path: dist/FortiDebugBuilder.exe
           if-no-files-found: error
 
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Attach EXE to GitHub Release
+        if: github.event_name == 'release' && github.event.action == 'published'
         uses: softprops/action-gh-release@v2
         with:
-          name: FortiDebug Builder ${{ github.ref_name }}
+          tag_name: ${{ github.event.release.tag_name }}
           files: dist/FortiDebugBuilder.exe
-          draft: false
-          generate_release_notes: true
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -12,12 +12,14 @@ from ui.tabs.recipe_r11 import RecipeR11Mixin
 from ui.tabs.recipe_r12 import RecipeR12Mixin
 from ui.tabs.recipe_r13 import RecipeR13Mixin
 from ui.tabs.recipe_r14 import RecipeR14Mixin
+from ui.tabs.recipe_r15 import RecipeR15Mixin
 from core.fortios_version import DEFAULT_VERSION
 from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(
+    RecipeR15Mixin,
     RecipeR14Mixin,
     RecipeR13Mixin,
     RecipeR12Mixin,
@@ -93,10 +95,15 @@ class RecipesTab(
         "CGNAT / hyperscale session",
         "EVPN / VXLAN-EVPN",
         "WebCache / WCCP",
-        # Release 14
         "LLDP / CDP neighbors",
         "802.1X wired auth",
         "Captive portal",
+        # Release 15 — remote users
+        "SSL VPN connected / no traffic",
+        "Dial-up IPsec up / inner traffic fail",
+        "SSL VPN realm / portal / group",
+        "SSL VPN DTLS / MTU / fragment",
+        "SSL VPN IP pool / wrong address",
     ]
 
     def __init__(
@@ -252,6 +259,15 @@ class RecipesTab(
             "LLDP / CDP neighbors": lambda: self._lldp_cdp(iface),
             "802.1X wired auth": lambda: self._dot1x(src, iface),
             "Captive portal": lambda: self._captive_portal(src),
+            "SSL VPN connected / no traffic": lambda: self._ssl_connected_no_traffic(
+                src, dst, port
+            ),
+            "Dial-up IPsec up / inner traffic fail": lambda: self._dialup_inner_traffic(
+                version, peer, src, dst, port
+            ),
+            "SSL VPN realm / portal / group": lambda: self._ssl_realm_portal_group(src),
+            "SSL VPN DTLS / MTU / fragment": lambda: self._ssl_dtls_mtu(src),
+            "SSL VPN IP pool / wrong address": lambda: self._ssl_ip_pool(src),
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

@@ -9,12 +9,14 @@ from ui.tabs.recipe_r8 import RecipeR8Mixin
 from ui.tabs.recipe_r9 import RecipeR9Mixin
 from ui.tabs.recipe_r10 import RecipeR10Mixin
 from ui.tabs.recipe_r11 import RecipeR11Mixin
+from ui.tabs.recipe_r12 import RecipeR12Mixin
 from core.fortios_version import DEFAULT_VERSION
 from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(
+    RecipeR12Mixin,
     RecipeR11Mixin,
     RecipeR10Mixin,
     RecipeR9Mixin,
@@ -80,9 +82,12 @@ class RecipesTab(
         "Automation Stitch",
         "IoC / Threat feed",
         "Cloud SDN connector",
-        # Release 11
         "BFD neighbor",
         "SAML SSO / admin login",
+        # Release 12
+        "GRE / IP-in-IP tunnel",
+        "VXLAN",
+        "CGNAT / hyperscale session",
     ]
 
     def __init__(
@@ -230,6 +235,9 @@ class RecipesTab(
             "Cloud SDN connector": self._cloud_sdn,
             "BFD neighbor": lambda: self._bfd(peer),
             "SAML SSO / admin login": lambda: self._saml_sso(src),
+            "GRE / IP-in-IP tunnel": lambda: self._gre_tunnel(peer, iface),
+            "VXLAN": lambda: self._vxlan(peer, iface),
+            "CGNAT / hyperscale session": lambda: self._cgnat(src, dst),
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

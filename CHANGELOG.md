@@ -6,26 +6,28 @@
 
 ---
 
+## [Unreleased] — Release 11 (0.12.0)
+
+### Added
+- Recipes: **BFD neighbor**, **SAML SSO / admin login**
+
+### Fixed / polish
+- `main_window`: live `get_vdom_map` + Settings `on_vdom_map` (refresh preview after save)
+- tests: coverage for R8–R10 recipe bodies
+
+---
+
 ## [0.11.0] — 2026-09-06 — Release 10
 
 ### Added
-- **Recipes +2 (55 total)** — `recipe_r10.py`:
-  - IoC / Threat feed (forticron, botnet tables, integrity hints)
-  - Cloud SDN connector (AWS/Azure/GCP/OCI/K8s status + debug)
-- `doc/RELEASE_10_PLAN.md`
-
-### Changed
-- About / README → **0.11.0**
-
-### Note
-- CI EXE: `git tag v0.11.0 && git push origin v0.11.0`
+- IoC / Threat feed + Cloud SDN (55 recipes)
 
 ---
 
 ## [0.10.0] — 2026-09-06 — Release 9
 
 ### Added
-- IS-IS + Automation Stitch (53 recipes)
+- IS-IS + Automation Stitch
 
 ---
 

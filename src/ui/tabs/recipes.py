@@ -106,6 +106,11 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         self.wan = ctk.CTkEntry(self, placeholder_text="wan1 / any / port1")
         self.wan.grid(row=7, column=1, sticky="ew", padx=10, pady=4)
         self.wan.bind("<KeyRelease>", self.notify_change)
+        ctk.CTkLabel(self, text="VDOM (index / name)").grid(row=8, column=0, sticky="w", padx=10, pady=4)
+        self.vdom = ctk.CTkEntry(self, placeholder_text="optional — e.g. 0 or root")
+        self.vdom.grid(row=8, column=1, sticky="ew", padx=10, pady=4)
+        self.vdom.bind("<KeyRelease>", self.notify_change)
+        tip(self.vdom, "Session/flow filter vd <index>; multi-VDOM advisory comment")
         self.grid_columnconfigure(1, weight=1)
 
     def generate_commands(self) -> str:
@@ -115,10 +120,11 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         port = self.port.get().strip()
         peer = self.peer.get().strip()
         iface = self.wan.get().strip() or "any"
+        vd = self.vdom.get().strip()
         version = self.get_version()
         dispatch = {
-            "First steps connectivity": lambda: self._first_steps(src, dst, port),
-            "Traffic not passing": lambda: self._traffic_not_passing(src, dst, port),
+            "First steps connectivity": lambda: self._first_steps(src, dst, port, vd),
+            "Traffic not passing": lambda: self._traffic_not_passing(src, dst, port, vd),
             "VPN down / rekey": lambda: self._vpn_down(version, peer),
             "Dial-up IPsec": lambda: self._dialup_ipsec(version, peer, src),
             "SSL VPN login fail": lambda: self._ssl_login_fail(src),
@@ -170,4 +176,8 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
             "Modem / LTE / PPP": lambda: self._modem_lte(iface),
         }
         fn = dispatch.get(name)
-        return fn() if fn else "# select a recipe"
+        body = fn() if fn else "# select a recipe"
+        if vd and name not in ("First steps connectivity", "Traffic not passing"):
+            prefix = "\n".join(self._vdom_banner(vd))
+            body = prefix + body if prefix else body
+        return body

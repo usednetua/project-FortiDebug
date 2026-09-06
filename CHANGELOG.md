@@ -6,10 +6,16 @@
 
 ---
 
-## [Unreleased] — Release 14 (0.15.0)
+## [0.15.0] — 2026-09-06 — Release 14
 
 ### Added
-- Recipes: **LLDP / CDP neighbors**, **802.1X wired auth**, **Captive portal**
+- **Recipes +3 (65 total)** — `recipe_r14.py`:
+  - LLDP / CDP neighbors
+  - 802.1X wired auth
+  - Captive portal
+
+### Changed
+- About / README → **0.15.0**
 
 ---
 

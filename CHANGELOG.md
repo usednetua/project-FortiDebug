@@ -6,6 +6,20 @@
 
 ---
 
+## [Unreleased] — Release 6 (0.7.0)
+
+### Added
+- **План Release 6** (`doc/RELEASE_6_PLAN.md`): gap-аналіз відкритих (публічних) FortiGate debug recipes, яких ще немає в додатку
+  - P0: ADVPN / Shortcut tunnels, SIP / VoIP / ALG, Application Control / ISDB
+  - P1: Email filter, File filter / DLP, Transparent / Bridging, Modem / LTE, VDOM-aware wrappers
+  - P2 backlog (RIP, IS-IS, SSL web-mode, IoC pack, …)
+- Оновлено `doc/INDEX.md` — додано Release 6, R5 позначено як архів/майже закритий
+
+### Changed
+- Старт нового спринту за Кодексом впровадження (план перед кодом)
+
+---
+
 ## [Unreleased] — Release 5
 
 ### Added

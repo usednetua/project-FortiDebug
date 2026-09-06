@@ -6,23 +6,24 @@
 
 ---
 
+## [Unreleased] — Release 13 (0.14.0)
+
+### Added
+- Recipes: **EVPN / VXLAN-EVPN**, **WebCache / WCCP**
+
+---
+
 ## [0.13.0] — 2026-09-06 — Release 12
 
 ### Added
-- **Recipes +3 (60 total)** — `recipe_r12.py`:
-  - GRE / IP-in-IP tunnel
-  - VXLAN
-  - CGNAT / hyperscale session
-
-### Changed
-- About / README → **0.13.0**
+- GRE / VXLAN / CGNAT (60 recipes)
 
 ---
 
 ## [0.12.0] — 2026-09-06 — Release 11
 
 ### Added
-- BFD + SAML SSO (57)
+- BFD + SAML SSO
 
 ---
 
@@ -50,7 +51,7 @@
 ## [0.8.0] — 2026-09-06 — Release 7
 
 ### Added
-- Restore stubs; global VDOM carve-out
+- Restore stubs; global VDOM
 
 ---
 

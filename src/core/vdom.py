@@ -11,13 +11,40 @@ and closed with:
     end
     end
 
+Some commands are **global-only** (HA cluster, NPU hardware, TAC report, …)
+and must NOT be wrapped — they run outside any VDOM context.
+
 Session / flow filters can also use numeric VDOM index:
 
     diagnose sys session filter vd <index>
     diagnose debug flow filter vd <index>
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set
+
+# Tabs whose output stays in global context even when VDOM mode is ON.
+GLOBAL_SCOPE_TABS: Set[str] = {
+    "ha",
+    "system_top",
+    "hardware",
+    "tac",
+}
+
+# Recipe scenario names that are global-only (no config vdom wrap).
+GLOBAL_SCOPE_RECIPES: Set[str] = {
+    "HA out-of-sync",
+    "NPU / offload check",
+    "General TAC collect / healthcheck",
+    "High CPU",
+    "High memory / conserv mode",
+    "Log disk / crashlog",
+    "FortiGuard / license",
+    "NTP / time sync",
+    "Certificate / SSL inspect",  # cert store is global on multi-VDOM
+}
+
+SCOPE_GLOBAL = "global"
+SCOPE_VDOM = "vdom"
 
 
 def vdom_enter(name: str) -> List[str]:
@@ -39,11 +66,42 @@ def vdom_leave() -> List[str]:
     ]
 
 
-def wrap_vdom_context(body: str, enabled: bool, name: str = "root") -> str:
-    """Wrap generated command body in config vdom / edit / end when enabled."""
-    if not enabled or not (body or "").strip():
+def should_wrap_vdom(
+    enabled: bool,
+    tab_key: str = "",
+    recipe_name: str = "",
+    scope: str = "",
+) -> bool:
+    """Return True only when VDOM wrap is appropriate."""
+    if not enabled:
+        return False
+    if (scope or "").strip().lower() == SCOPE_GLOBAL:
+        return False
+    if tab_key in GLOBAL_SCOPE_TABS:
+        return False
+    if recipe_name in GLOBAL_SCOPE_RECIPES:
+        return False
+    return True
+
+
+def wrap_vdom_context(
+    body: str,
+    enabled: bool,
+    name: str = "root",
+    *,
+    tab_key: str = "",
+    recipe_name: str = "",
+    scope: str = "",
+) -> str:
+    """Wrap generated command body in config vdom / edit / end when appropriate.
+
+    Global-scope tabs/recipes keep the body unchanged (only a comment may be added
+    by the caller).
+    """
+    if not should_wrap_vdom(enabled, tab_key, recipe_name, scope):
         return body
-    # Avoid double-wrap if body already starts with config vdom
+    if not (body or "").strip():
+        return body
     stripped = body.lstrip()
     if stripped.startswith("config vdom"):
         return body
@@ -52,7 +110,6 @@ def wrap_vdom_context(body: str, enabled: bool, name: str = "root") -> str:
 
 
 def session_filter_vd_line(prefix: str, vd: str) -> Optional[str]:
-    """Return 'diagnose sys session[6] filter vd X' if vd non-empty."""
     vd = (vd or "").strip()
     if not vd:
         return None
@@ -60,7 +117,6 @@ def session_filter_vd_line(prefix: str, vd: str) -> Optional[str]:
 
 
 def flow_filter_vd_line(filter_cmd: str, vd: str) -> Optional[str]:
-    """filter_cmd e.g. 'diagnose debug flow filter' or '... filter6'."""
     vd = (vd or "").strip()
     if not vd:
         return None
@@ -81,13 +137,15 @@ def resolve_vd_index(vdom_mode: bool, vdom_name: str, explicit_vd: str = "") -> 
     name = (vdom_name or "").strip()
     if name.isdigit():
         return name
-    # common convention: root → 0
     if name.lower() in ("root", ""):
         return "0"
     return ""
 
 
-def vdom_banner(enabled: bool, name: str = "root") -> str:
+def vdom_banner(enabled: bool, name: str = "root", *, wrapped: bool = True) -> str:
     if not enabled:
         return "# VDOM mode: off (single / no multi-VDOM)"
-    return f"# VDOM mode: on — context '{(name or 'root').strip() or 'root'}'"
+    ctx = (name or "root").strip() or "root"
+    if wrapped:
+        return f"# VDOM mode: on — context '{ctx}'"
+    return f"# VDOM mode: on — GLOBAL scope (no config vdom; active VDOM name '{ctx}' ignored)"

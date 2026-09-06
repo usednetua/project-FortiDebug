@@ -14,12 +14,14 @@ from ui.tabs.recipe_r13 import RecipeR13Mixin
 from ui.tabs.recipe_r14 import RecipeR14Mixin
 from ui.tabs.recipe_r15 import RecipeR15Mixin
 from ui.tabs.recipe_r16 import RecipeR16Mixin
+from ui.tabs.recipe_r17 import RecipeR17Mixin
 from core.fortios_version import DEFAULT_VERSION
 from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
 class RecipesTab(
+    RecipeR17Mixin,
     RecipeR16Mixin,
     RecipeR15Mixin,
     RecipeR14Mixin,
@@ -105,7 +107,6 @@ class RecipesTab(
         "SSL VPN realm / portal / group",
         "SSL VPN DTLS / MTU / fragment",
         "SSL VPN IP pool / wrong address",
-        # Release 16 — WiFi
         "FortiAP offline / CAPWAP join",
         "WiFi client cannot associate",
         "WiFi 802.1X / WPA-Enterprise",
@@ -114,6 +115,14 @@ class RecipesTab(
         "Rogue AP / WIDS",
         "Radio RF / channel check",
         "cw_acd / controller load",
+        # Release 17 — logging
+        "Log disk full / filesystem",
+        "Syslog not received",
+        "FAZ OFTP / connectivity deep",
+        "Memory logging / miglogd",
+        "Traffic log missing",
+        "Event log search / filter",
+        "Log rate / miglogd load",
     ]
 
     def __init__(
@@ -288,6 +297,13 @@ class RecipesTab(
             "Rogue AP / WIDS": self._wifi_rogue_wids,
             "Radio RF / channel check": lambda: self._wifi_radio_rf(peer),
             "cw_acd / controller load": self._wifi_cw_acd_load,
+            "Log disk full / filesystem": self._log_disk_full,
+            "Syslog not received": lambda: self._log_syslog(peer),
+            "FAZ OFTP / connectivity deep": lambda: self._log_faz_oftp(peer),
+            "Memory logging / miglogd": self._log_memory_miglogd,
+            "Traffic log missing": lambda: self._log_traffic_missing(src, dst),
+            "Event log search / filter": lambda: self._log_event_search(src),
+            "Log rate / miglogd load": self._log_rate_load,
         }
         fn = dispatch.get(name)
         return fn() if fn else "# select a recipe"

@@ -5,7 +5,7 @@ import webbrowser
 from ui.tabs.base_tab import BaseTab
 from core.i18n import t
 
-APP_VERSION = "0.5.1"
+APP_VERSION = "0.7.0"
 AUTHOR = "used.net.ua"
 WEBSITE = "https://used.net.ua"
 
@@ -43,9 +43,11 @@ class AboutTab(BaseTab):
 
         ctk.CTkLabel(
             self,
-            text="FortiDebug Builder — Windows CLI helper for FortiGate diagnostics.",
+            text="FortiDebug Builder — Windows CLI helper for FortiGate diagnostics.\n"
+            "49 recipes · FortiOS + VDOM mode · safety blocks.",
             text_color="gray",
             wraplength=480,
+            justify="left",
         ).grid(row=5, column=0, sticky="w", padx=10, pady=8)
 
     def refresh_labels(self):

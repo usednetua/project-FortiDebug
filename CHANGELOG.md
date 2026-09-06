@@ -6,10 +6,10 @@
 
 ---
 
-## [Unreleased] — Release 17 (0.18.0)
+## [0.18.0] — 2026-09-06 — Release 17
 
 ### Added
-- Logging pack (`recipe_r17.py`):
+- **Logging pack +7 (85 total)** — `recipe_r17.py`:
   - Log disk full / filesystem
   - Syslog not received
   - FAZ OFTP / connectivity deep
@@ -17,6 +17,9 @@
   - Traffic log missing
   - Event log search / filter
   - Log rate / miglogd load
+
+### Changed
+- About / README → **0.18.0**
 
 ---
 

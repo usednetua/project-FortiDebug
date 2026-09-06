@@ -21,15 +21,29 @@ def bpf_presets_path() -> Path:
     return _config_dir() / "bpf_presets.json"
 
 
+def _defaults() -> Dict[str, Any]:
+    return {
+        "theme": "Dark",
+        "language": "uk",
+        "fortios": "7.4.x",
+        "vdom_enabled": False,
+        "vdom_name": "root",
+    }
+
+
 def load_config() -> Dict[str, Any]:
     path = config_path()
+    base = _defaults()
     if not path.exists():
-        return {"theme": "Dark", "language": "uk", "fortios": "7.4.x"}
+        return base
     try:
         with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+        if isinstance(data, dict):
+            base.update(data)
+        return base
     except (json.JSONDecodeError, OSError):
-        return {"theme": "Dark", "language": "uk", "fortios": "7.4.x"}
+        return base
 
 
 def save_config(data: Dict[str, Any]) -> None:

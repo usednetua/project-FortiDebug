@@ -6,6 +6,7 @@ from ui.tabs.recipe_impl import RecipeImplMixin
 from ui.tabs.recipe_extra import RecipeExtraMixin
 from ui.tabs.recipe_r6 import RecipeR6Mixin
 from core.fortios_version import DEFAULT_VERSION
+from core.vdom import resolve_vd_index
 from ui.widgets.tooltip import tip
 
 
@@ -64,9 +65,19 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         "Modem / LTE / PPP",
     ]
 
-    def __init__(self, master, on_change=None, get_version=None, **kwargs):
+    def __init__(
+        self,
+        master,
+        on_change=None,
+        get_version=None,
+        get_vdom_mode=None,
+        get_vdom_name=None,
+        **kwargs,
+    ):
         super().__init__(master, on_change=on_change, **kwargs)
         self.get_version = get_version or (lambda: DEFAULT_VERSION)
+        self.get_vdom_mode = get_vdom_mode or (lambda: False)
+        self.get_vdom_name = get_vdom_name or (lambda: "root")
         self._build_ui()
 
     def _build_ui(self):
@@ -106,12 +117,20 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         self.wan = ctk.CTkEntry(self, placeholder_text="wan1 / any / port1")
         self.wan.grid(row=7, column=1, sticky="ew", padx=10, pady=4)
         self.wan.bind("<KeyRelease>", self.notify_change)
-        ctk.CTkLabel(self, text="VDOM (index / name)").grid(row=8, column=0, sticky="w", padx=10, pady=4)
-        self.vdom = ctk.CTkEntry(self, placeholder_text="optional — e.g. 0 or root")
+        ctk.CTkLabel(self, text="VDOM index override").grid(row=8, column=0, sticky="w", padx=10, pady=4)
+        self.vdom = ctk.CTkEntry(self, placeholder_text="optional; sidebar VDOM switch is primary")
         self.vdom.grid(row=8, column=1, sticky="ew", padx=10, pady=4)
         self.vdom.bind("<KeyRelease>", self.notify_change)
-        tip(self.vdom, "Session/flow filter vd <index>; multi-VDOM advisory comment")
+        tip(
+            self.vdom,
+            "Override filter vd. Основний режим — перемикач VDOM у sidebar (config vdom + edit).",
+        )
         self.grid_columnconfigure(1, weight=1)
+
+    def _resolved_vd(self) -> str:
+        return resolve_vd_index(
+            self.get_vdom_mode(), self.get_vdom_name(), self.vdom.get().strip()
+        )
 
     def generate_commands(self) -> str:
         name = self.recipe.get()
@@ -120,7 +139,7 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
         port = self.port.get().strip()
         peer = self.peer.get().strip()
         iface = self.wan.get().strip() or "any"
-        vd = self.vdom.get().strip()
+        vd = self._resolved_vd()
         version = self.get_version()
         dispatch = {
             "First steps connectivity": lambda: self._first_steps(src, dst, port, vd),
@@ -176,8 +195,4 @@ class RecipesTab(RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab):
             "Modem / LTE / PPP": lambda: self._modem_lte(iface),
         }
         fn = dispatch.get(name)
-        body = fn() if fn else "# select a recipe"
-        if vd and name not in ("First steps connectivity", "Traffic not passing"):
-            prefix = "\n".join(self._vdom_banner(vd))
-            body = prefix + body if prefix else body
-        return body
+        return fn() if fn else "# select a recipe"

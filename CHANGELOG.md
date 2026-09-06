@@ -13,13 +13,19 @@
 - **Recipes +7 (49 total)** — `src/ui/tabs/recipe_r6.py` (`RecipeR6Mixin`):
   - **P0:** ADVPN / Shortcut tunnels; SIP / VoIP / ALG; Application Control / ISDB
   - **P1:** Email filter / Antispam; File filter / DLP; Transparent mode / Bridging; Modem / LTE / PPP
-- **VDOM field** у Recipes tab + `diagnose sys session filter vd` / `flow filter vd` у helpers
-- `tests/test_recipes_r6.py` — headless smoke для R6 + vd filters
+- **Глобальний перемикач VDOM** (sidebar, поруч із FortiOS):
+  - Switch **VDOM mode** + поле імені VDOM (default `root`)
+  - **ON:** preview обгортається в `config vdom` → `edit <name>` … `end` / `end`
+  - **OFF:** без multi-VDOM контексту
+  - Sessions / Flows / Recipes: `filter vd` через `resolve_vd_index` (root→0, numeric name, local override)
+  - Persist: `vdom_enabled`, `vdom_name` у config.json
+- `src/core/vdom.py` + `tests/test_vdom.py`, `tests/test_recipes_r6.py`
 - `RecipesTab`: MRO `RecipeR6Mixin, RecipeExtraMixin, RecipeImplMixin, BaseTab`
 - Оновлено `doc/INDEX.md` — Release 6 in progress
 
 ### Changed
 - `_session_block` / `_flow_block` / First steps & Traffic not passing — optional `vd`
+- Export bundle header включає стан VDOM mode
 - Старт спринту за Кодексом впровадження (план перед кодом)
 
 ---

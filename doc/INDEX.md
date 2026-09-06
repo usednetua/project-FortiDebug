@@ -41,7 +41,7 @@
 | [RELEASE_4_PLAN.md](./RELEASE_4_PLAN.md) | Release 4 | 📦 Архів |
 | [RELEASE_5_PLAN.md](./RELEASE_5_PLAN.md) | Release 5 | 📦 Архів |
 | [RELEASE_6_PLAN.md](./RELEASE_6_PLAN.md) | Release 6 (0.7.0) — recipes + VDOM | ✅ Done / 📦 Архів |
-| [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | Release 7 (0.8.0) — restore stubs + polish | 🔄 In progress |
+| [RELEASE_7_PLAN.md](./RELEASE_7_PLAN.md) | Release 7 (0.8.0) — restore stubs + global scope | ✅ Done / 📦 Архів |
 
 ---
 

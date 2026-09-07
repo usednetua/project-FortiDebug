@@ -6,6 +6,16 @@
 
 ---
 
+## [0.18.2] — 2026-09-07
+
+### Fixed
+- **Скрол колесом миші у випадаючих списках** — stock CustomTkinter OptionMenu/ComboBox не скролиться на довгих списках.
+  - Vendored [CTkScrollableDropdown](https://github.com/Akascape/CTkScrollableDropdown) (MIT, Akash Bora)
+  - `wire_scrollable_dropdowns()` підключає scrollable popup до всіх меню після старту (`src/main.py`)
+  - Helper: `src/ui/widgets/scrollable_menu.py`
+
+---
+
 ## [0.18.1] — 2026-09-07
 
 ### Changed

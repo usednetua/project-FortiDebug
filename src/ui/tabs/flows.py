@@ -42,8 +42,11 @@ class FlowsTab(BaseTab):
         warn.grid(row=1, column=0, columnspan=2, sticky="w", padx=10, pady=(0, 6))
 
         ctk.CTkLabel(self, text="Preset").grid(row=2, column=0, sticky="w", padx=10, pady=4)
+        preset_values = [""] + sorted(
+            [k for k in self.PRESETS.keys() if k], key=str.casefold
+        )
         self.preset = ctk.CTkOptionMenu(
-            self, values=list(self.PRESETS.keys()), command=self._apply_preset
+            self, values=preset_values, command=self._apply_preset
         )
         self.preset.set("")
         self.preset.grid(row=2, column=1, sticky="ew", padx=10, pady=4)
@@ -91,9 +94,10 @@ class FlowsTab(BaseTab):
         self.port.bind("<KeyRelease>", self.notify_change)
 
         ctk.CTkLabel(self, text="Protocol").grid(row=11, column=0, sticky="w", padx=10, pady=4)
+        proto_values = sorted(["any", "1 (ICMP)", "6 (TCP)", "17 (UDP)"], key=str.casefold)
         self.proto = ctk.CTkOptionMenu(
             self,
-            values=["any", "1 (ICMP)", "6 (TCP)", "17 (UDP)"],
+            values=proto_values,
             command=lambda _: self.notify_change(),
         )
         self.proto.set("any")

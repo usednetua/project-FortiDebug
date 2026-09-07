@@ -6,6 +6,19 @@
 
 ---
 
+## [0.18.1] — 2026-09-07
+
+### Changed
+- **Алфавітне сортування всіх меню та списків у UI** (case-insensitive):
+  - Sidebar navigation — за поточним перекладеним label (перебудова при зміні мови)
+  - Recipes (85 playbooks)
+  - App Debug daemons, Sessions/Flows/Sniffer protocols, System Top variants
+  - Sniffer interfaces + BPF presets, Hardware NPU family
+  - Policy Lookup proto / pol_type / auth_type, SSH Logger shells
+- Числові рівні (verbose, IKE, debug level) та FortiOS versions залишено в логічному порядку
+
+---
+
 ## [0.18.0] — 2026-09-06 — Release 17
 
 ### Added

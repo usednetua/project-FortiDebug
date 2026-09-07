@@ -9,6 +9,7 @@
 ## [Unreleased]
 
 ### Changed
+- **Процес релізу:** обов’язок генерувати `RELEASE_NOTES.md` під кожен реліз і публікувати разом із GitHub Release (asset + body). Зафіксовано в `AGENTS.md` §3, `doc/CODEX_IMPLEMENTATION.md`, CI `build-windows.yml`.
 - **README.md** — повний детальний опис програми (можливості, Recipes, модулі, встановлення, структура, обмеження, гарячі клавіші). Версія в README: 0.18.2.
 
 ---

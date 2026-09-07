@@ -39,12 +39,15 @@ jobs:
           path: dist/FortiDebugBuilder.exe
           if-no-files-found: error
 
-      - name: Attach EXE to GitHub Release
+      - name: Attach EXE and RELEASE_NOTES to GitHub Release
         if: github.event_name == 'release' && github.event.action == 'published'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.release.tag_name }}
-          files: dist/FortiDebugBuilder.exe
-          fail_on_unmatched_files: true
+          files: |
+            dist/FortiDebugBuilder.exe
+            RELEASE_NOTES.md
+          body_path: RELEASE_NOTES.md
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

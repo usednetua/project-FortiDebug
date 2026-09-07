@@ -21,9 +21,10 @@ class SystemTopTab(BaseTab):
         title.grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(5, 15))
 
         ctk.CTkLabel(self, text="Variant").grid(row=1, column=0, sticky="w", padx=10, pady=4)
+        variant_values = sorted(self.VARIANTS.keys(), key=str.casefold)
         self.variant = ctk.CTkOptionMenu(
             self,
-            values=list(self.VARIANTS.keys()),
+            values=variant_values,
             command=lambda _: self.notify_change(),
         )
         self.variant.set("top")

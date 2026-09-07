@@ -40,9 +40,13 @@ class SshLoggerTab(BaseTab):
         self.log_dir.bind("<KeyRelease>", self.notify_change)
 
         ctk.CTkLabel(self, text="Shell").grid(row=5, column=0, sticky="w", padx=10, pady=4)
+        shell_values = sorted(
+            ["PowerShell (Tee-Object)", "CMD (tee if available)", "Git Bash / WSL"],
+            key=str.casefold,
+        )
         self.shell = ctk.CTkOptionMenu(
             self,
-            values=["PowerShell (Tee-Object)", "CMD (tee if available)", "Git Bash / WSL"],
+            values=shell_values,
             command=lambda _: self.notify_change(),
         )
         self.shell.set("PowerShell (Tee-Object)")

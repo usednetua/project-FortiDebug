@@ -52,15 +52,17 @@ class AppDebugTab(BaseTab):
         tip(self.mode, "Realtime: diagnose debug application … | Test: diagnose test application …")
 
         ctk.CTkLabel(self, text="Daemon").grid(row=3, column=0, sticky="w", padx=10, pady=4)
+        daemon_values = sorted(self.DAEMONS.keys(), key=str.casefold)
         self.daemon = ctk.CTkOptionMenu(
             self,
-            values=list(self.DAEMONS.keys()),
+            values=daemon_values,
             command=self._on_daemon,
         )
-        self.daemon.set("authd")
+        self.daemon.set(daemon_values[0] if daemon_values else "authd")
         self.daemon.grid(row=3, column=1, sticky="ew", padx=10, pady=4)
 
-        self.hint = ctk.CTkLabel(self, text=self.DAEMONS["authd"], text_color="gray")
+        first = self.daemon.get()
+        self.hint = ctk.CTkLabel(self, text=self.DAEMONS.get(first, ""), text_color="gray")
         self.hint.grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=2)
 
         ctk.CTkLabel(self, text="Level").grid(row=5, column=0, sticky="w", padx=10, pady=4)

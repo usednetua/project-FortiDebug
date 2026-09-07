@@ -61,8 +61,9 @@ class SessionsTab(BaseTab):
         self.dst_port.bind("<KeyRelease>", self.notify_change)
 
         ctk.CTkLabel(self, text="Protocol").grid(row=6, column=0, sticky="w", padx=10, pady=4)
+        proto_values = sorted(self.PROTOCOLS.keys(), key=str.casefold)
         self.proto = ctk.CTkOptionMenu(
-            self, values=list(self.PROTOCOLS.keys()), command=lambda _: self.notify_change()
+            self, values=proto_values, command=lambda _: self.notify_change()
         )
         self.proto.set("Any")
         self.proto.grid(row=6, column=1, sticky="ew", padx=10, pady=4)

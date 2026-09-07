@@ -139,19 +139,7 @@ class MainWindow(ctk.CTk):
         self.nav_scroll.grid_columnconfigure(0, weight=1)
 
         self.nav_buttons = {}
-        for i, (key, _) in enumerate(NAV_KEYS):
-            btn = ctk.CTkButton(
-                self.nav_scroll,
-                text=t(key),
-                command=lambda k=key: self.show_tab(k),
-                fg_color="transparent",
-                text_color=("gray10", "gray90"),
-                hover_color=("gray70", "gray30"),
-                anchor="w",
-                height=28,
-            )
-            btn.grid(row=i, column=0, padx=6, pady=1, sticky="ew")
-            self.nav_buttons[key] = btn
+        self._build_nav_buttons()
 
         self.content = ctk.CTkScrollableFrame(self, corner_radius=0)
         self.content.grid(row=0, column=1, sticky="nsew")
@@ -249,6 +237,31 @@ class MainWindow(ctk.CTk):
 
         self.show_tab("recipes")
 
+    def _sorted_nav_keys(self):
+        """Alphabetical order by current UI label (language-aware)."""
+        return sorted(NAV_KEYS, key=lambda kv: t(kv[0]).casefold())
+
+    def _build_nav_buttons(self):
+        for btn in self.nav_buttons.values():
+            try:
+                btn.destroy()
+            except Exception:
+                pass
+        self.nav_buttons.clear()
+        for i, (key, _) in enumerate(self._sorted_nav_keys()):
+            btn = ctk.CTkButton(
+                self.nav_scroll,
+                text=t(key),
+                command=lambda k=key: self.show_tab(k),
+                fg_color="transparent",
+                text_color=("gray10", "gray90"),
+                hover_color=("gray70", "gray30"),
+                anchor="w",
+                height=28,
+            )
+            btn.grid(row=i, column=0, padx=6, pady=1, sticky="ew")
+            self.nav_buttons[key] = btn
+
     def get_version(self) -> FortiOSVersion:
         return self.fortios_version
 
@@ -305,8 +318,12 @@ class MainWindow(ctk.CTk):
         self.title(t("app_title"))
         self.fortios_lbl.configure(text=t("fortios"))
         self.vdom_switch.configure(text=t("vdom_mode"))
-        for key, btn in self.nav_buttons.items():
-            btn.configure(text=t(key))
+        # Rebuild nav in alphabetical order for the new language
+        current = self.current_tab
+        self._build_nav_buttons()
+        if current:
+            for k, btn in self.nav_buttons.items():
+                btn.configure(fg_color=("gray75", "gray25") if k == current else "transparent")
         self.btn_copy.configure(text=t("copy"))
         self.btn_copy_stop.configure(text=t("copy_stop"))
         self.btn_save_txt.configure(text=t("save_txt"))

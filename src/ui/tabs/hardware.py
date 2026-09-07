@@ -58,9 +58,10 @@ class HardwareTab(BaseTab):
         tip(self.deviceinfo_nic, "Без імені — загальний огляд; з NIC — деталі інтерфейсу")
 
         ctk.CTkLabel(self, text="NPU family").grid(row=6, column=0, sticky="w", padx=10, pady=4)
+        npu_values = sorted(["np6", "np7", "np6xlite", "np6lite"], key=str.casefold)
         self.npu_family = ctk.CTkOptionMenu(
             self,
-            values=["np6", "np7", "np6xlite", "np6lite"],
+            values=npu_values,
             command=lambda _: self.notify_change(),
         )
         self.npu_family.set("np6")

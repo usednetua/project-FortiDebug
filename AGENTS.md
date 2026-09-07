@@ -27,64 +27,47 @@
 
 ## 3. RELEASE_NOTES.md під кожен реліз
 
-**Обов’язок:** для **кожного** релізу (tag `vX.Y.Z` / GitHub Release) генерувати файл **`RELEASE_NOTES.md`** у корені репозиторію і **публікувати його разом із релізом**.
+**Обов’язок:** для **кожного** релізу (tag `vX.Y.Z` / GitHub Release) мати **`RELEASE_NOTES.md`** у корені репозиторію і **публікувати його разом із релізом**.
 
-### 3.1. Коли створювати
+### 3.1. Автогенерація (обов’язковий інструмент)
 
-- Перед створенням git tag і публікацією GitHub Release.
-- Вміст базується на секції відповідної версії в `CHANGELOG.md` (Added / Changed / Fixed / Removed).
-- Файл **перезаписується** під кожен новий реліз (історія — у `CHANGELOG.md` і в тілах минулих GitHub Releases).
+Джерело правди — `CHANGELOG.md`. Нотатки **генеруються** скриптом:
 
-### 3.2. Зміст і формат
+```bash
+# остання версійна секція
+python scripts/generate_release_notes.py
 
-Мінімальний шаблон:
+# конкретна версія
+python scripts/generate_release_notes.py 0.19.0
+python scripts/generate_release_notes.py v0.19.0 --tag v0.19.0
 
-```markdown
-# FortiDebug Builder X.Y.Z
-
-**Дата:** YYYY-MM-DD  
-**Tag:** vX.Y.Z
-
-## Highlights
-- …
-
-## Added
-- …
-
-## Changed
-- …
-
-## Fixed
-- …
-
-## Install
-- Windows EXE: вкладення `FortiDebugBuilder.exe` у цьому Release
-- З вихідників: `pip install -r requirements.txt && python src/main.py`
-
-## Full changelog
-Див. [CHANGELOG.md](CHANGELOG.md).
+# перевірка наявності секції (CI / pre-tag)
+python scripts/generate_release_notes.py 0.19.0 --check
 ```
 
-Мова: українська (як CHANGELOG) або змішана UK/EN — узгоджено з тоном репозиторію.
+Скрипт читає `## [X.Y.Z] — YYYY-MM-DD`, секції Added/Changed/Fixed/… і пише `RELEASE_NOTES.md` (Highlights + Install + посилання на CHANGELOG).
 
-### 3.3. Публікація разом із релізом
+**CI** (`.github/workflows/build-windows.yml`) при `release: published`:
+1. Бере версію з `github.event.release.tag_name` (`v0.19.0` → `0.19.0`).
+2. Запускає `python scripts/generate_release_notes.py <ver> --tag <tag>`.
+3. Прикріплює EXE + `RELEASE_NOTES.md` і ставить body Release з `body_path: RELEASE_NOTES.md`.
 
-1. Закомітити `RELEASE_NOTES.md` **до** `git tag` / створення Release.
-2. Створити GitHub Release для tag `vX.Y.Z`.
-3. CI (`.github/workflows/build-windows.yml`) при `release: published`:
-   - збирає `FortiDebugBuilder.exe`;
-   - прикріплює EXE **і** `RELEASE_NOTES.md` до Release;
-   - підставляє тіло Release з `RELEASE_NOTES.md` (`body_path`), якщо файл є в checkout.
+Тобто навіть якщо файл у гілці застарів, **опублікований Release завжди отримає свіжі нотатки з CHANGELOG на момент tag/checkout**.
 
-Ручний fallback: завантажити `RELEASE_NOTES.md` як asset і вставити текст у Description Release.
+Рекомендовано також згенерувати і закомітити `RELEASE_NOTES.md` **перед** tag (для читабельності в `main`), але для публікації достатньо коректної секції в CHANGELOG.
 
-### 3.4. Чеклист перед tag
+### 3.2. Коли готувати CHANGELOG
 
-- [ ] `CHANGELOG.md` — секція `[X.Y.Z]` заповнена, `[Unreleased]` очищено або перенесено
-- [ ] `RELEASE_NOTES.md` згенеровано з цієї секції
+- Перед tag: перенести пункти з `[Unreleased]` у `## [X.Y.Z] — YYYY-MM-DD`.
+- Не публікувати Release, поки `python scripts/generate_release_notes.py X.Y.Z --check` не поверне 0.
+
+### 3.3. Чеклист перед tag
+
+- [ ] `CHANGELOG.md` — секція `[X.Y.Z]` заповнена
+- [ ] `python scripts/generate_release_notes.py X.Y.Z` (або покластися на CI)
 - [ ] Версія в `src/ui/tabs/about.py` (`APP_VERSION`) і README узгоджені
 - [ ] `doc/INDEX.md` актуальний (якщо змінювались плани)
-- [ ] Коміт(и) з нотатками **перед** `git tag vX.Y.Z && git push origin vX.Y.Z`
+- [ ] Commit & push → `git tag vX.Y.Z && git push origin vX.Y.Z` → Publish Release
 
 ---
 
@@ -93,14 +76,14 @@
 ```text
 1. План у doc/ (якщо не тривіальний patch)
 2. Код + тести + «не зламай!»
-3. CHANGELOG [X.Y.Z]
-4. RELEASE_NOTES.md
+3. CHANGELOG [X.Y.Z] (з [Unreleased])
+4. python scripts/generate_release_notes.py X.Y.Z   # опційно закомітити
 5. about.py / README version bump
 6. Commit & push
 7. git tag vX.Y.Z && git push origin vX.Y.Z
-8. GitHub Release (published) → CI прикріплює EXE + RELEASE_NOTES.md
+8. GitHub Release (published) → CI: generate notes + EXE + attach + body
 ```
 
 ---
 
-*Оновлено: 2026-09-07 — додано §3 RELEASE_NOTES.md.*
+*Оновлено: 2026-09-07 — §3 автогенерація RELEASE_NOTES.md.*

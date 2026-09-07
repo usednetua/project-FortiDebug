@@ -32,6 +32,25 @@ jobs:
       - name: Build EXE with PyInstaller
         run: pyinstaller build.spec
 
+      - name: Derive version from release tag
+        if: github.event_name == 'release' && github.event.action == 'published'
+        id: ver
+        shell: bash
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          VER="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Using version=$VER tag=$TAG"
+
+      - name: Generate RELEASE_NOTES.md from CHANGELOG
+        if: github.event_name == 'release' && github.event.action == 'published'
+        shell: bash
+        run: |
+          python scripts/generate_release_notes.py "${{ steps.ver.outputs.version }}" --tag "${{ steps.ver.outputs.tag }}"
+          echo "----- RELEASE_NOTES.md -----"
+          head -n 40 RELEASE_NOTES.md
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

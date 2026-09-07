@@ -16,26 +16,28 @@
 | 5 | doc/INDEX.md | ✅ Done | P0 | |
 | 6 | CHANGELOG [Unreleased] | ✅ Done | P0 | перед комітом |
 | 7 | Regression: workflow YAML валідний | ✅ Done | P0 | «не зламай!» збірку EXE |
+| 8 | **Автогенерація** `scripts/generate_release_notes.py` | ✅ Done | P0 | CHANGELOG → RELEASE_NOTES |
+| 9 | CI step: generate from tag before attach | ✅ Done | P0 | version з tag_name |
 
 ---
 
 ## Детальні кроки
 
-### 1. AGENTS.md
-Повний текст правил агента в репозиторії: CHANGELOG, CODEX, **RELEASE_NOTES під кожен реліз + публікація з Release**.
+### Автогенерація
 
-### 2. CODEX
-Додати рядок у таблицю «Зв’язок з іншими правилами».
+- Скрипт: `scripts/generate_release_notes.py` (stdlib only).
+- Парсить `## [X.Y.Z] — YYYY-MM-DD` і `### Added|Changed|Fixed|…`.
+- Пише `RELEASE_NOTES.md` з Highlights, категоріями, Install, посиланням на CHANGELOG.
+- Відхиляє `[Unreleased]` як ціль публікації.
+- CI на `release: published` завжди перегенеровує файл з checkout + tag.
 
-### 3. CI
-`softprops/action-gh-release`:
-- `files:` EXE + `RELEASE_NOTES.md`
-- `body_path: RELEASE_NOTES.md` (тіло GitHub Release)
-- не падати, якщо нотаток немає лише на старих tag без файлу — для нових релізів файл обов’язковий за AGENTS.
+### Локально
 
-### 4. Приклад
-`RELEASE_NOTES.md` у корені для **0.18.2** (scrollable dropdowns + посилання на UX 0.18.1).
+```bash
+python scripts/generate_release_notes.py 0.19.0
+python scripts/generate_release_notes.py 0.19.0 --check
+```
 
 ---
 
-*Оновлено: 2026-09-07*
+*Оновлено: 2026-09-07 — автогенерація.*

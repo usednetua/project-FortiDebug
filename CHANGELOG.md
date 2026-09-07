@@ -8,9 +8,12 @@
 
 ## [Unreleased]
 
+### Added
+- **Автогенерація RELEASE_NOTES.md** — `scripts/generate_release_notes.py` (CHANGELOG → notes); CI на `release: published` генерує з tag і прикріплює до Release (`body_path` + asset).
+
 ### Changed
-- **Процес релізу:** обов’язок генерувати `RELEASE_NOTES.md` під кожен реліз і публікувати разом із GitHub Release (asset + body). Зафіксовано в `AGENTS.md` §3, `doc/CODEX_IMPLEMENTATION.md`, CI `build-windows.yml`.
-- **README.md** — повний детальний опис програми (можливості, Recipes, модулі, встановлення, структура, обмеження, гарячі клавіші). Версія в README: 0.18.2.
+- **Процес релізу:** обов’язок `RELEASE_NOTES.md` під кожен реліз; джерело правди — CHANGELOG; правила в `AGENTS.md` §3.
+- **README.md** — повний детальний опис програми. Версія в README: 0.18.2.
 
 ---
 

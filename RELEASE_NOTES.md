@@ -5,8 +5,7 @@
 
 ## Highlights
 
-- Скрол колесом миші у всіх довгих випадаючих списках (OptionMenu / ComboBox).
-- Продовження UX-лінії 0.18.1 (алфавітне сортування меню).
+- **Скрол колесом миші у випадаючих списках** — stock CustomTkinter OptionMenu/ComboBox не скролиться на довгих списках.
 
 ## Fixed
 
@@ -15,14 +14,9 @@
   - `wire_scrollable_dropdowns()` підключає scrollable popup до всіх меню після старту (`src/main.py`)
   - Helper: `src/ui/widgets/scrollable_menu.py`
 
-## Changed (процес, 2026-09-07)
-
-- Обов’язок генерувати **`RELEASE_NOTES.md`** під кожен реліз і публікувати його разом із GitHub Release (EXE + нотатки + body).
-- Правила зафіксовані в `AGENTS.md` §3; CI оновлено.
-
 ## Install
 
-- **Windows EXE:** вкладення `FortiDebugBuilder.exe` у цьому Release (після CI на tag).
+- **Windows EXE:** вкладення `FortiDebugBuilder.exe` у цьому GitHub Release
 - **З вихідників:**
 
 ```bash
@@ -32,4 +26,4 @@ python src/main.py
 
 ## Full changelog
 
-Див. [CHANGELOG.md](CHANGELOG.md) — секції `[0.18.2]`, `[0.18.1]`, `[0.18.0]`.
+Див. [CHANGELOG.md](CHANGELOG.md) — секція `[0.18.2]`.

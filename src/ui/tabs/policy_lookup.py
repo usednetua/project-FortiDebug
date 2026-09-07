@@ -56,8 +56,9 @@ class PolicyLookupTab(BaseTab):
         self.dport.bind("<KeyRelease>", self.notify_change)
 
         ctk.CTkLabel(self, text="Protocol").grid(row=6, column=0, sticky="w", padx=10, pady=4)
+        proto_values = sorted(self.PROTOS.keys(), key=str.casefold)
         self.proto = ctk.CTkOptionMenu(
-            self, values=list(self.PROTOS.keys()), command=lambda _: self.notify_change()
+            self, values=proto_values, command=lambda _: self.notify_change()
         )
         self.proto.set("TCP (6)")
         self.proto.grid(row=6, column=1, sticky="ew", padx=10, pady=4)
@@ -69,9 +70,10 @@ class PolicyLookupTab(BaseTab):
         tip(self.intf, "Ingress interface name as on FortiGate")
 
         ctk.CTkLabel(self, text="Policy type (≥7.4)").grid(row=8, column=0, sticky="w", padx=10, pady=4)
+        pol_values = ["(none)"] + sorted(["policy", "proxy"], key=str.casefold)
         self.pol_type = ctk.CTkOptionMenu(
             self,
-            values=["(none)", "policy", "proxy"],
+            values=pol_values,
             command=lambda _: self.notify_change(),
         )
         self.pol_type.set("(none)")
@@ -79,9 +81,12 @@ class PolicyLookupTab(BaseTab):
         tip(self.pol_type, "7.4.1+: активує extended policy match")
 
         ctk.CTkLabel(self, text="Auth type (≥7.4)").grid(row=9, column=0, sticky="w", padx=10, pady=4)
+        auth_values = ["(none)"] + sorted(
+            ["local", "ldap", "saml", "group"], key=str.casefold
+        )
         self.auth_type = ctk.CTkOptionMenu(
             self,
-            values=["(none)", "local", "ldap", "saml", "group"],
+            values=auth_values,
             command=lambda _: self.notify_change(),
         )
         self.auth_type.set("(none)")

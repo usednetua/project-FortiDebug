@@ -43,16 +43,20 @@ class SnifferTab(BaseTab):
         return merged
 
     def _preset_names(self):
-        return [""] + list(self._all_presets().keys())
+        return [""] + sorted(self._all_presets().keys(), key=str.casefold)
 
     def _build_ui(self):
         title = ctk.CTkLabel(self, text="Sniffer", font=ctk.CTkFont(size=18, weight="bold"))
         title.grid(row=0, column=0, columnspan=3, sticky="w", padx=10, pady=(5, 12))
 
         ctk.CTkLabel(self, text="Interface").grid(row=1, column=0, sticky="w", padx=10, pady=4)
+        ifaces = sorted(
+            ["any", "port1", "port2", "wan1", "wan2", "internal", "vlan100"],
+            key=str.casefold,
+        )
         self.interface = ctk.CTkComboBox(
             self,
-            values=["any", "port1", "port2", "wan1", "wan2", "internal", "vlan100"],
+            values=ifaces,
             command=lambda _: self.notify_change(),
         )
         self.interface.set("any")
@@ -119,9 +123,10 @@ class SnifferTab(BaseTab):
         self.s_port_dir.grid(row=1, column=2, padx=5)
 
         ctk.CTkLabel(self.simple_frame, text="Protocol").grid(row=2, column=0, sticky="w", padx=8, pady=3)
+        protos = sorted(["any", "tcp", "udp", "icmp", "arp", "ip6"], key=str.casefold)
         self.s_proto = ctk.CTkOptionMenu(
             self.simple_frame,
-            values=["any", "tcp", "udp", "icmp", "arp", "ip6"],
+            values=protos,
             command=lambda _: self.notify_change(),
         )
         self.s_proto.set("any")
